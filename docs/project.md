@@ -12,9 +12,9 @@ Write a program that emulates a shell.
 	- Handle double quotes (")
 	- Redirections
 		- < input
-		- > output
+		- \> output
 		- << heredoc
-		- >> output append
+		- \>\> output append
 	- Pipes
 	- Environment variables ($VARIABLE)
 	- Exit code ($?)
