@@ -21,6 +21,9 @@ int	main(int argc, char *argv[], char *envp[])
 {
 	t_mini	minishell;
 
+	(void)argc;
+	(void)argv;
+
 	init_struct(&minishell, envp);
 	show_prompt(&minishell);
 	read_input(&minishell);
@@ -28,9 +31,4 @@ int	main(int argc, char *argv[], char *envp[])
 	exec_input(&minishell);
 	signals(&minishell);
 	save_history(&minishell);
-}
-
-void	random(t_mini *minishell)
-{
-	minishell->signals->sig;
 }
