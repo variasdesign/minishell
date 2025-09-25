@@ -14,29 +14,22 @@
 # define MINISHELL_H
 
 # include "libft.h"
-
-typedef struct s_history
-{
-}	t_history;
-
-typedef struct s_signal
-{
-	int	sig;
-}	t_signal;
+# include <stdio.h>
+# include <readline/readline.h>
+# include <readline/history.h>
 
 typedef struct s_mini
 {
-	char		**env;
-	t_signal	sig;
-	t_history	his;
+	t_list		*env;
 }	t_mini;
 
-void init_struct(t_mini *minishell, char **envp);
-void show_prompt(t_mini *minishell);
-void read_input(t_mini *minishell);
-void parse_input(t_mini *minishell);
-void exec_input(t_mini *minishell);
-void signals(t_mini *minishell);
-void save_history(t_mini *minishell);
+int	g_sig;
+
+void	show_prompt(t_mini *minishell);
+void	read_input(t_mini *minishell);
+void	parse_input(t_mini *minishell);
+void	exec_input(t_mini *minishell);
+void	signals(t_mini *minishell);
+void	save_history(t_mini *minishell);
 
 #endif

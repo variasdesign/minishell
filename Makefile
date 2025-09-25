@@ -28,7 +28,7 @@ all: $(NAME)
 
 $(NAME): $(BASE_OBJS) $(LIBFT)
 	@echo "Generating minishell objects..."
-	@$(CC) $(CFLAGS) $(BASE_OBJS) $(HEADERS) $(LIBS) -o $(NAME)
+	@$(CC) $(CFLAGS) $(BASE_OBJS) $(HEADERS) $(LIBS) -o $(NAME) -lreadline
 	@echo "Done! :D"
 
 $(BUILD_BASE_DIR)/%.o: $(BASE_DIR)/%.c $(BASE_HEADERS) $(LIBFT)
