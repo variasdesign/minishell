@@ -23,24 +23,58 @@ static t_list	*init_env(char **envp)
 	while (envp[++i])
 	{
 		env = ft_lstnew_node(env_list->data_size * ft_strlen(envp[i]), envp[i]);
-		ft_lstadd_front(env_list, env);
+		ft_lstadd_back(env_list, env);
 	}
 	return (env_list);
+}
+
+static char*	getpath(t_list *env_list)
+{
+	t_node	*env;
+	char	*value;
+
+	env = env_list->head;
+	while (env)
+	{
+		value = env->content;	
+		if (!ft_strncmp(value, "PATH=", 5))
+			return(ft_substr(value, 5, ft_strlen(value) - 5));
+		env = env->next;
+	}
+	return (NULL);
+}
+
+static char	*read_input(t_mini *minishell)
+{
+	char *args;
+	
+	(void)minishell;
+	args = readline("minishell > ");
+	if (args)
+		add_history(args);
+	printf("%s\n", args);
+	return (args);
 }
 
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_mini	minishell;
-	char	*args;
 
-	(void)argc;
-	(void)argv;
+	if (argc > 1 || argv[1])
+	{
+		printf("This program doesn't take arguments.\n");
+		return (1);
+	}
+	// TODO: Signal handler (setup_signals)
 	minishell.env = init_env(envp);
-	args = readline("minishell > ");
-	ft_printf(1, "%s\n", args);
-	// read_input(&minishell);
-	// parse_input(&minishell);
-	// exec_input(&minishell);
-	// signals(&minishell);
-	// save_history(&minishell);
+	minishell.cwd = getcwd(NULL, 0);
+	minishell.path = getpath(minishell.env);
+	while (1)
+	{
+		read_input(&minishell);
+		// parse_input(&minishell);
+		// exec_input(&minishell);
+	}
+	// TODO: Free all (PATH, cwd, envs, etc)
+	return (0);
 }

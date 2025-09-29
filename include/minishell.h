@@ -18,15 +18,27 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 
+typedef struct s_cmd
+{
+	char			**args;
+	int				pipe_in;
+	int				pipe_out;
+	char			*heredoc_fd;
+	struct s_cmd	*next;
+	// TODO: t_redir struct?
+}	t_cmd;
+
 typedef struct s_mini
 {
-	t_list		*env;
+	t_list	*env;
+	char	*cwd;
+	char	*path;
+	t_cmd	*first;
 }	t_mini;
 
 int	g_sig;
 
 void	show_prompt(t_mini *minishell);
-void	read_input(t_mini *minishell);
 void	parse_input(t_mini *minishell);
 void	exec_input(t_mini *minishell);
 void	signals(t_mini *minishell);
