@@ -48,9 +48,10 @@ static char	*read_input(void)
 {
 	char	*args;
 
-	args = readline("minishell > ");
-	if (args)
-		add_history(args);
+	while (!args)
+		args = readline("minishell > ");
+		
+	add_history(args);
 	printf("%s\n", args);
 	return (args);
 }
