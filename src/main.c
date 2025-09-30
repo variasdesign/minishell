@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/09/15 17:23:57 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/09/30 13:59:17 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ static t_list	*init_env(char **envp)
 	return (env_list);
 }
 
-static char*	getpath(t_list *env_list)
+static char	*getpath(t_list *env_list)
 {
 	t_node	*env;
 	char	*value;
@@ -36,24 +36,37 @@ static char*	getpath(t_list *env_list)
 	env = env_list->head;
 	while (env)
 	{
-		value = env->content;	
+		value = env->content;
 		if (!ft_strncmp(value, "PATH=", 5))
-			return(ft_substr(value, 5, ft_strlen(value) - 5));
+			return (ft_substr(value, 5, ft_strlen(value) - 5));
 		env = env->next;
 	}
 	return (NULL);
 }
 
-static char	*read_input(t_mini *minishell)
+static char	*read_input(void)
 {
-	char *args;
-	
-	(void)minishell;
+	char	*args;
+
 	args = readline("minishell > ");
 	if (args)
 		add_history(args);
 	printf("%s\n", args);
 	return (args);
+}
+
+static void	mini_loop(t_mini *minishell)
+{
+	char	*args;
+
+	args = NULL;
+	while (1)
+	{
+		args = read_input();
+		args = expander(minishell, args);
+		minishell->exit_code = exec_input(minishell);
+	}
+	free(args);
 }
 
 int	main(int argc, char *argv[], char *envp[])
@@ -69,12 +82,7 @@ int	main(int argc, char *argv[], char *envp[])
 	minishell.env = init_env(envp);
 	minishell.cwd = getcwd(NULL, 0);
 	minishell.path = getpath(minishell.env);
-	while (1)
-	{
-		read_input(&minishell);
-		// parse_input(&minishell);
-		// exec_input(&minishell);
-	}
+	mini_loop(&minishell);
 	// TODO: Free all (PATH, cwd, envs, etc)
 	return (0);
 }
