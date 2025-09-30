@@ -44,13 +44,10 @@ static char	*getpath(t_list *env_list)
 	return (NULL);
 }
 
-static char	*read_input(void)
+static char	*read_input(char *args)
 {
-	char	*args;
-
 	while (!args)
 		args = readline("minishell > ");
-		
 	add_history(args);
 	printf("%s\n", args);
 	return (args);
@@ -60,12 +57,14 @@ static void	mini_loop(t_mini *minishell)
 {
 	char	*args;
 
+	(void)minishell;
 	args = NULL;
 	while (1)
 	{
-		args = read_input();
-		args = expander(minishell, args);
-		minishell->exit_code = exec_input(minishell);
+		args = read_input(args);
+		args = expander(args);
+		// TODO: Exec
+		// minishell->exit_code = exec_input(minishell);
 	}
 	free(args);
 }

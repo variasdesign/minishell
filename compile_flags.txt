@@ -2,4 +2,6 @@
 -Wextra
 -Werror
 -I include
--I libft/include
+-I lib/libft/include
+-Iinclude
+-Ilib/libft/include

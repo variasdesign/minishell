@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 13:21:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/09/30 14:00:14 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/09/30 18:34:36 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,65 +14,55 @@
 
 static size_t	count_variables(char *args)
 {
-	size_t count;
-	
-	count = 0;
-	while (args)
-	{
-		if (args == '$' && !ft_isspace(args + 1))
-			count++;
-	}
+	size_t	count;
 
+	count = 0;
+	while (*args)
+	{
+		if (*args == '$' && !ft_isspace(*(args + 1)))
+			count++;
+		args++;
+	}
 	return (count);
 }
 
-static char **allocate_variables(size_t count)
+static char	**allocate_variables(char *args, size_t count)
 {
-	char **vars;
-
-	vars = ft_calloc(count * sizeof(char **));
-	return (vars);
-}
-
-static char	*expand_variable(char *args, t_node *env)
-{
-	char *first;
-	size_t len;
-	char *var_name;
-
-
-	first = args;
-	while (!ft_isspace(*args) || args || *args)
-	{
-		len++;
-		args++;
-	}
-	var_name = ft_substr(first, 0, len);
-	return (get_env(var_name));
-}
-
-
-char	*expander(t_mini *minishell, char *args)
-{
-	char	*orig;
 	char	**vars;
-	
-	orig = args;
-	vars = allocate_variables(count_variables(args));
-	if (!vars)	
+
+	vars = ft_calloc(count, sizeof(char **));
+	if (!vars)
 	{
 		free(args);
 		printf("Array allocation failed.\n");
 		exit(EXIT_FAILURE);
 	}
-	while (args)
+	return (vars);
+}
+
+char	*expander(char *args)
+{
+	const ssize_t	count = count_variables(args);
+	const char		*orig = args;
+	char			**vars;
+	int				var_len;
+
+	vars = allocate_variables(args, count);
+	while (*args && *args + 1)
 	{
-		if (args == '$' && !ft_isspace(args + 1))
+		if (*args == '$')
 		{
-			*vars = ft_strdup(expand_variable(args++, minishell->env->head));
+			var_len = is_variable(++args);
+			if (var_len)
+			{
+				*vars++ = getenv(ft_substr(args, 0, var_len));
+				args += var_len;
+				continue ;
+			}
 		}
-		args++;
+		else
+			args++;
 	}
-	free(orig);
+	free((void *)orig);
 	return (args);
 }

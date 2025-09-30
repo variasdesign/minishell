@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/09/30 13:59:29 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/09/30 18:09:55 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,10 +37,9 @@ typedef struct s_mini
 	int		exit_code;
 }	t_mini;
 
-int	g_sig;
-
-char	*expander(t_mini *minishell, char *args);
+char	*expander(char *args);
 int		exec_input(t_mini *minishell);
+int		is_variable(char *var_ptr);
 void	parse_input(t_mini *minishell);
 void	save_history(t_mini *minishell);
 void	show_prompt(t_mini *minishell);
