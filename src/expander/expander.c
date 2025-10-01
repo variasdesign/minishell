@@ -55,7 +55,7 @@ char	*expander(char *args)
 			var_len = is_variable(++args);
 			if (var_len)
 			{
-				*vars++ = getenv(ft_substr(args, 0, var_len));
+				*(vars++) = getenv(ft_substr(args, 0, var_len));
 				args += var_len;
 				continue ;
 			}

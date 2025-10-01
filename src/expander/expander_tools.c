@@ -16,8 +16,8 @@ int	is_variable(char *var_ptr)
 {
 	int		len;
 
-	var_ptr++;
 	len = 0;
+	// TODO: Check allowed characters for variable names.
 	while (!ft_isspace(var_ptr[len]) && var_ptr[len] != '$' && var_ptr[len])
 		len++;
 	return (len);
