@@ -12,21 +12,7 @@
 
 #include "minishell.h"
 
-static size_t	count_variables(char *args)
-{
-	size_t	count;
-
-	count = 0;
-	while (*args)
-	{
-		if (*args == '$' && !ft_isspace(*(args + 1)))
-			count++;
-		args++;
-	}
-	return (count);
-}
-
-static char	**allocate_variables(char *args, size_t count)
+static char	**allocate_vars(char *args, size_t count)
 {
 	char	**vars;
 
@@ -40,29 +26,49 @@ static char	**allocate_variables(char *args, size_t count)
 	return (vars);
 }
 
-char	*expander(char *args)
+static char	**obtain_var_values(char *args, char **var_table, int count)
 {
-	const ssize_t	count = count_variables(args);
-	const char		*orig = args;
-	char			**vars;
+	char			**var_values;
 	int				var_len;
 
-	vars = allocate_variables(args, count);
-	while (*args && *args + 1)
+	var_values = allocate_vars(args, count);
+	var_len = 0;
+	while (*var_table)
 	{
-		if (*args == '$')
-		{
-			var_len = is_variable(++args);
-			if (var_len)
-			{
-				*(vars++) = getenv(ft_substr(args, 0, var_len));
-				args += var_len;
-				continue ;
-			}
-		}
-		else
-			args++;
+		var_len = is_variable(*(var_table) + 1);
+		*(var_values++) = getenv(ft_substr(*var_table, 1, var_len));
+		var_table++;
 	}
+	return (var_values);
+}
+
+// TODO: custom ft_split + ft_strjoin, ex:
+// echo Me llamo $USER y soy $JOB en $COMPANY
+// \             \   \\      \  \\
+// 0             p1  var_len p2 var_len and so on...
+//                     \          \
+//                     last_char  last_char
+static char	*expand_vars(char *args, t_vars vars)
+{
+	(void)args;
+	(void)vars;
+	return (NULL);
+}
+
+// TODO: Research globbing and quoting:
+// echo Me llamo $USER y soy $JOB en $COMPANY
+// Me llamo varias y soy en <- one space
+// echo Me llamo $USER y soy "$JOB" en "$COMPANY"
+// Me llamo varias y soy  en <- two spaces
+char	*expander(char *args)
+{
+	const char	*orig = args;
+	const int	count = count_variables(args);
+	t_vars		vars;
+
+	vars.var_table = locate_vars(args, count);
+	vars.var_values = obtain_var_values(args, vars.var_table, count);
+	args = expand_vars(args, vars);
 	free((void *)orig);
 	return (args);
 }

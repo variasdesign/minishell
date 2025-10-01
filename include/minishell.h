@@ -28,6 +28,12 @@ typedef struct s_cmd
 	// TODO: t_redir struct?
 }	t_cmd;
 
+typedef struct s_vars
+{
+	char	**var_table;
+	char	**var_values;
+}	t_vars;
+
 typedef struct s_mini
 {
 	t_list	*env;
@@ -37,7 +43,9 @@ typedef struct s_mini
 	int		exit_code;
 }	t_mini;
 
+char	**locate_vars(char *args, int count);
 char	*expander(char *args);
+int		count_variables(char *args);
 int		exec_input(t_mini *minishell);
 int		is_variable(char *var_ptr);
 void	parse_input(t_mini *minishell);
