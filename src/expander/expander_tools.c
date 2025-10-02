@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 
 int	count_variables(char *args)
@@ -63,19 +64,20 @@ char	**locate_vars(char *args, int count)
 	return (var_table);
 }
 
-// TODO: Check allowed characters for variable names.
 // https://stackoverflow.com/questions/2821043/allowed-characters-in-linux-environment-variable-names:
 // Environment variable names used by the utilities in the Shell and Utilities
 // volume of IEEE Std 1003.1-2001 consist solely of uppercase letters, digits,
 // and the '_' (underscore) from the characters defined in Portable Character Set
 // and do not begin with a digit. Other characters may be permitted by an implementation;
 // applications shall tolerate the presence of such names.
+// TODO: Should we avoid reserved keywords also? (e.g. for, while, do, etc)
 int	is_variable(char *var_ptr)
 {
 	int		len;
 
 	len = 0;
-	while (var_ptr[len] && (ft_isalnum(var_ptr[len]) || var_ptr[len] == '_'))
-		len++;
+	if (!ft_isdigit(var_ptr[len]))
+		while (var_ptr[len] && (ft_isalnum(var_ptr[len]) || var_ptr[len] == '_'))
+			len++;
 	return (len);
 }
