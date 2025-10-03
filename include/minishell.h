@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/03 15:03:02 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/10/03 18:24:04 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,7 @@ typedef struct s_mini
 }	t_mini;
 
 char	**locate_vars(char *args, int count);
+char	**split_vars(char *args, char **var_table);
 char	*expander(char *args);
 int		count_variables(char *args);
 int		exec_input(t_mini *minishell);

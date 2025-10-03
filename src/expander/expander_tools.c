@@ -6,11 +6,10 @@
 /*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:04:38 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/03 15:01:56 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/10/03 18:31:17 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "minishell.h"
 
 int	count_variables(char *args)

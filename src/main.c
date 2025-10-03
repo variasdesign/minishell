@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/09/30 13:59:17 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/03 17:58:58 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,8 @@ static void	mini_loop(t_mini *minishell)
 	while (1)
 	{
 		args = read_input(args);
+		if (!args)
+			continue ;
 		args = expander(args);
 		// TODO: Exec
 		// minishell->exit_code = exec_input(minishell);
