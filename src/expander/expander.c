@@ -18,19 +18,23 @@ static char	*expand_vars(char *args, char **var_table)
 	char	*tmp;
 	int		i;
 	int		j;
+	int		var_len;
 
 	split = split_vars(args, var_table);
 	i = 0;
 	j = 0;
 	while (var_table[i])
 	{
-		if (ft_strncmp(split[j], var_table[i], ft_strlen(var_table[i])))
+		var_len = *(var_table + 1) - *var_table;
+		if (ft_strncmp(split[j], var_table[i], var_len))
 			j++;
 		else
 		{
 			tmp = split[j];
-			split[j] = ft_strdup(getenv(var_table[i]));
+			// FIX: ft_substr needs to be stored somewhere for later freeing or it will leak
+			split[j] = ft_strdup(getenv(ft_substr(var_table[i], 0, var_len)));
 			free(tmp);
+			var_table += 2;
 		}
 	}
 	return (args);
