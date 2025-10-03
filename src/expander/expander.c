@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 13:21:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/09/30 18:34:36 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/03 15:27:25 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static char	**allocate_vars(char *args, size_t count)
 {
 	char	**vars;
 
-	vars = ft_calloc(count, sizeof(char **));
+	vars = ft_calloc(count, sizeof(char *));
 	if (!vars)
 	{
 		free(args);
@@ -43,16 +43,25 @@ static char	**obtain_var_values(char *args, char **var_table, int count)
 }
 
 // TODO: custom ft_split + ft_strjoin, ex:
-// echo Me llamo $USER y soy $JOB en $COMPANY
+// echo Me llamo $USER$JOB en $COMPANY
 // \             \   \\      \  \\
 // 0             p1  var_len p2 var_len and so on...
 //                     \          \
 //                     last_char  last_char
+static char	**split_vars(char *args, char **var_table)
+{
+	char	**split;
+	int 	count;
+
+	count = args != var_table[0];
+}
+
 static char	*expand_vars(char *args, t_vars vars)
 {
-	(void)args;
-	(void)vars;
-	return (NULL);
+	int i;
+	i = 0;
+	while (*args < vars.var_table[i])
+	return ();
 }
 
 // TODO: Research globbing and quoting:
@@ -64,11 +73,13 @@ char	*expander(char *args)
 {
 	const char	*orig = args;
 	const int	count = count_variables(args);
-	t_vars		vars;
+	char		*var_table;
 
-	vars.var_table = locate_vars(args, count);
-	vars.var_values = obtain_var_values(args, vars.var_table, count);
-	args = expand_vars(args, vars);
-	free((void *)orig);
+	if (count > 0)
+	{
+		var_table = locate_vars(args, count);
+		args = expand_vars(args, vars);
+		free((void *)orig);
+	}
 	return (args);
 }

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander_tools.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:04:38 by varias-c          #+#    #+#             */
-/*   Updated: 2025/09/30 18:13:05 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/03 15:01:56 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ char	**locate_vars(char *args, int count)
 	int		var_len;
 	int		i;
 
-	var_table = ft_calloc(count + 1, sizeof(char *));
+	var_table = ft_calloc((count * 2) + 1, sizeof(char *));
 	var_len = 0;
 	i = 0;
 	while (*args && *(args + 1))
@@ -54,8 +54,9 @@ char	**locate_vars(char *args, int count)
 			if (var_len)
 			{
 				var_table[i] = args - 1;
-				args += var_len;
-				i++;
+				var_table[i + 1] = args + var_len;
+				args = var_table[i + 1];
+				i += 2;
 			}
 			continue ;
 		}

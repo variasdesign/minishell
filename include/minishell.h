@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/09/30 18:09:55 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/03 15:03:02 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,6 @@ typedef struct s_cmd
 	struct s_cmd	*next;
 	// TODO: t_redir struct?
 }	t_cmd;
-
-typedef struct s_vars
-{
-	char	**var_table;
-	char	**var_values;
-}	t_vars;
 
 typedef struct s_mini
 {
