@@ -6,13 +6,17 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 18:08:58 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/03 18:34:36 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/04 13:36:30 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 #include "minishell.h"
 
+// Count segments of strings, segregated by variables and non-variables
+// Example:	echo My name is $USER and I work as $JOB in $COMPANY
+// 			|               |    |              |   |   |
+// 			1               2    3              4   5   6
 static int	count_segments(char *args, char **var_table)
 {
 	int		count;
@@ -33,9 +37,12 @@ static int	count_segments(char *args, char **var_table)
 	return (count);
 }
 
+// Fill the split with its corresponding segmented string. If the segmented
+// string is a variable name, obtain its value and expand it.
 char	**fill_split(char **split, char *args, char **var_table, int count)
 {
-	int	i;
+	char	*tmp_env;
+	int		i;
 
 	i = 0;
 	while (i < count && *var_table)
@@ -47,7 +54,9 @@ char	**fill_split(char **split, char *args, char **var_table, int count)
 		}
 		else
 		{
-			split[i] = ft_strndup(args, *(var_table + 1) - *var_table);
+			tmp_env = ft_strndup(args + 1, *(var_table + 1) - *var_table - 1);
+			split[i] = ft_strdup(getenv(tmp_env));
+			free(tmp_env);
 			args = *(var_table + 1);
 			var_table += 2;
 		}
@@ -58,12 +67,6 @@ char	**fill_split(char **split, char *args, char **var_table, int count)
 	return (split);
 }
 
-// TODO: custom ft_split + ft_strjoin, ex:
-// echo Me llamo $USER$JOB en $COMPANY
-// \             \   \\      \  \\
-// 0             p1  var_len p2 var_len and so on...
-//                     \          \
-//                     last_char  last_char
 char	**split_vars(char *args, char **var_table)
 {
 	const int	count = count_segments(args, var_table);

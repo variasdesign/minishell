@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/03 17:58:58 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/04 13:19:30 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,22 +28,6 @@ static t_list	*init_env(char **envp)
 	return (env_list);
 }
 
-static char	*getpath(t_list *env_list)
-{
-	t_node	*env;
-	char	*value;
-
-	env = env_list->head;
-	while (env)
-	{
-		value = env->content;
-		if (!ft_strncmp(value, "PATH=", 5))
-			return (ft_substr(value, 5, ft_strlen(value) - 5));
-		env = env->next;
-	}
-	return (NULL);
-}
-
 static char	*read_input(char *args)
 {
 	while (!args)
@@ -62,13 +46,17 @@ static void	mini_loop(t_mini *minishell)
 	while (1)
 	{
 		args = read_input(args);
-		if (!args)
-			continue ;
 		args = expander(args);
+		if (!args)
+		{
+			perror("Error expanding args");
+			exit(EXIT_FAILURE);
+		}
 		// TODO: Exec
 		// minishell->exit_code = exec_input(minishell);
+		free(args);
+		args = NULL;
 	}
-	free(args);
 }
 
 int	main(int argc, char *argv[], char *envp[])
@@ -83,7 +71,7 @@ int	main(int argc, char *argv[], char *envp[])
 	// TODO: Signal handler (setup_signals)
 	minishell.env = init_env(envp);
 	minishell.cwd = getcwd(NULL, 0);
-	minishell.path = getpath(minishell.env);
+	minishell.path = getenv("PATH");
 	mini_loop(&minishell);
 	// TODO: Free all (PATH, cwd, envs, etc)
 	return (0);

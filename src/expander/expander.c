@@ -6,37 +6,30 @@
 /*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 13:21:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/03 18:30:25 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/04 13:46:22 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static char	*expand_vars(char *args, char **var_table)
+// Count the length of the split arguments with expanded vars, then allocate and
+// concatenate the split arguments into a single string.
+static char	*reassemble_args(char *args, char **split_args)
 {
-	char	**split;
-	char	*tmp;
 	int		i;
-	int		j;
-	int		var_len;
+	int		new_len;
 
-	split = split_vars(args, var_table);
+	new_len = 0;
 	i = 0;
-	j = 0;
-	while (var_table[i])
-	{
-		var_len = *(var_table + 1) - *var_table;
-		if (ft_strncmp(split[j], var_table[i], var_len))
-			j++;
-		else
-		{
-			tmp = split[j];
-			// FIX: ft_substr needs to be stored somewhere for later freeing or it will leak
-			split[j] = ft_strdup(getenv(ft_substr(var_table[i], 0, var_len)));
-			free(tmp);
-			var_table += 2;
-		}
-	}
+	while (split_args[i])
+		new_len += ft_strlen(split_args[i++]);
+	args = ft_calloc(new_len + 1, sizeof(char));
+	if (!args)
+		return (NULL);
+	i = 0;
+	while (split_args[i])
+		ft_strlcat(args, split_args[i++], new_len + 1);
+	ft_freematrix((void **)split_args);
 	return (args);
 }
 
@@ -50,11 +43,13 @@ char	*expander(char *args)
 	const char	*orig = args;
 	const int	count = count_variables(args);
 	char		**var_table;
+	char		**split_args;
 
 	if (count > 0)
 	{
 		var_table = locate_vars(args, count);
-		args = expand_vars(args, var_table);
+		split_args = split_vars(args, var_table);
+		args = reassemble_args(args, split_args);
 		free((void *)orig);
 	}
 	return (args);

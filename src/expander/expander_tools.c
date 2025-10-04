@@ -6,12 +6,14 @@
 /*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:04:38 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/03 18:31:17 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/04 13:45:13 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+// Count variables by checking if they have valid names. Invalid names will
+// return var_len = 0;
 int	count_variables(char *args)
 {
 	size_t	count;
@@ -36,6 +38,12 @@ int	count_variables(char *args)
 	return (count);
 }
 
+// Locate every variable and store its start and end in a variable table
+// Even-numbered pointers are the first char of variable ($),
+// odd-numbered pointers are the next char after the last char of variable.
+// Example:	echo My name is $USER and I work as $JOB in $COMPANY\0
+// 			                |    |              |   |   |       |
+// 			                0    1              2   3   4       5
 char	**locate_vars(char *args, int count)
 {
 	char	**var_table;
@@ -64,12 +72,13 @@ char	**locate_vars(char *args, int count)
 	return (var_table);
 }
 
-// https://stackoverflow.com/questions/2821043/allowed-characters-in-linux-environment-variable-names:
+// https://stackoverflow.com/questions/2821043/
+// allowed-characters-in-linux-environment-variable-names
 // Environment variable names used by the utilities in the Shell and Utilities
 // volume of IEEE Std 1003.1-2001 consist solely of uppercase letters, digits,
-// and the '_' (underscore) from the characters defined in Portable Character Set
-// and do not begin with a digit. Other characters may be permitted by an implementation;
-// applications shall tolerate the presence of such names.
+// and the '_' (underscore) from the characters defined in Portable Character
+// Set and do not begin with a digit. Other characters may be permitted by an
+// implementation; applications shall tolerate the presence of such names.
 // TODO: Should we avoid reserved keywords also? (e.g. for, while, do, etc)
 int	is_variable(char *var_ptr)
 {

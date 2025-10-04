@@ -36,9 +36,9 @@ $(info BASE_OBJS: $(BASE_OBJS))
 all: $(NAME)
 
 $(NAME): $(BASE_OBJS) $(LIBFT)
-	@echo "Generating minishell objects..."
+	@echo -n "Generating minishell objects... "
 	@$(CC) $(CFLAGS) $(BASE_OBJS) $(INCLUDES) $(LIBS) -o $(NAME)
-	@echo "Done! :D"
+	@echo "✅"
 
 $(BUILD_BASE_DIR)/%.o:: $(SRC_DIR)/%.c $(LIBFT)
 	@echo "Compiling $@..."
@@ -55,15 +55,16 @@ $(LIBFT):
 	@$(MAKE) -C $(LIBFT_DIR) --no-print-directory
 
 clean:
-	@echo "Cleaning minishell objects..."
+	@echo -n "Cleaning minishell objects... "
 	@$(RM) $(BASE_OBJS)
+	@echo "✅"
 	@$(MAKE) -C $(LIBFT_DIR) fclean --no-print-directory
 
 fclean: clean
-	@echo "Cleaning all minishell files..."
+	@echo -n "Cleaning all minishell files... "
 	@$(RM) $(BUILD_DIR)
 	@$(RM) $(NAME)
-	@echo "Done! :D"
+	@echo "✅"
 
 re: fclean all
 
