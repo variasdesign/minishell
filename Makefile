@@ -18,6 +18,7 @@ LIBS			= $(LIBFT) $(READLINE)
 
 SRC_DIR			= src
 SRC_DIR_EX		= src/expander
+SRC_DIR_SIG		= src/signal
 
 BASE_SRCS		= $(addprefix $(SRC_DIR)/,		\
 					main.c						\
@@ -27,6 +28,10 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR)/expander/,	\
 				  	expander.c							\
 					expander_tools.c					\
 					split.c								\
+					)
+
+BASE_SRCS		+= $(addprefix $(SRC_DIR)/signal/,		\
+				  	signal.c							\
 					)
 
 $(info BASE_SRCS: $(BASE_SRCS))
@@ -46,6 +51,11 @@ $(BUILD_BASE_DIR)/%.o:: $(SRC_DIR)/%.c $(LIBFT)
 	@$(CC) $(CFLAGS) -c $< $(INCLUDES) -o $@
 
 $(BUILD_BASE_DIR)/%.o:: $(SRC_DIR_EX)/%.c $(LIBFT)
+	@echo "Compiling $@..."
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) -c $< $(INCLUDES) -o $@
+
+$(BUILD_BASE_DIR)/%.o:: $(SRC_DIR_SIG)/%.c $(LIBFT)
 	@echo "Compiling $@..."
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -c $< $(INCLUDES) -o $@

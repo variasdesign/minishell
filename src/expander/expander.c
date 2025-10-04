@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 13:21:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/04 13:46:22 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/04 22:42:16 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,17 +33,17 @@ static char	*reassemble_args(char *args, char **split_args)
 	return (args);
 }
 
-// TODO: Research globbing and quoting:
+// TODO: Research quoting:
 // echo Me llamo $USER y soy $JOB en $COMPANY
 // Me llamo varias y soy en <- one space
 // echo Me llamo "$USER" y soy "$JOB" en "$COMPANY"
 // Me llamo varias y soy  en <- two spaces
 char	*expander(char *args)
 {
-	const char	*orig = args;
-	const int	count = count_variables(args);
-	char		**var_table;
-	char		**split_args;
+	const char		*orig = args;
+	const ssize_t	count = count_variables(args);
+	char			**var_table;
+	char			**split_args;
 
 	if (count > 0)
 	{
@@ -52,5 +52,7 @@ char	*expander(char *args)
 		args = reassemble_args(args, split_args);
 		free((void *)orig);
 	}
+	if (count < 0)
+		return (NULL);
 	return (args);
 }

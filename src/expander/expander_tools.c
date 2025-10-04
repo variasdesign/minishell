@@ -6,34 +6,52 @@
 /*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:04:38 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/04 13:45:13 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/04 23:20:31 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// Count variables by checking if they have valid names. Invalid names will
-// return var_len = 0;
-int	count_variables(char *args)
+// TODO: Unclosed quotes shouldn't be interpreted, but should be notified
+// and the prompt restarted. Otherwise, interpret everything as normal.
+// Different implementations do either one.
+//
+// Search for a closing single quote
+// and return the length of the quoted segment
+static ssize_t	end_quote(char *args)
 {
-	size_t	count;
-	int		var_len;
+	int	rem_quotes;
+
+	rem_quotes = 0;
+	while (args[rem_quotes] && args[rem_quotes] != '\'')
+		rem_quotes++;
+	if (!args[rem_quotes])
+		return (-1);
+	return (rem_quotes + 1);
+}
+
+// Count variables by checking if they have valid names. Invalid names will
+// return var_len = 0. Variables inside single quotes are ignored.
+ssize_t	count_variables(char *args)
+{
+	ssize_t	count;
+	ssize_t	var_len;
+	ssize_t	rem_quotes;
 
 	count = 0;
-	var_len = 0;
+	rem_quotes = 0;
 	while (*args && *(args + 1))
 	{
-		if (*args == '$')
+		var_len = 0;
+		if (*args == '\'' && rem_quotes <= 0)
+			rem_quotes = end_quote(++args);
+		if (*args == '$' && rem_quotes <= 0)
 		{
-			var_len = is_variable(++args);
-			if (var_len)
-			{
-				count++;
-				args += var_len;
-				continue ;
-			}
+			var_len = is_variable(args + 1);
+			count += var_len > 0;
 		}
-		args++;
+		rem_quotes -= rem_quotes > 0;
+		args += 1 + var_len * (var_len > 0);
 	}
 	return (count);
 }
@@ -44,10 +62,11 @@ int	count_variables(char *args)
 // Example:	echo My name is $USER and I work as $JOB in $COMPANY\0
 // 			                |    |              |   |   |       |
 // 			                0    1              2   3   4       5
+// TODO: Don't store var names inside single quotes
 char	**locate_vars(char *args, int count)
 {
 	char	**var_table;
-	int		var_len;
+	ssize_t	var_len;
 	int		i;
 
 	var_table = ft_calloc((count * 2) + 1, sizeof(char *));
@@ -80,13 +99,13 @@ char	**locate_vars(char *args, int count)
 // Set and do not begin with a digit. Other characters may be permitted by an
 // implementation; applications shall tolerate the presence of such names.
 // TODO: Should we avoid reserved keywords also? (e.g. for, while, do, etc)
-int	is_variable(char *var_ptr)
+ssize_t	is_variable(char *var)
 {
 	int		len;
 
 	len = 0;
-	if (!ft_isdigit(var_ptr[len]))
-		while (var_ptr[len] && (ft_isalnum(var_ptr[len]) || var_ptr[len] == '_'))
+	if (!ft_isdigit(var[len]))
+		while (var[len] && (ft_isalnum(var[len]) || var[len] == '_'))
 			len++;
 	return (len);
 }

@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/03 18:24:04 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/04 22:43:30 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "libft.h"
 # include <stdio.h>
+# include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
 
@@ -37,15 +38,15 @@ typedef struct s_mini
 	int		exit_code;
 }	t_mini;
 
+extern int	g_sig;
+
 char	**locate_vars(char *args, int count);
 char	**split_vars(char *args, char **var_table);
 char	*expander(char *args);
-int		count_variables(char *args);
+ssize_t	count_variables(char *args);
 int		exec_input(t_mini *minishell);
-int		is_variable(char *var_ptr);
-void	parse_input(t_mini *minishell);
-void	save_history(t_mini *minishell);
-void	show_prompt(t_mini *minishell);
-void	signals(t_mini *minishell);
+ssize_t	is_variable(char *var_ptr);
+void	catch_int(int sig_num);
+void	catch_suspend(int sig_num);
 
 #endif

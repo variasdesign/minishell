@@ -6,11 +6,13 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/04 13:19:30 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/04 22:48:35 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int	g_sig;
 
 static t_list	*init_env(char **envp)
 {
@@ -48,13 +50,11 @@ static void	mini_loop(t_mini *minishell)
 		args = read_input(args);
 		args = expander(args);
 		if (!args)
-		{
 			perror("Error expanding args");
-			exit(EXIT_FAILURE);
-		}
 		// TODO: Exec
 		// minishell->exit_code = exec_input(minishell);
-		free(args);
+		if (args)
+			free(args);
 		args = NULL;
 	}
 }
@@ -63,6 +63,7 @@ int	main(int argc, char *argv[], char *envp[])
 {
 	t_mini	minishell;
 
+	g_sig = 0;
 	if (argc > 1 || argv[1])
 	{
 		printf("This program doesn't take arguments.\n");
@@ -72,6 +73,8 @@ int	main(int argc, char *argv[], char *envp[])
 	minishell.env = init_env(envp);
 	minishell.cwd = getcwd(NULL, 0);
 	minishell.path = getenv("PATH");
+	signal(SIGINT, catch_int);
+	signal(SIGTSTP, catch_suspend);
 	mini_loop(&minishell);
 	// TODO: Free all (PATH, cwd, envs, etc)
 	return (0);
