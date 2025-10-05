@@ -26,7 +26,8 @@ BASE_SRCS		= $(addprefix $(SRC_DIR)/,		\
 
 BASE_SRCS		+= $(addprefix $(SRC_DIR)/expander/,	\
 				  	expander.c							\
-					expander_tools.c					\
+					var_tools.c							\
+					squote_tools.c						\
 					split.c								\
 					)
 

@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 13:21:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/04 22:42:16 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/05 18:33:40 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,26 +33,26 @@ static char	*reassemble_args(char *args, char **split_args)
 	return (args);
 }
 
-// TODO: Research quoting:
-// echo Me llamo $USER y soy $JOB en $COMPANY
-// Me llamo varias y soy en <- one space
-// echo Me llamo "$USER" y soy "$JOB" en "$COMPANY"
-// Me llamo varias y soy  en <- two spaces
+// TODO: Pass squote_table to split_vars?
+// TODO: Free allocated memory in locate funcs
 char	*expander(char *args)
 {
-	const char		*orig = args;
-	const ssize_t	count = count_variables(args);
-	char			**var_table;
-	char			**split_args;
+	const char	*orig = args;
+	t_str_tab	var_table;
+	t_str_tab	squote_table;
+	char		**split_args;
 
-	if (count > 0)
+	locate_squotes(args, &squote_table);
+	if (squote_table.count < 0)
+		return (NULL);
+	locate_vars(args, &var_table, squote_table);
+	if (var_table.count < 0)
+		return (NULL);
+	if (var_table.count > 0)
 	{
-		var_table = locate_vars(args, count);
 		split_args = split_vars(args, var_table);
 		args = reassemble_args(args, split_args);
 		free((void *)orig);
 	}
-	if (count < 0)
-		return (NULL);
 	return (args);
 }
