@@ -1,0 +1,5 @@
+display var_can
+display var_len
+display squote_i
+display (char *)var_tab->start[i]
+display (char *)var_tab->end[i]

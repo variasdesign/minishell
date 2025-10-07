@@ -45,23 +45,29 @@ static ssize_t	count_squotes(char *args)
 // 			             start[i]          |
 // 			                               |
 // 			                               end[i]
-void	locate_squotes(char *args, t_ptr_tab *squote_tab)
+ssize_t	locate_squotes(char *args, t_ptr_tab *squote_tab)
 {
 	ssize_t	i;
 
 	squote_tab->count = count_squotes(args);
 	if (squote_tab->count > 0)
 	{
-		ft_alloptrtab(squote_tab, args, sizeof(char *));
+		squote_tab = ft_alloptrtab(squote_tab, args, sizeof(char *));
+		if (!squote_tab)
+		{
+			perror("Error allocating single quote pointer table");
+			return (-1);
+		}
 		i = 0;
 		squote_tab->start[i] = ft_strchr(squote_tab->orig, '\'');
 		while (i < squote_tab->count && squote_tab->start[i])
 		{
 			squote_tab->end[i] = ft_strchr(squote_tab->start[i] + 1, '\'') + 1;
-			squote_tab->start[i] = ft_strchr(squote_tab->end[i], '\'');
-			i++;
+			if (++i < squote_tab->count)
+				squote_tab->start[i] = ft_strchr(squote_tab->end[i], '\'');
 		}
 	}
 	if (squote_tab->count < 0)
 		perror("Error locating single quotes");
+	return (squote_tab->count);
 }

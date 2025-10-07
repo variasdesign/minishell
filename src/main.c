@@ -10,25 +10,10 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 
 int	g_sig;
-
-static t_list	*init_env(char **envp)
-{
-	t_list	*env_list;
-	t_node	*env;
-	int		i;
-
-	env_list = ft_lstnew_list(sizeof(char));
-	i = -1;
-	while (envp[++i])
-	{
-		env = ft_lstnew_node(env_list->data_size * ft_strlen(envp[i]), envp[i]);
-		ft_lstadd_back(env_list, env);
-	}
-	return (env_list);
-}
 
 static char	*read_input(char *args)
 {
@@ -39,19 +24,43 @@ static char	*read_input(char *args)
 	return (args);
 }
 
+static t_expander	*allocate_expander(void)
+{
+	t_expander	*ex;
+
+	ex = ft_calloc(1, sizeof(t_expander));
+	if (!ex)
+		return (NULL);
+	ex->squote_tab = ft_calloc(1, sizeof(t_ptr_tab));
+	if (!ex->squote_tab)
+	{
+		free (ex);
+		return (NULL);
+	}
+	ex->var_tab = ft_calloc(1, sizeof(t_ptr_tab));
+	if (!ex->var_tab)
+	{
+		free (ex);
+		free (ex->squote_tab);
+		return (NULL);
+	}
+	return (ex);
+}
+
 static void	mini_loop(t_mini *minishell)
 {
-	t_expander	ex;
+	t_expander	*ex;
 	// t_lexer		lex;
 	// t_cmd		cmd;
 	char		*args;
 
 	(void)minishell;
 	args = NULL;
+	ex = allocate_expander();
 	while (1)
 	{
 		args = read_input(args);
-		args = expander(args, &ex);
+		args = expander(args, ex);
 		// TODO: Lexer
 		// args = lexer(ex.var_tab->orig, &lex);
 		// TODO: Parser
@@ -64,7 +73,7 @@ static void	mini_loop(t_mini *minishell)
 	}
 }
 
-int	main(int argc, char *argv[], char *envp[])
+int	main(int argc, char *argv[])
 {
 	t_mini	minishell;
 
@@ -75,7 +84,6 @@ int	main(int argc, char *argv[], char *envp[])
 		return (1);
 	}
 	// TODO: Signal handler (setup_signals)
-	minishell.env = init_env(envp);
 	minishell.cwd = getcwd(NULL, 0);
 	minishell.path = getenv("PATH");
 	signal(SIGINT, catch_int);

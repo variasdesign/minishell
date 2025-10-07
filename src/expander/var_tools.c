@@ -37,54 +37,55 @@ static ssize_t	count_variables(char *args, t_ptr_tab sq_t)
 {
 	ssize_t	count;
 	ssize_t	var_len;
-	ssize_t	quote_i;
+	ssize_t	squote_i;
 	char	*var_can;
 
 	count = 0;
 	var_can = ft_strchr(args, '$');
 	while (var_can)
 	{
-		quote_i = ft_inptrtab(var_can, sq_t);
-		if (quote_i < 0)
+		squote_i = ft_inptrtab(var_can, sq_t);
+		if (squote_i < 0)
 		{
 			var_len = is_variable(var_can);
 			count += var_len > 0;
 			var_can = ft_strchr(++var_can + var_len, '$');
 		}
 		else
-			var_can = ft_strchr(sq_t.end[quote_i], '$');
+			var_can = ft_strchr(sq_t.end[squote_i], '$');
 	}
 	return (count);
 }
 
-void	search_var_candidate(t_ptr_tab *var_t, t_ptr_tab sq_t)
+void	search_var_candidate(t_ptr_tab *var_tab, t_ptr_tab squote_tab)
 {
 	ssize_t	var_len;
-	ssize_t	quote_i;
+	ssize_t	squote_i;
 	char	*var_can;
 	ssize_t	i;
 
-	var_can = ft_strchr(var_t->orig, '$');
+	var_can = ft_strchr(var_tab->orig, '$');
 	var_len = 0;
-	quote_i = -1;
+	squote_i = -1;
 	i = -1;
-	while (++i < var_t->count && var_can)
+	while (++i < var_tab->count && var_can)
 	{
-		quote_i = ft_inptrtab(var_can, sq_t);
-		if (quote_i < 0)
+		squote_i = ft_inptrtab(var_can, squote_tab);
+		if (squote_i < 0)
 		{
 			var_len = is_variable(var_can);
 			if (var_len)
 			{
-				var_t->start[i] = var_can;
-				var_t->end[i] = ++var_can + var_len;
+				var_tab->start[i] = var_can;
+				var_tab->end[i] = ++var_can + var_len;
 			}
 			var_can = ft_strchr(var_can, '$');
 		}
 		else
-			var_can = ft_strchr(sq_t.end[quote_i], '$');
+			var_can = ft_strchr(squote_tab.end[squote_i], '$');
 	}
 }
+
 // Locate every variable and store its start and end in a pointer table.
 // start is a pointer to first char, end is a pointer to next char of last.
 // Example:	echo My name is $USER, hello!
@@ -92,14 +93,20 @@ void	search_var_candidate(t_ptr_tab *var_t, t_ptr_tab sq_t)
 // 			orig            start[0]
 // 			                     |
 // 			                     end[0]
-void	locate_vars(char *args, t_expander *ex)
+ssize_t	locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab)
 {
-	ex->var_tab->count = count_variables(args, *ex->squote_tab);
-	if (ex->var_tab->count > 0)
+	var_tab->count = count_variables(args, squote_tab);
+	if (var_tab->count > 0)
 	{
-		ft_alloptrtab(ex->var_tab, ex->var_tab->orig, sizeof(char *));
-		search_var_candidate(ex->var_tab, *ex->squote_tab);
+		var_tab = ft_alloptrtab(var_tab, args, sizeof(char *));
+		if (!var_tab)
+		{
+			perror("Error allocating variable pointer table");
+			return (-1);
+		}
+		search_var_candidate(var_tab, squote_tab);
 	}
-	if (ex->var_tab->count < 0)
+	if (var_tab->count < 0)
 		perror("Error locating variables");
+	return (var_tab->count);
 }

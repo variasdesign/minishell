@@ -29,8 +29,7 @@ static ssize_t	count_segments(t_ptr_tab *var_tab)
 		count++;
 		i++;
 	}
-	if ((char *)var_tab->end[i - 1] < ft_strlast(var_tab->orig))
-		count++;
+	count += (char *)var_tab->end[i - 1] < ft_strlast(var_tab->orig);
 	return (count);
 }
 

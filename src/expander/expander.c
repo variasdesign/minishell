@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 
 // Count the length of the split arguments with expanded vars, then allocate and
@@ -43,7 +44,7 @@ char	*expander(char *args, t_expander *ex)
 	locate_squotes(args, ex->squote_tab);
 	if (ex->squote_tab->count < 0)
 		return (NULL);
-	locate_vars(args, ex);
+	locate_vars(args, ex->var_tab, *ex->squote_tab);
 	if (ex->var_tab->count < 0)
 		return (NULL);
 	if (ex->var_tab->count > 0)

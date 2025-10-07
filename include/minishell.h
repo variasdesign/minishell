@@ -38,7 +38,6 @@ typedef struct s_cmd
 
 typedef struct s_mini
 {
-	t_list	*env;
 	char	*cwd;
 	char	*path;
 	t_cmd	*first;
@@ -50,8 +49,8 @@ extern int	g_sig;
 char	**split_vars(t_expander *ex);
 char	*expander(char *args, t_expander *ex);
 int		exec_input(t_mini *minishell);
-void	locate_squotes(char *args, t_ptr_tab *squote_table);
-void	locate_vars(char *args, t_expander *ex);
+ssize_t	locate_squotes(char *args, t_ptr_tab *squote_table);
+ssize_t	locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab);
 void	catch_int(int sig_num);
 void	catch_suspend(int sig_num);
 
