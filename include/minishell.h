@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/05 18:17:11 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/06 19:28:14 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,13 @@
 # include <signal.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+
+typedef struct s_expander
+{
+	t_ptr_tab	*squote_tab;
+	t_ptr_tab	*dquote_tab;
+	t_ptr_tab	*var_tab;
+}	t_expander;
 
 typedef struct s_cmd
 {
@@ -40,12 +47,11 @@ typedef struct s_mini
 
 extern int	g_sig;
 
-char	**split_vars(char *args, t_str_tab var_table);
-char	*expander(char *args);
+char	**split_vars(t_expander *ex);
+char	*expander(char *args, t_expander *ex);
 int		exec_input(t_mini *minishell);
-ssize_t	inside_squotes(char *ptr, t_str_tab sq_t);
-void	locate_squotes(char *args, t_str_tab *squote_table);
-void	locate_vars(char *args, t_str_tab *var_table, t_str_tab squote_table);
+void	locate_squotes(char *args, t_ptr_tab *squote_table);
+void	locate_vars(char *args, t_expander *ex);
 void	catch_int(int sig_num);
 void	catch_suspend(int sig_num);
 

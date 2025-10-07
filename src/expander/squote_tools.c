@@ -6,13 +6,13 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/05 17:15:38 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/05 19:18:18 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/06 19:39:18 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// TODO: Return -1 if inquotes = true?
+// TODO: Return -1 if in_quotes = true?
 // Depending of handling of unclosed quotes:
 // Unclosed quotes shouldn't be interpreted, but should be notified
 // and the prompt restarted. Otherwise, interpret everything as normal.
@@ -37,23 +37,7 @@ static ssize_t	count_squotes(char *args)
 	return (count);
 }
 
-// TODO: Binary search to optimize times
-// Check if ptr is inside start and end of all instances of single quotes
-ssize_t	inside_squotes(char *ptr, t_str_tab sq_t)
-{
-	ssize_t	i;
-
-	i = 0;
-	while (i < sq_t.count && sq_t.start[i] && sq_t.end[i])
-	{
-		if (ptr > sq_t.start[i] && ptr < sq_t.end[i])
-			return (i);
-		i++;
-	}
-	return (-1);
-}
-
-// Locate every single quote and store its start and end in a variable table
+// Locate every single quote and store its start and end in a string table
 // start is a pointer to starting quote, end is a pointer to the next char
 // of ending quote.
 // Example:	echo My name 'is $USER, hello!'\0
@@ -61,22 +45,23 @@ ssize_t	inside_squotes(char *ptr, t_str_tab sq_t)
 // 			             start[i]          |
 // 			                               |
 // 			                               end[i]
-void	locate_squotes(char *args, t_str_tab *sq_t)
+void	locate_squotes(char *args, t_ptr_tab *squote_tab)
 {
 	ssize_t	i;
 
-	sq_t->count = count_squotes(args);
-	if (sq_t->count > 0)
+	squote_tab->count = count_squotes(args);
+	if (squote_tab->count > 0)
 	{
-		sq_t->start = ft_calloc(sq_t->count + 1, sizeof(char *));
-		sq_t->end = ft_calloc(sq_t->count + 1, sizeof(char *));
+		ft_alloptrtab(squote_tab, args, sizeof(char *));
 		i = 0;
-		sq_t->start[i] = ft_strchr(args, '\'');
-		while (sq_t->start[i] && i < sq_t->count)
+		squote_tab->start[i] = ft_strchr(squote_tab->orig, '\'');
+		while (i < squote_tab->count && squote_tab->start[i])
 		{
-			sq_t->end[i] = ft_strchr(sq_t->start[i] + 1, '\'') + 1;
+			squote_tab->end[i] = ft_strchr(squote_tab->start[i] + 1, '\'') + 1;
+			squote_tab->start[i] = ft_strchr(squote_tab->end[i], '\'');
 			i++;
-			sq_t->start[i] = ft_strchr(sq_t->end[i - 1], '\'');
 		}
 	}
+	if (squote_tab->count < 0)
+		perror("Error locating single quotes");
 }

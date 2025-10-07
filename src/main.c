@@ -41,16 +41,21 @@ static char	*read_input(char *args)
 
 static void	mini_loop(t_mini *minishell)
 {
-	char	*args;
+	t_expander	ex;
+	// t_lexer		lex;
+	// t_cmd		cmd;
+	char		*args;
 
 	(void)minishell;
 	args = NULL;
 	while (1)
 	{
 		args = read_input(args);
-		args = expander(args);
-		if (!args)
-			perror("Error expanding args");
+		args = expander(args, &ex);
+		// TODO: Lexer
+		// args = lexer(ex.var_tab->orig, &lex);
+		// TODO: Parser
+		// args = lexer(ex.var_tab->orig, &lex);
 		// TODO: Exec
 		// minishell->exit_code = exec_input(minishell);
 		if (args)

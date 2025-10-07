@@ -35,22 +35,20 @@ static char	*reassemble_args(char *args, char **split_args)
 
 // TODO: Pass squote_table to split_vars?
 // TODO: Free allocated memory in locate funcs
-char	*expander(char *args)
+char	*expander(char *args, t_expander *ex)
 {
 	const char	*orig = args;
-	t_str_tab	var_table;
-	t_str_tab	squote_table;
 	char		**split_args;
 
-	locate_squotes(args, &squote_table);
-	if (squote_table.count < 0)
+	locate_squotes(args, ex->squote_tab);
+	if (ex->squote_tab->count < 0)
 		return (NULL);
-	locate_vars(args, &var_table, squote_table);
-	if (var_table.count < 0)
+	locate_vars(args, ex);
+	if (ex->var_tab->count < 0)
 		return (NULL);
-	if (var_table.count > 0)
+	if (ex->var_tab->count > 0)
 	{
-		split_args = split_vars(args, var_table);
+		split_args = split_vars(ex);
 		args = reassemble_args(args, split_args);
 		free((void *)orig);
 	}
