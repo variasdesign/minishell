@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   split.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 18:08:58 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/06 19:29:11 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/07 16:52:59 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,14 +46,17 @@ static char	*dup_non_var(char *str, t_expander *ex, size_t i)
 	{
 		j = 0;
 		k = 0;
-		tmp = ft_calloc(len, sizeof(char));
-		while (j < len)
+		tmp = ft_calloc(len + 1, sizeof(char));
+		if (!tmp)
+			return (NULL);
+		while (k < len)
 		{
 			if (((char *)ex->var_tab->read)[k] != '\''
-				|| ((char *)ex->var_tab->read)[k] != '\"')
-				tmp[j] = ((char *)ex->var_tab->read)[k++];
-			j++;
+				&& ((char *)ex->var_tab->read)[k] != '\"')
+				tmp[j++] = ((char *)ex->var_tab->read)[k];
+			k++;
 		}
+		str = tmp;
 	}
 	else
 		str = ft_strndup(ex->var_tab->read, len);
