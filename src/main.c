@@ -6,12 +6,12 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/04 22:48:35 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/07 20:57:51 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "minishell.h"
+#include <stdlib.h>
 
 int	g_sig;
 
@@ -20,75 +20,55 @@ static char	*read_input(char *args)
 	while (!args)
 		args = readline("minishell > ");
 	add_history(args);
-	printf("%s\n", args);
 	return (args);
 }
 
-static t_expander	*allocate_expander(void)
+static void	mini_loop(t_mini *msh)
 {
-	t_expander	*ex;
-
-	ex = ft_calloc(1, sizeof(t_expander));
-	if (!ex)
-		return (NULL);
-	ex->squote_tab = ft_calloc(1, sizeof(t_ptr_tab));
-	if (!ex->squote_tab)
-	{
-		free (ex);
-		return (NULL);
-	}
-	ex->var_tab = ft_calloc(1, sizeof(t_ptr_tab));
-	if (!ex->var_tab)
-	{
-		free (ex);
-		free (ex->squote_tab);
-		return (NULL);
-	}
-	return (ex);
-}
-
-static void	mini_loop(t_mini *minishell)
-{
-	t_expander	*ex;
-	// t_lexer		lex;
-	// t_cmd		cmd;
 	char		*args;
+	// t_cmd		cmd;
 
-	(void)minishell;
 	args = NULL;
-	ex = allocate_expander();
 	while (1)
 	{
 		args = read_input(args);
-		args = expander(args, ex);
+		locate_squotes(args, msh->squote_tab);
+		locate_dquotes(args, msh->dquote_tab);
+		locate_vars(args, msh->var_tab, *msh->squote_tab);
+		args = expander(args, msh);
 		// TODO: Lexer
-		// args = lexer(ex.var_tab->orig, &lex);
+		// args = lexer(args, msh);
 		// TODO: Parser
-		// args = lexer(ex.var_tab->orig, &lex);
+		// args = parser(args, msh);
 		// TODO: Exec
 		// minishell->exit_code = exec_input(minishell);
+		printf("%s\n", args);
 		if (args)
 			free(args);
 		args = NULL;
+		// TODO: Free allocated memory in pointer tables
 	}
 }
 
 int	main(int argc, char *argv[])
 {
-	t_mini	minishell;
+	t_mini	*msh;
 
-	g_sig = 0;
 	if (argc > 1 || argv[1])
 	{
 		printf("This program doesn't take arguments.\n");
 		return (1);
 	}
+	g_sig = 0;
+	msh = allocate_minishell();
+	if (!msh)
+		return (EXIT_FAILURE);
 	// TODO: Signal handler (setup_signals)
-	minishell.cwd = getcwd(NULL, 0);
-	minishell.path = getenv("PATH");
+	msh->cwd = getcwd(NULL, 0);
+	msh->path = getenv("PATH");
 	signal(SIGINT, catch_int);
 	signal(SIGTSTP, catch_suspend);
-	mini_loop(&minishell);
+	mini_loop(msh);
 	// TODO: Free all (PATH, cwd, envs, etc)
 	return (0);
 }

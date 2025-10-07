@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 13:21:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/05 18:33:40 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/07 20:27:29 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,22 +34,18 @@ static char	*reassemble_args(char *args, char **split_args)
 	return (args);
 }
 
-// TODO: Pass squote_table to split_vars?
-// TODO: Free allocated memory in locate funcs
-char	*expander(char *args, t_expander *ex)
+char	*expander(char *args, t_mini *msh)
 {
 	const char	*orig = args;
 	char		**split_args;
 
-	locate_squotes(args, ex->squote_tab);
-	if (ex->squote_tab->count < 0)
+	if (msh->squote_tab->count < 0)
 		return (NULL);
-	locate_vars(args, ex->var_tab, *ex->squote_tab);
-	if (ex->var_tab->count < 0)
+	if (msh->var_tab->count < 0)
 		return (NULL);
-	if (ex->var_tab->count > 0)
+	if (msh->var_tab->count > 0)
 	{
-		split_args = split_vars(ex);
+		split_args = split_vars(msh);
 		args = reassemble_args(args, split_args);
 		free((void *)orig);
 	}
