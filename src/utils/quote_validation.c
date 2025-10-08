@@ -13,8 +13,7 @@
 #include "minishell.h"
 
 // FIX: ft_tabdelone is not working correctly (see ft_ptrtab from libft)
-ssize_t	find_and_del_quotes(ssize_t count,
-							t_ptr_tab *lead_tab, t_ptr_tab *second_tab)
+ssize_t	find_and_del_quotes(t_ptr_tab *lead_tab, t_ptr_tab *second_tab)
 {
 	ssize_t			i;
 
