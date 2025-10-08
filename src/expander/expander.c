@@ -6,11 +6,10 @@
 /*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 13:21:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/07 20:27:29 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/08 19:34:40 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "minishell.h"
 
 // Count the length of the split arguments with expanded vars, then allocate and

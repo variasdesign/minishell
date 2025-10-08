@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 18:08:58 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/07 20:38:15 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/08 19:35:56 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ static char	*expand_var(char *str, t_ptr_tab var_tab,
 	{
 		tmp_env = ft_strndup(var_tab.start[i] + 1, var_len);
 		env = getenv(tmp_env);
-		if (!env && ft_inptrtab(var_tab.start[i], dquote_tab))
+		if (!env && ft_tabfind(var_tab.start[i], dquote_tab))
 			str = ft_strdup(" ");
 		else
 			str = ft_strdup(env);

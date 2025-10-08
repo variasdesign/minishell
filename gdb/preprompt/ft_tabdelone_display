@@ -1,0 +1,9 @@
+display start_or_end
+display i
+display j
+display (char *)tab->start[i]
+display (char *)tab->end[i]
+display (char *)tab->start[j]
+display (char *)tab->end[j]
+display (char *)tab->start[0]@tab->count
+display (char *)tab->end[0]@tab->count
