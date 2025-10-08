@@ -1,2 +1,0 @@
-display (char *)squote_tab->start[i]
-display (char *)squote_tab->end[i]

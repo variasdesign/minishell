@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/07 20:57:51 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/08 14:22:37 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,8 +32,8 @@ static void	mini_loop(t_mini *msh)
 	while (1)
 	{
 		args = read_input(args);
-		locate_squotes(args, msh->squote_tab);
-		locate_dquotes(args, msh->dquote_tab);
+		locate_quotes(args, msh->squote_tab, '\'');
+		locate_quotes(args, msh->dquote_tab, '\"');
 		locate_vars(args, msh->var_tab, *msh->squote_tab);
 		args = expander(args, msh);
 		// TODO: Lexer

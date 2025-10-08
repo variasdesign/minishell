@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/07 20:58:16 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/08 14:23:18 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,7 @@ extern int	g_sig;
 char	**split_vars(t_mini	*msh);
 char	*expander(char *args, t_mini *msh);
 int		exec_input(t_mini *msh);
-ssize_t	locate_squotes(char *args, t_ptr_tab *squote_tab);
-ssize_t	locate_dquotes(char *args, t_ptr_tab *dquote_tab);
+ssize_t	locate_quotes(char *args, t_ptr_tab *quote_tab, char q);
 ssize_t	locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab);
 t_mini	*allocate_minishell(void);
 void	catch_int(int sig_num);
