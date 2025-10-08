@@ -1,0 +1,5 @@
+display i
+display (char *)ptr
+display tab.count
+display (char *)tab.start[i]
+display (char *)tab.end[i]

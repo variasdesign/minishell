@@ -1,0 +1,7 @@
+display i
+display count
+display (char *)second_tab->orig
+display (char *)second_tab->start[i]
+display (char *)second_tab->end[i]
+display (char *)second_tab->start[0]@second_tab->count
+display (char *)second_tab->end[0]@second_tab->count

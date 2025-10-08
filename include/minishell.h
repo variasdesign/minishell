@@ -51,6 +51,7 @@ char	*expander(char *args, t_mini *msh);
 int		exec_input(t_mini *msh);
 ssize_t	locate_quotes(char *args, t_ptr_tab *quote_tab, char q);
 ssize_t	locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab);
+ssize_t	validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab);
 t_mini	*allocate_minishell(void);
 void	catch_int(int sig_num);
 void	catch_suspend(int sig_num);

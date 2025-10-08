@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:04:38 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/06 19:40:24 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/08 19:34:31 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ static ssize_t	count_variables(char *args, t_ptr_tab sq_t)
 	var_can = ft_strchr(args, '$');
 	while (var_can)
 	{
-		squote_i = ft_inptrtab(var_can, sq_t);
+		squote_i = ft_tabfind(var_can, sq_t);
 		if (squote_i < 0)
 		{
 			var_len = is_variable(var_can);
@@ -70,7 +70,7 @@ void	search_var_candidate(t_ptr_tab *var_tab, t_ptr_tab squote_tab)
 	i = -1;
 	while (++i < var_tab->count && var_can)
 	{
-		squote_i = ft_inptrtab(var_can, squote_tab);
+		squote_i = ft_tabfind(var_can, squote_tab);
 		if (squote_i < 0)
 		{
 			var_len = is_variable(var_can);
@@ -98,7 +98,7 @@ ssize_t	locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab)
 	var_tab->count = count_variables(args, squote_tab);
 	if (var_tab->count > 0)
 	{
-		var_tab = ft_alloptrtab(var_tab, args, sizeof(char *));
+		var_tab = ft_taballoc(var_tab, args, sizeof(char *));
 		if (!var_tab)
 		{
 			perror("Error allocating variable pointer table");

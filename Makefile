@@ -27,8 +27,6 @@ BASE_SRCS		= $(addprefix $(SRC_DIR)/,		\
 
 BASE_SRCS		+= $(addprefix $(SRC_DIR_EX)/,	\
 				  	expander.c					\
-					var_tools.c					\
-					quote_tools.c				\
 					split.c						\
 					)
 
@@ -38,6 +36,9 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_SIG)/,	\
 
 BASE_SRCS		+= $(addprefix $(SRC_DIR_UT)/,	\
 				  	alloc.c						\
+					quote_locate.c				\
+					quote_validation.c			\
+					var_tools.c					\
 					)
 
 $(info BASE_SRCS: $(BASE_SRCS))

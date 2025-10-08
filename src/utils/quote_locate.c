@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   quote_tools.c                                      :+:      :+:    :+:   */
+/*   quote_locate.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 20:22:47 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/08 16:23:50 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/10/08 19:45:30 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,11 @@
 // FIX: Handle interleaved and nested quotes:
 // echo "'$USER"' '"$USER'" "'$USER'" '"$USER"'
 // Right now quotes are independently counted and located
-
 static ssize_t	count_quotes(char *args, char q)
 {
 	ssize_t	count;
-	char *can;
-	
+	char	*can;
+
 	count = 0;
 	can = ft_strchr(args, q);
 	while (can)
@@ -31,11 +30,12 @@ static ssize_t	count_quotes(char *args, char q)
 	return (count);
 }
 
-static t_ptr_tab	*search_quotes_candidates(char *args, t_ptr_tab *quote_tab, char q)
+static t_ptr_tab	*search_quotes_candidates(char *args,
+											t_ptr_tab *quote_tab, char q)
 {
 	ssize_t	i;
-	
-	quote_tab = ft_alloptrtab(quote_tab, args, sizeof(char *));
+
+	quote_tab = ft_taballoc(quote_tab, args, sizeof(char *));
 	if (!quote_tab)
 	{
 		perror("Error allocating single quote pointer table");
@@ -47,14 +47,14 @@ static t_ptr_tab	*search_quotes_candidates(char *args, t_ptr_tab *quote_tab, cha
 	{
 		quote_tab->end[i] = ft_strchr(quote_tab->start[i] + 1, q);
 		quote_tab->end[i] += quote_tab->end[i] != NULL;
-		if (i + 1 < quote_tab->count) 
+		if (i + 1 < quote_tab->count)
 			quote_tab->start[i + 1] = ft_strchr(quote_tab->end[i], q);
 		i++;
-	}	
+	}
 	return (quote_tab);
 }
 
-// Locate every single quote and store its start and end in a string table
+// Locate every (char q) quote and store its start and end in a string table
 // start is a pointer to starting quote, end is a pointer to the next char
 // of ending quote.
 // Example:	echo My name 'is $USER, hello!'\0
@@ -68,11 +68,11 @@ ssize_t	locate_quotes(char *args, t_ptr_tab *quote_tab, char q)
 	quote_tab->count = quote_tab->count / 2 + quote_tab->count % 2;
 	if (quote_tab->count > 0)
 	{
-		search_quotes_candidates(args,quote_tab,q);
+		quote_tab = search_quotes_candidates(args, quote_tab, q);
 		if (!quote_tab)
 			return (-1);
 	}
 	if (quote_tab->count < 0)
-		perror("Error locating single quotes");
+		perror("Error locating quotes");
 	return (quote_tab->count);
 }

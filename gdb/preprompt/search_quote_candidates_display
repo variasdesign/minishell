@@ -1,0 +1,3 @@
+display (char *)quote_tab->start[i]
+display (char *)quote_tab->end[i]
+display  quote_tab->count
