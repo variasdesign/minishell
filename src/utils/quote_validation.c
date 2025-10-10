@@ -25,7 +25,8 @@ ssize_t	find_and_del_quotes(t_ptr_tab *lead_tab, t_ptr_tab *second_tab)
 		end_i = ft_tabfind(second_tab->end[i], *lead_tab);
 		if (start_i >= 0)
 			second_tab->start[i] = ft_tabdelone(f, i, second_tab);
-		else if (end_i >= 0 && ft_tabfind(lead_tab->start[end_i], *second_tab) < 0)
+		else if (end_i >= 0
+			&& ft_tabfind(lead_tab->start[end_i], *second_tab) < 0)
 			second_tab->end[i] = ft_tabdelone(t, i, second_tab);
 		else
 			i++;
@@ -38,6 +39,13 @@ ssize_t	find_and_del_quotes(t_ptr_tab *lead_tab, t_ptr_tab *second_tab)
 // 2. Iterate over second quote type pointer table and search
 // for ocurrences in ranges of lead quote type. If found, invalidate quote
 // by replacing it with posterior quotes in the table (if any).
+// TODO: Validate quotes on lead table:
+// e.g: echo    0'"dq_in_sq"'_    1"'sq_in_dq'"_    2''twice_sq''_
+// 3""twice_dq""_    4"'inter_dq_lead"'_    5'"inter_sq_lead'"_
+// In this example, single quotes are lead quotes. But in the 4th case
+// (interleaved with double quotes leading), the first single quote
+// of the group needs to be invalidated. I think a second call to
+// find_and_del_quotes should suffice.
 ssize_t	validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab)
 {
 	const t_bool	lead_quote = squote_tab->start[0] > dquote_tab->start[0];
