@@ -12,9 +12,6 @@
 
 #include "minishell.h"
 
-// FIX: Handle interleaved and nested quotes:
-// echo "'$USER"' '"$USER'" "'$USER'" '"$USER"'
-// Right now quotes are independently counted and located
 static ssize_t	count_quotes(char *args, char q)
 {
 	ssize_t	count;
@@ -30,12 +27,10 @@ static ssize_t	count_quotes(char *args, char q)
 	return (count);
 }
 
-t_ptr_tab	*search_quotes_candidates(char *args,
-											t_ptr_tab *quote_tab, char q)
+static t_ptr_tab	*search_quotes_candidates(t_ptr_tab *quote_tab, char q)
 {
 	ssize_t	i;
 
-	(void)args; // <-- why we use args as parameter here?
 	if (!quote_tab)
 	{
 		perror(NULL);
@@ -57,12 +52,13 @@ t_ptr_tab	*search_quotes_candidates(char *args,
 
 // Locate every (char q) quote and store its start and end in a string table
 // start is a pointer to starting quote, end is a pointer to the next char
-// of ending quote.
+// of ending quote. Later, quote validation will be performed to remove
+// literal quotes and readjust the count in case of odd-numbered quotes.
 // Example:	echo My name 'is $USER, hello!'\0
 // 			             |                 |
-// 			             start[i]          |
+// 			             start[0]          |
 // 			                               |
-// 			                               end[i]
+// 			                               end[0]
 ssize_t	locate_quotes(char *args, t_ptr_tab *quote_tab, char q)
 {
 	quote_tab->count = count_quotes(args, q);
@@ -70,7 +66,7 @@ ssize_t	locate_quotes(char *args, t_ptr_tab *quote_tab, char q)
 	if (quote_tab->count > 0)
 	{
 		quote_tab = ft_taballoc(quote_tab, args, sizeof(char *));
-		quote_tab = search_quotes_candidates(args, quote_tab, q);
+		quote_tab = search_quotes_candidates(quote_tab, q);
 		if (!quote_tab)
 			return (-1);
 	}

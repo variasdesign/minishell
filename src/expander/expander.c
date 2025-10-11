@@ -6,10 +6,11 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 13:21:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/09 16:59:20 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/10/11 18:30:26 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 
 // Count the length of the split arguments with expanded vars, then allocate and
@@ -38,6 +39,10 @@ char	*expander(char *args, t_mini *msh)
 	const char	*orig = args;
 	char		**split_args;
 
+	locate_quotes(args, msh->squote_tab, '\'');
+	locate_quotes(args, msh->dquote_tab, '\"');
+	validate_quotes(msh->squote_tab, msh->dquote_tab);
+	locate_vars(args, msh->var_tab, *msh->squote_tab);
 	if (msh->squote_tab->count < 0)
 		return (NULL);
 	if (msh->var_tab->count < 0)
@@ -48,5 +53,8 @@ char	*expander(char *args, t_mini *msh)
 		args = reassemble_args(args, split_args);
 		free((void *)orig);
 	}
+	ft_tabfree(msh->squote_tab);
+	ft_tabfree(msh->dquote_tab);
+	ft_tabfree(msh->var_tab);
 	return (args);
 }

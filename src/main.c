@@ -6,14 +6,13 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/10 13:11:25 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/10/11 18:21:59 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <stdlib.h>
 
-int			g_sig;
+int	g_sig;
 
 static char	*read_input(char *args)
 {
@@ -32,13 +31,8 @@ static void	mini_loop(t_mini *msh)
 	while (1)
 	{
 		args = read_input(args);
-		locate_quotes(args, msh->squote_tab, '\'');
-		locate_quotes(args, msh->dquote_tab, '\"');
-		validate_quotes(msh->squote_tab, msh->dquote_tab);
-		locate_vars(args, msh->var_tab, *msh->squote_tab);
 		args = expander(args, msh);
-		// TODO: Lexer
-		// args = lexer(args, msh);
+		args = lexer(args, msh);
 		// TODO: Parser
 		// args = parser(args, msh);
 		// TODO: Exec

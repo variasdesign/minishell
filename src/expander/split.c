@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 
 // Count segments of strings, segregated by variables and non-variables
@@ -34,8 +35,15 @@ static ssize_t	count_segments(t_ptr_tab var_tab)
 }
 
 // Obtain var value, checking also for special variable $? (exit status)
-static char	*expand_var(char *str, t_ptr_tab var_tab,
-					size_t i, t_ptr_tab dquote_tab)
+// TODO: Obtain exit status from last executed cmd
+// split = ft_itoa(WEXITSTATUS(status));
+// TODO: Research word splitting when empty var names:
+// echo Me llamo $USER y soy $JOB en $COMPANY
+// Me llamo varias y soy en <- one space
+// echo Me llamo "$USER" y soy "$JOB" en "$COMPANY"
+// Me llamo varias y soy  en <- two spaces
+// https://askubuntu.com/questions/850971/bash-variable-expansion-behavior-when-using-single-or-double-spaces
+static char	*expand_var(char *str, t_ptr_tab var_tab, size_t i)
 {
 	const ssize_t	var_len = var_tab.end[i] - var_tab.start[i] - 1;
 	const char		*first_char = var_tab.start[i] + 1;
@@ -46,52 +54,40 @@ static char	*expand_var(char *str, t_ptr_tab var_tab,
 	{
 		tmp_env = ft_strndup(var_tab.start[i] + 1, var_len);
 		env = getenv(tmp_env);
-		if (!env && ft_tabfind(var_tab.start[i], dquote_tab))
-			str = ft_strdup(" ");
-		else
-			str = ft_strdup(env);
+		str = ft_strdup(env);
 		free(tmp_env);
 	}
-	// TODO: Obtain exit status from last executed cmd
-	// else
-	// 	split = ft_itoa(WEXITSTATUS(status));
 	return (str);
 }
 
 // Fill the split with its corresponding segmented string. If the segmented
 // string is a variable name, obtain its value and expand it.
-// TODO: Research double quoting when empty var names:
-// echo Me llamo $USER y soy $JOB en $COMPANY
-// Me llamo varias y soy en <- one space
-// echo Me llamo "$USER" y soy "$JOB" en "$COMPANY"
-// Me llamo varias y soy  en <- two spaces
-// TODO: Remove quotes before filling split
-char	**fill_split(char **split, ssize_t count, t_mini *msh)
+static char	**fill_split(char **split, ssize_t count, t_ptr_tab var_tab)
 {
 	int		i;
 	int		j;
 
 	i = 0;
 	j = 0;
-	while (i < count && msh->var_tab->start[j] && msh->var_tab->end[j])
+	while (i < count && var_tab.start[j] && var_tab.end[j])
 	{
-		if (msh->var_tab->read < msh->var_tab->start[j])
+		if (var_tab.read < var_tab.start[j])
 		{
-			split[i] = ft_strndup(msh->var_tab->read,
-					msh->var_tab->start[i] - msh->var_tab->read);
-			msh->var_tab->read += msh->var_tab->start[j] - msh->var_tab->read;
+			split[i] = ft_strndup(var_tab.read,
+					var_tab.start[i] - var_tab.read);
+			var_tab.read += var_tab.start[j] - var_tab.read;
 		}
 		else
 		{
-			split[i] = expand_var(split[i], *msh->var_tab, j, *msh->dquote_tab);
-			msh->var_tab->read = msh->var_tab->end[j];
+			split[i] = expand_var(split[i], var_tab, j);
+			var_tab.read = var_tab.end[j];
 			j++;
 		}
 		i++;
 	}
-	if (i < count && !msh->var_tab->start[j] && !msh->var_tab->end[j])
-		split[i] = ft_strndup(msh->var_tab->read,
-				ft_strlen(msh->var_tab->read));
+	if (i < count && !var_tab.start[j] && !var_tab.end[j])
+		split[i] = ft_strndup(var_tab.read,
+				ft_strlen(var_tab.read));
 	return (split);
 }
 
@@ -103,6 +99,6 @@ char	**split_vars(t_mini *msh)
 	split = ft_calloc(count + 1, sizeof(char *));
 	if (!split)
 		return (NULL);
-	split = fill_split(split, count, msh);
+	split = fill_split(split, count, *msh->var_tab);
 	return (split);
 }
