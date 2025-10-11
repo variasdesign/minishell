@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   expander.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
+/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 13:21:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/08 19:34:40 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/09 16:59:20 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,8 +16,8 @@
 // concatenate the split arguments into a single string.
 static char	*reassemble_args(char *args, char **split_args)
 {
-	int		i;
-	int		new_len;
+	int	i;
+	int	new_len;
 
 	new_len = 0;
 	i = 0;

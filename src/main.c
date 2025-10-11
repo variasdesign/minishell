@@ -6,14 +6,14 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/08 19:48:02 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/10 13:11:25 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 #include <stdlib.h>
 
-int	g_sig;
+int			g_sig;
 
 static char	*read_input(char *args)
 {
@@ -25,9 +25,9 @@ static char	*read_input(char *args)
 
 static void	mini_loop(t_mini *msh)
 {
-	char		*args;
-	// t_cmd		cmd;
+	char	*args;
 
+	// t_cmd		cmd;
 	args = NULL;
 	while (1)
 	{

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quote_validation.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 18:22:03 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/08 20:45:20 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/11 16:45:50 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,8 +42,8 @@ ssize_t	validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab)
 
 	new_count = squote_tab->count + dquote_tab->count;
 	if (!lead_quote)
-		new_count = find_and_del_quotes(new_count, squote_tab, dquote_tab);
+		new_count = find_and_del_quotes(squote_tab, dquote_tab);
 	else
-		new_count = find_and_del_quotes(new_count, dquote_tab, squote_tab);
+		new_count = find_and_del_quotes(dquote_tab, squote_tab);
 	return (new_count);
 }
