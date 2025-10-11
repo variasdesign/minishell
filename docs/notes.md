@@ -1,4 +1,5 @@
 # Notes
+
 ## Prompt processing
 Most of the prompt processing deals with string classification and manipulation. Thus the use of pointer tables, which allow us to store pointers (start and end) to memory addresses containing substrings of the original string. Pointer tables can be reused since the three parts of the prompt processing stage work with certain common data.
 
@@ -14,6 +15,7 @@ Most of the prompt processing deals with string classification and manipulation.
 	- Single quote table.
 	- Double quote table.
 - Quotes which are invalidated must be removed from the pointer tables, its space filled by next quotes (if any). This also means that we can invalidate one quote character, or pairs of quotes. An odd number of quotes, single or double, is considered an invalid prompt, but invalidation of quotes will alter the quote count, making an apparent valid prompt invalid and vice versa.
+- Good string to test proper quote validation: `echo    0'"dq_in_sq"'_    1"'sq_in_dq'"_    2''twice_sq''_    3""twice_dq""_    4"'inter_dq_lead"'_    5'"inter_sq_lead'"_`
 
 ### Expander
 - The expander does variable expansion and single quote handling.

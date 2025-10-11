@@ -40,7 +40,7 @@ static t_mini	*allocate_tables(t_mini *msh, t_ptr_tab **tables)
 t_mini	*allocate_minishell(void)
 {
 	t_mini		*msh;
-	t_ptr_tab	*tables[5];
+	t_ptr_tab	*tables[TABLE_NUM];
 
 	msh = ft_calloc(1, sizeof(t_mini));
 	if (!msh)

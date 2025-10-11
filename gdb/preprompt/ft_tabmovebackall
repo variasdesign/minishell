@@ -1,5 +1,5 @@
-display start_or_end
 display i
+display tab->count
 display (char *)tab->start[0]
 display (char *)tab->end[0]
 display (char *)tab->start[i]

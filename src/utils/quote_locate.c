@@ -38,7 +38,8 @@ t_ptr_tab	*search_quotes_candidates(char *args,
 	(void)args; // <-- why we use args as parameter here?
 	if (!quote_tab)
 	{
-		perror("Error allocating single quote pointer table");
+		perror(NULL);
+		printf("Error allocating %c quote pointer table\n", q);
 		return (NULL);
 	}
 	i = 0;
@@ -74,6 +75,9 @@ ssize_t	locate_quotes(char *args, t_ptr_tab *quote_tab, char q)
 			return (-1);
 	}
 	if (quote_tab->count < 0)
-		perror("Error locating quotes");
+	{
+		perror(NULL);
+		printf("Error locating %c quotes\n", q);
+	}
 	return (quote_tab->count);
 }
