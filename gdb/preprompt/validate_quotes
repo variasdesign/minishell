@@ -1,0 +1,6 @@
+display squote_tab->count
+display dquote_tab->count
+display (char *)squote_tab->start[0]@squote_tab->count + 1
+display (char *)squote_tab->end[0]@squote_tab->count + 1
+display (char *)dquote_tab->start[0]@dquote_tab->count + 1
+display (char *)dquote_tab->end[0]@dquote_tab->count + 1
