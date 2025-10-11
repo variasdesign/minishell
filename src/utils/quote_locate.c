@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 20:22:47 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/08 19:45:30 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/11 16:44:42 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,12 +30,12 @@ static ssize_t	count_quotes(char *args, char q)
 	return (count);
 }
 
-static t_ptr_tab	*search_quotes_candidates(char *args,
+t_ptr_tab	*search_quotes_candidates(char *args,
 											t_ptr_tab *quote_tab, char q)
 {
 	ssize_t	i;
 
-	quote_tab = ft_taballoc(quote_tab, args, sizeof(char *));
+	(void)args; // <-- why we use args as parameter here?
 	if (!quote_tab)
 	{
 		perror(NULL);
@@ -69,6 +69,7 @@ ssize_t	locate_quotes(char *args, t_ptr_tab *quote_tab, char q)
 	quote_tab->count = quote_tab->count / 2 + quote_tab->count % 2;
 	if (quote_tab->count > 0)
 	{
+		quote_tab = ft_taballoc(quote_tab, args, sizeof(char *));
 		quote_tab = search_quotes_candidates(args, quote_tab, q);
 		if (!quote_tab)
 			return (-1);

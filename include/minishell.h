@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/08 14:23:18 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/10/10 13:15:46 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,26 @@
 # define MINISHELL_H
 
 # include "libft.h"
-# include <stdio.h>
-# include <signal.h>
-# include <readline/readline.h>
 # include <readline/history.h>
+# include <readline/readline.h>
+# include <signal.h>
+# include <stdio.h>
 
-typedef struct s_cmd
+typedef enum e_token_type
+{
+	TOKEN_WORD,
+	TOKEN_PIPE,
+	TOKEN_REDIR_IN,
+	TOKEN_REDIR_OUT,
+	TOKEN_REDIR_APPEND,
+	TOKEN_REDIR_HEREDOC,
+	// need more?
+} t_token_type;
+
+
+
+
+	typedef struct s_cmd
 {
 	char			**args;
 	int				pipe_in;
@@ -27,33 +41,41 @@ typedef struct s_cmd
 	char			*heredoc_fd;
 	struct s_cmd	*next;
 	// TODO: t_redir struct?
-}	t_cmd;
+}					t_cmd;
 
 # define TABLE_NUM 5
 
 typedef struct s_mini
 {
-	char		*cwd;
-	char		*path;
-	int			exit_code;
-	t_cmd		*first;
-	t_ptr_tab	*redir_tab;
-	t_ptr_tab	*squote_tab;
-	t_ptr_tab	*dquote_tab;
-	t_ptr_tab	*var_tab;
-	t_ptr_tab	*word_tab;
-}	t_mini;
+	char			*cwd;
+	char			*path;
+	int				exit_code;
+	t_cmd			*first;
+	t_ptr_tab		*redir_tab;
+	t_ptr_tab		*squote_tab;
+	t_ptr_tab		*dquote_tab;
+	t_ptr_tab		*var_tab;
+	t_ptr_tab		*word_tab;
+}					t_mini;
 
-extern int	g_sig;
+extern int			g_sig;
 
-char	**split_vars(t_mini	*msh);
-char	*expander(char *args, t_mini *msh);
-int		exec_input(t_mini *msh);
-ssize_t	locate_quotes(char *args, t_ptr_tab *quote_tab, char q);
-ssize_t	locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab);
-ssize_t	validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab);
-t_mini	*allocate_minishell(void);
-void	catch_int(int sig_num);
-void	catch_suspend(int sig_num);
+t_ptr_tab			*search_quotes_candidates(char *args, t_ptr_tab *quote_tab,
+						char q);
+char				**split_vars(t_mini *msh);
+char				*expander(char *args, t_mini *msh);
+int					is_redir_char(char c);
+int					is_redir_start(char *str);
+char				*process_redir(char *str, int redir_len, t_mini *msh, ssize_t *count);
+int					is_inside_quotes(char *pos, t_mini *msh);
+int					exec_input(t_mini *msh);
+ssize_t				locate_quotes(char *args, t_ptr_tab *quote_tab, char q);
+ssize_t				locate_vars(char *args, t_ptr_tab *var_tab,
+						t_ptr_tab squote_tab);
+ssize_t				validate_quotes(t_ptr_tab *squote_tab,
+						t_ptr_tab *dquote_tab);
+t_mini				*allocate_minishell(void);
+void				catch_int(int sig_num);
+void				catch_suspend(int sig_num);
 
 #endif

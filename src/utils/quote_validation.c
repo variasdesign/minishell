@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quote_validation.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 18:22:03 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/08 20:45:20 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/11 16:45:50 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
