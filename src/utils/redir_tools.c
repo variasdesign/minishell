@@ -9,6 +9,7 @@ int is_redir(char *str)
 {
     size_t len;
 
+<<<<<<< HEAD
     len = 0;
     if (str[len] == '|' && ft_isspace(str[len + 1]))
         return (++len);
@@ -19,6 +20,19 @@ int is_redir(char *str)
     if (len > 1)
         return (0);
     return (len +// Process redirection operator and advance pointer
+=======
+	len = 0;
+	if (is_redir_char(c))
+	{
+		max_len = 2 - c == '|';
+		while (len < max_len && redir[len] == c)
+			len++;
+	}
+	return (len);
+}
+
+// Process redirection operator and advance pointer
+>>>>>>> 4351e33b4e7a56c46ccc32e06614b4a2dc3fe4b1
 char	*process_redir(char *str, int redir_len, t_mini *msh, ssize_t *count)
 {
 	if (is_inside_quotes(str, msh))
