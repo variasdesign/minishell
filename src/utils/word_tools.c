@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   word_tools.c                                       :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/13 13:28:40 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/13 13:28:41 by varias-c         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "minishell.h"
 
 static ssize_t	get_word_len(char *word)
@@ -51,26 +39,4 @@ static char	*process_word(char *str, ssize_t *count)
 		return (str + word_len);
 	}
 	return (str + 1);  // Skip single character if not part of word
-}
-
-static ssize_t	count_words(char *args, t_mini *msh)
-{
-	ssize_t count;
-	char *str;
-	int redir_len;
-
-	str = args;
-	count = 0;
-	while (*str)
-	{
-		str = skip_whitespace(str);
-		if (!*str)
-			break ;
-		redir_len = is_redir_start(str);
-		if (redir_len > 0)
-			str = process_redir(str, redir_len, msh, &count);
-		else
-			str = process_word(str, &count);
-	}
-	return (count);
 }

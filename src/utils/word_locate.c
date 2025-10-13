@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   word_locate.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/13 13:54:03 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/13 14:05:08 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/13 17:51:50 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,21 +18,62 @@ static ssize_t	count_words(char *args, t_ptr_tab squote_tab,
 								t_ptr_tab dquote_tab)
 {
 	ssize_t	count;
-	ssize_t	word_len;
-	ssize_t	squote_i;
-	ssize_t	dquote_i;
-	char	*word_can;
+	char	*str;
 
 	count = 0;
+	str = args;
+	while (*str)
+	{
+		while (*str && ft_isspace(*str))
+			str++;
+		if (!*str)
+			break ;
+		if (ft_tabfind(str, squote_tab) >= 0 || ft_tabfind(str, dquote_tab) >= 0)
+		{
+			while (*str && (ft_tabfind(str, squote_tab) >= 0 || 
+					ft_tabfind(str, dquote_tab) >= 0))
+				str++;
+		}
+		else
+		{
+			while (*str && !ft_isspace(*str) && !is_redir_char(*str))
+				str++;
+		}
+		count++;
+	}
 	return (count);
 }
 
 static void	search_word_candidate(t_ptr_tab *word_tab, t_ptr_tab squote_tab,
 									t_ptr_tab dquote_tab)
 {
+	char	*str;
+	char	*word_start;
+	ssize_t	i;
+
+	str = (char *)word_tab->orig;
+	i = 0;
+	while (*str && i < word_tab->count)
+	{
+		while (*str && ft_isspace(*str))
+			str++;
+		if (!*str)
+			break ;
+		word_start = str;
+		if (ft_tabfind(str, squote_tab) >= 0 || ft_tabfind(str, dquote_tab) >= 0)
+			while (*str && (ft_tabfind(str, squote_tab) >= 0 || 
+					ft_tabfind(str, dquote_tab) >= 0))
+				str++;
+		else
+			while (*str && !ft_isspace(*str) && !is_redir_char(*str))
+				str++;
+		word_tab->start[i] = word_start;
+		word_tab->end[i] = str;
+		i++;
+	}
 }
 
-// Locate every word and store its start and end in a pointer table.
+// Locate every word and store its start and  	end in a pointer table.
 // start is a pointer to first char, end is a pointer to next char of last.
 // Example:	cat "file with spaces" | sort -n\0
 // 			|  | |               |   |   || |
