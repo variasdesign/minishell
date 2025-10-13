@@ -14,7 +14,8 @@
 
 // Placeholder for gdb: "echo jmellado es el \"usuario\" | cat > file" 
 // recall locate_quotes
-
+// TODO: Redir and word validation: Prompts can't start or end with a redir,
+// and (if I'm not mistaken) there should be more words than redirs.
 char	*lexer(char *args, t_mini *msh)
 {
 	locate_quotes(args, msh->squote_tab, '\'');

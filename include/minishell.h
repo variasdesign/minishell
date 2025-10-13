@@ -26,33 +26,38 @@ typedef enum e_token_type
 	TOKEN_REDIR_IN,
 	TOKEN_REDIR_OUT,
 	TOKEN_REDIR_APPEND,
-	TOKEN_REDIR_HEREDOC,
-	// need more?
+	TOKEN_REDIR_HEREDOC
 } t_token_type;
+
+typedef struct s_redir
+{
+	int		redir_type;
+	char	*file;
+}	t_redir;
 
 typedef struct s_cmd
 {
 	char			**args;
+	t_redir			*redirections;
 	int				pipe_in;
 	int				pipe_out;
 	char			*heredoc_fd;
 	struct s_cmd	*next;
-	// TODO: t_redir struct?
 }	t_cmd;
 
 # define TABLE_NUM 5
 
 typedef struct s_mini
 {
-	char			*cwd;
-	char			*path;
-	int				exit_code;
-	t_cmd			*first;
-	t_ptr_tab		*redir_tab;
-	t_ptr_tab		*squote_tab;
-	t_ptr_tab		*dquote_tab;
-	t_ptr_tab		*var_tab;
-	t_ptr_tab		*word_tab;
+	char		*cwd;
+	char		*path;
+	int			exit_code;
+	t_cmd		*first;
+	t_ptr_tab	*redir_tab;
+	t_ptr_tab	*squote_tab;
+	t_ptr_tab	*dquote_tab;
+	t_ptr_tab	*var_tab;
+	t_ptr_tab	*word_tab;
 }	t_mini;
 
 extern int			g_sig;
