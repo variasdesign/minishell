@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   alloc.c                                            :+:      :+:    :+:   */
+/*   init.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 19:27:26 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/07 19:43:49 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/13 13:44:48 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,7 +54,7 @@ t_mini	*allocate_minishell(void)
 	msh->squote_tab = tables[0];
 	msh->dquote_tab = tables[1];
 	msh->var_tab = tables[2];
-	msh->word_tab = tables[3];
-	msh->redir_tab = tables[4];
+	msh->redir_tab = tables[3];
+	msh->word_tab = tables[4];
 	return (msh);
 }

@@ -6,11 +6,10 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 18:08:58 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/08 19:35:56 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/13 13:53:47 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "minishell.h"
 
 // Count segments of strings, segregated by variables and non-variables

@@ -60,11 +60,11 @@ extern int			g_sig;
 char	**split_vars(t_mini *msh);
 char	*expander(char *args, t_mini *msh);
 char	*lexer(char *args, t_mini *msh);
-int		is_redir_char(char c);
 int		is_redir_start(char *str);
 char	*process_redir(char *str, int redir_len, t_mini *msh, ssize_t *count);
 int		is_inside_quotes(char *pos, t_mini *msh);
 int		exec_input(t_mini *msh);
+ssize_t	is_redir(char *redir);
 ssize_t	locate_quotes(char *args, t_ptr_tab *quote_tab, char q);
 ssize_t	locate_vars(char *args, t_ptr_tab *var_tab,
 			t_ptr_tab squote_tab);

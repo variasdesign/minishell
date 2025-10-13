@@ -33,7 +33,7 @@ static ssize_t	is_variable(char *var)
 
 // Count variables by checking if they have valid names. Invalid names will
 // return var_len = 0. Variables inside single quotes are ignored.
-static ssize_t	count_variables(char *args, t_ptr_tab sq_t)
+static ssize_t	count_variables(char *args, t_ptr_tab squote_tab)
 {
 	ssize_t	count;
 	ssize_t	var_len;
@@ -44,7 +44,7 @@ static ssize_t	count_variables(char *args, t_ptr_tab sq_t)
 	var_can = ft_strchr(args, '$');
 	while (var_can)
 	{
-		squote_i = ft_tabfind(var_can, sq_t);
+		squote_i = ft_tabfind(var_can, squote_tab);
 		if (squote_i < 0)
 		{
 			var_len = is_variable(var_can);
@@ -52,7 +52,7 @@ static ssize_t	count_variables(char *args, t_ptr_tab sq_t)
 			var_can = ft_strchr(++var_can + var_len, '$');
 		}
 		else
-			var_can = ft_strchr(sq_t.end[squote_i], '$');
+			var_can = ft_strchr(squote_tab.end[squote_i], '$');
 	}
 	return (count);
 }

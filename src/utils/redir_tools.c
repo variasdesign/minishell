@@ -12,23 +12,25 @@
 
 #include "minishell.h"
 
-int	is_redir_char(char c)
+static int	is_redir_char(char c)
 {
 	return (c == '<' || c == '>' || c == '|');
 }
 
-int	is_redir(char *str)
+ssize_t	is_redir(char *redir)
 {
-	size_t	len;
+	const char	c = *redir;
+	ssize_t		len;
+	ssize_t		max_len;
 
 	len = 0;
-	if (str[len] == '|' && ft_isspace(str[len + 1]))
-		return (++len);
-	while (str[len] == '<' || str[len] == '>' && len < 2)
-		len++;
-	if (len > 1)
-		return (0);
-	return (len + 1);
+	if (is_redir_char(c))
+	{
+		max_len = 2 - c == '|';
+		while (len <= max_len && redir[len] == c)
+			len++;
+	}
+	return (len);
 }
 
 // Process redirection operator and advance pointer
