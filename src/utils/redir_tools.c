@@ -1,64 +1,34 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redir_tools.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/10/14 23:15:58 by varias-c          #+#    #+#             */
+/*   Updated: 2025/10/14 23:15:59 by varias-c         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-int	is_redir_char(char c)
+int	redir_char(char c)
 {
 	return (c == '<' || c == '>' || c == '|');
 }
 
-int is_redir(char *str)
+ssize_t is_redir(char *redir)
 {
-    size_t len;
+	const char	c = *redir;
+    size_t		len;
+    size_t		max_len;
 
-<<<<<<< HEAD
-    len = 0;
-    if (str[len] == '|' && ft_isspace(str[len + 1]))
-        return (++len);
-    while (str[len] == '<' || str[len] == '>' && len < 2)
-    {
-       len++;
-    }
-    if (len > 1)
-        return (0);
-    return (len +// Process redirection operator and advance pointer
-=======
 	len = 0;
-	if (is_redir_char(c))
+	if (redir_char(c))
 	{
 		max_len = 2 - c == '|';
 		while (len < max_len && redir[len] == c)
 			len++;
 	}
 	return (len);
-}
-
-// Process redirection operator and advance pointer
->>>>>>> 4351e33b4e7a56c46ccc32e06614b4a2dc3fe4b1
-char	*process_redir(char *str, int redir_len, t_mini *msh, ssize_t *count)
-{
-	if (is_inside_quotes(str, msh))
-	{
-		// Operator inside quotes = counts as word
-		(*count)++;
-	}
-	// Operator outside quotes = skip, don't count
-	return (str + redir_len);
-}
- 1);
-}
-
-// Check if current position starts with a redirection operator
-static int	is_redir_start(char *str)
-{
-	if (!str || !*str)
-		return (0);
-	
-	// Check for double operators first
-	if ((str[0] == '<' && str[1] == '<') || (str[0] == '>' && str[1] == '>'))
-		return (2);
-	
-	// Check for single operators
-	if (str[0] == '<' || str[0] == '>' || str[0] == '|')
-		return (1);
-	
-	return (0);
 }

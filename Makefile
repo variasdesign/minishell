@@ -47,7 +47,6 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_UT)/,	\
 					redir_tools.c				\
 					var_tools.c					\
 					word_locate.c				\
-					word_tools.c				\
 					)
 
 $(info BASE_SRCS: $(BASE_SRCS))

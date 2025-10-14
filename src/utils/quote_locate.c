@@ -27,16 +27,10 @@ static ssize_t	count_quotes(char *args, char q)
 	return (count);
 }
 
-static t_ptr_tab	*search_quotes_candidates(t_ptr_tab *quote_tab, char q)
+t_ptr_tab	*search_quotes_candidates(t_ptr_tab *quote_tab, char q)
 {
 	ssize_t	i;
 
-	if (!quote_tab)
-	{
-		perror(NULL);
-		printf("Error allocating %c quote pointer table\n", q);
-		return (NULL);
-	}
 	i = 0;
 	quote_tab->start[i] = ft_strchr(quote_tab->orig, q);
 	while (i < quote_tab->count && quote_tab->start[i])
@@ -66,9 +60,13 @@ ssize_t	locate_quotes(char *args, t_ptr_tab *quote_tab, char q)
 	if (quote_tab->count > 0)
 	{
 		quote_tab = ft_taballoc(quote_tab, args, sizeof(char *));
-		quote_tab = search_quotes_candidates(quote_tab, q);
 		if (!quote_tab)
+		{
+			perror(NULL);
+			printf("Error allocating %c quote pointer table\n", q);
 			return (-1);
+		}
+		quote_tab = search_quotes_candidates(quote_tab, q);
 	}
 	if (quote_tab->count < 0)
 	{

@@ -5,40 +5,43 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/13 13:54:03 by varias-c          #+#    #+#             */
+
 /*   Updated: 2025/10/13 17:51:50 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+static t_bool	check_char(char c)
+{
+	return (ft_isspace(c) || quote_char(c) || redir_char(c));
+}
 // Count words by checking if they are valid. Invalid words will
 // return word_len = 0. Words inside single or double quotes are counted as one.
 static ssize_t	count_words(char *args, t_ptr_tab squote_tab,
 								t_ptr_tab dquote_tab)
 {
 	ssize_t	count;
+	ssize_t	squote_i;
+	ssize_t	dquote_i;
 	char	*str;
 
 	count = 0;
 	str = args;
 	while (*str)
 	{
-		while (*str && ft_isspace(*str))
+		while (*str && (check_char(*str)))
 			str++;
 		if (!*str)
 			break ;
-		if (ft_tabfind(str, squote_tab) >= 0 || ft_tabfind(str, dquote_tab) >= 0)
-		{
-			while (*str && (ft_tabfind(str, squote_tab) >= 0 || 
-					ft_tabfind(str, dquote_tab) >= 0))
-				str++;
-		}
-		else
-		{
-			while (*str && !ft_isspace(*str) && !is_redir_char(*str))
-				str++;
-		}
+		squote_i = ft_tabfind(str, squote_tab);
+		dquote_i = ft_tabfind(str, dquote_tab);
+		if (squote_i >= 0)
+			str = squote_tab.end[squote_i];
+		if (dquote_i >= 0)
+			str = dquote_tab.end[dquote_i];
+		while (*str && !check_char(*str))
+			str++;
 		count++;
 	}
 	return (count);
@@ -47,33 +50,42 @@ static ssize_t	count_words(char *args, t_ptr_tab squote_tab,
 static void	search_word_candidate(t_ptr_tab *word_tab, t_ptr_tab squote_tab,
 									t_ptr_tab dquote_tab)
 {
-	char	*str;
-	char	*word_start;
+	char	*word_can;
 	ssize_t	i;
+	ssize_t	squote_i;
+	ssize_t	dquote_i;
 
-	str = (char *)word_tab->orig;
-	i = 0;
-	while (*str && i < word_tab->count)
+	word_can = (char *)word_tab->orig;
+	i = -1;
+	while (*word_can && ++i < word_tab->count)
 	{
-		while (*str && ft_isspace(*str))
-			str++;
-		if (!*str)
+		while (*word_can && check_char(*word_can))
+			word_can++;
+		if (!*word_can)
 			break ;
-		word_start = str;
-		if (ft_tabfind(str, squote_tab) >= 0 || ft_tabfind(str, dquote_tab) >= 0)
-			while (*str && (ft_tabfind(str, squote_tab) >= 0 || 
-					ft_tabfind(str, dquote_tab) >= 0))
-				str++;
+		word_tab->start[i] = word_can;
+		squote_i = ft_tabfind(word_can, squote_tab);
+		dquote_i = ft_tabfind(word_can, dquote_tab);
+		if (squote_i >= 0)
+		{
+			word_tab->end[i] = squote_tab.end[squote_i] - 2;
+			word_can = squote_tab.end[squote_i];
+		}
+		else if (dquote_i >= 0)
+		{
+			word_tab->end[i] = dquote_tab.end[dquote_i] - 2;
+			word_can = dquote_tab.end[dquote_i];
+		}
 		else
-			while (*str && !ft_isspace(*str) && !is_redir_char(*str))
-				str++;
-		word_tab->start[i] = word_start;
-		word_tab->end[i] = str;
-		i++;
+		{
+			while (*word_can && !check_char(*word_can))
+				word_can++;
+			word_tab->end[i] = word_can;
+		}
 	}
 }
 
-// Locate every word and store its start and  	end in a pointer table.
+// Locate every word and store its start and end in a pointer table.
 // start is a pointer to first char, end is a pointer to next char of last.
 // Example:	cat "file with spaces" | sort -n\0
 // 			|  | |               |   |   || |
@@ -84,6 +96,8 @@ static void	search_word_candidate(t_ptr_tab *word_tab, t_ptr_tab squote_tab,
 // 			   end[0]                     start[3]
 // 			     |                          |
 // 			     start[1]                   end[3]
+// TODO: Read on IFS (internal field separator)
+// https://www.baeldung.com/linux/ifs-shell-variable
 ssize_t	locate_words(char *args, t_mini *msh)
 {
 	msh->word_tab->count = count_words(args, *msh->squote_tab,

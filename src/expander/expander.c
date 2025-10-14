@@ -52,8 +52,6 @@ char	*expander(char *args, t_mini *msh)
 		args = reassemble_args(args, split_args);
 		free((void *)orig);
 	}
-	msh->squote_tab = ft_tabfree(msh->squote_tab);
-	msh->dquote_tab = ft_tabfree(msh->dquote_tab);
 	msh->var_tab = ft_tabfree(msh->var_tab);
 	return (args);
 }

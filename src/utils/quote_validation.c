@@ -12,6 +12,11 @@
 
 #include "minishell.h"
 
+int	quote_char(char c)
+{
+	return (c == '\"' || c == '\'');
+}
+
 ssize_t	find_and_del_quotes(t_ptr_tab *lead_tab, t_ptr_tab *second_tab)
 {
 	ssize_t	i;
