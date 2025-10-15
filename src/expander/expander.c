@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
 #include "minishell.h"
 
 // Count the length of the split arguments with expanded vars, then allocate and
@@ -45,8 +44,8 @@ char	*expander(char *args, t_ptr_tab *squote_tab,
 	if ((squote_tab->count > 0 && dquote_tab->count > 0)
 		&& validate_quotes(squote_tab, dquote_tab) < 0)
 	{
-		squote_tab = ft_tabfree(squote_tab);
-		dquote_tab = ft_tabfree(dquote_tab);
+		squote_tab = ft_tabfree(&squote_tab);
+		dquote_tab = ft_tabfree(&dquote_tab);
 		return (NULL);
 	}
 	if (locate_vars(args, var_tab, *squote_tab) < 0)
@@ -56,6 +55,8 @@ char	*expander(char *args, t_ptr_tab *squote_tab,
 		args = reassemble_args(args, split_vars(var_tab));
 		free((void *)orig);
 	}
-	var_tab = ft_tabfree(var_tab);
+	squote_tab = ft_tabfree(&squote_tab);
+	dquote_tab = ft_tabfree(&dquote_tab);
+	var_tab = ft_tabfree(&var_tab);
 	return (args);
 }

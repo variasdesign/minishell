@@ -27,7 +27,7 @@ static ssize_t	count_quotes(char *args, char q)
 	return (count);
 }
 
-t_ptr_tab	*search_quotes_candidates(t_ptr_tab *quote_tab, char q)
+static t_ptr_tab	*search_quotes_candidates(t_ptr_tab *quote_tab, char q)
 {
 	ssize_t	i;
 
