@@ -61,18 +61,16 @@ typedef struct s_mini
 }	t_mini;
 
 extern int	g_sig;
-extern int	rl_done;
 
 t_ptr_tab	*search_quotes_candidates(t_ptr_tab *quote_tab,
 				char q);
-char		**split_vars(t_mini *msh);
-char		*expander(char *args, t_mini *msh);
+char		**split_vars(t_ptr_tab *var_tab);
+char		*expander(char *args, t_ptr_tab *squote_tab,
+				t_ptr_tab *dquote_tab, t_ptr_tab *var_tab);
 char		*lexer(char *args, t_mini *msh);
-int			redir_char(char c);
 int			quote_char(char c);
+int			redir_char(char c);
 int			redir_start(char *str);
-char		*process_redir(char *str, int redir_len, t_mini *msh, ssize_t *count);
-int			is_inside_quotes(char *pos, t_mini *msh);
 int			exec_input(t_mini *msh);
 ssize_t		is_redir(char *redir);
 ssize_t		locate_quotes(char *args, t_ptr_tab *quote_tab, char q);

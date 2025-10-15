@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 
 // Count the length of the split arguments with expanded vars, then allocate and
@@ -33,25 +34,28 @@ static char	*reassemble_args(char *args, char **split_args)
 	return (args);
 }
 
-char	*expander(char *args, t_mini *msh)
+char	*expander(char *args, t_ptr_tab *squote_tab,
+					t_ptr_tab *dquote_tab, t_ptr_tab *var_tab)
 {
 	const char	*orig = args;
-	char		**split_args;
 
-	locate_quotes(args, msh->squote_tab, '\'');
-	locate_quotes(args, msh->dquote_tab, '\"');
-	validate_quotes(msh->squote_tab, msh->dquote_tab);
-	locate_vars(args, msh->var_tab, *msh->squote_tab);
-	if (msh->squote_tab->count < 0)
+	if (locate_quotes(args, squote_tab, '\'') < 0
+		|| locate_quotes(args, dquote_tab, '\"') < 0)
 		return (NULL);
-	if (msh->var_tab->count < 0)
-		return (NULL);
-	if (msh->var_tab->count > 0)
+	if ((squote_tab->count > 0 && dquote_tab->count > 0)
+		&& validate_quotes(squote_tab, dquote_tab) < 0)
 	{
-		split_args = split_vars(msh);
-		args = reassemble_args(args, split_args);
+		squote_tab = ft_tabfree(squote_tab);
+		dquote_tab = ft_tabfree(dquote_tab);
+		return (NULL);
+	}
+	if (locate_vars(args, var_tab, *squote_tab) < 0)
+		return (NULL);
+	if (var_tab->count > 0)
+	{
+		args = reassemble_args(args, split_vars(var_tab));
 		free((void *)orig);
 	}
-	msh->var_tab = ft_tabfree(msh->var_tab);
+	var_tab = ft_tabfree(var_tab);
 	return (args);
 }

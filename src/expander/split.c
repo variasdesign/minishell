@@ -53,7 +53,10 @@ static char	*expand_var(char *str, t_ptr_tab var_tab, size_t i)
 	{
 		tmp_env = ft_strndup(var_tab.start[i] + 1, var_len);
 		env = getenv(tmp_env);
-		str = ft_strdup(env);
+		if (!env)
+			str = ft_strdup("");
+		else
+			str = ft_strdup(env);
 		free(tmp_env);
 	}
 	return (str);
@@ -73,7 +76,7 @@ static char	**fill_split(char **split, ssize_t count, t_ptr_tab var_tab)
 		if (var_tab.read < var_tab.start[j])
 		{
 			split[i] = ft_strndup(var_tab.read,
-					var_tab.start[i] - var_tab.read);
+					var_tab.start[j] - var_tab.read);
 			var_tab.read += var_tab.start[j] - var_tab.read;
 		}
 		else
@@ -90,14 +93,14 @@ static char	**fill_split(char **split, ssize_t count, t_ptr_tab var_tab)
 	return (split);
 }
 
-char	**split_vars(t_mini *msh)
+char	**split_vars(t_ptr_tab *var_tab)
 {
-	const ssize_t	count = count_segments(*msh->var_tab);
+	const ssize_t	count = count_segments(*var_tab);
 	char			**split;
 
 	split = ft_calloc(count + 1, sizeof(char *));
 	if (!split)
 		return (NULL);
-	split = fill_split(split, count, *msh->var_tab);
+	split = fill_split(split, count, *var_tab);
 	return (split);
 }

@@ -14,8 +14,11 @@
 
 int	g_sig;
 
+// TODO: Read on rl_done global var
 static char	*read_input(char *args)
 {
+	extern int	rl_done;
+
 	while (!args)
 		args = readline("minishell > ");
 	add_history(args);
@@ -26,12 +29,11 @@ static void	mini_loop(t_mini *msh)
 {
 	char	*args;
 
-	// t_cmd		cmd;
 	args = NULL;
 	while (1)
 	{
 		args = read_input(args);
-		args = expander(args, msh);
+		args = expander(args, msh->squote_tab, msh->dquote_tab, msh->var_tab);
 		args = lexer(args, msh);
 		// TODO: Parser
 		// args = parser(args, msh);

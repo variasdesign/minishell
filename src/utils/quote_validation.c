@@ -62,7 +62,8 @@ ssize_t	validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab)
 		new_count = find_and_del_quotes(dquote_tab, squote_tab);
 		new_count = find_and_del_quotes(squote_tab, dquote_tab);
 	}
-	if (squote_tab->count % 2 || dquote_tab->count % 2)
+	if (!squote_tab->end[squote_tab->count - 1]
+		|| !dquote_tab->end[dquote_tab->count - 1])
 	{
 		printf("Invalid number of quotes.\n");
 		return (-1);
