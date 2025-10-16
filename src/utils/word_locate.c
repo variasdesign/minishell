@@ -47,7 +47,7 @@ static ssize_t	count_words(char *args, t_ptr_tab squote_tab,
 	return (count);
 }
 
-static void	search_word_candidate(t_ptr_tab *word_tab, t_ptr_tab squote_tab,
+static void	search_word_candidates(t_ptr_tab *word_tab, t_ptr_tab squote_tab,
 									t_ptr_tab dquote_tab)
 {
 	char	*word_can;
@@ -68,12 +68,12 @@ static void	search_word_candidate(t_ptr_tab *word_tab, t_ptr_tab squote_tab,
 		dquote_i = ft_tabfind(word_can, dquote_tab);
 		if (squote_i >= 0)
 		{
-			word_tab->end[i] = squote_tab.end[squote_i] - 2;
+			word_tab->end[i] = squote_tab.end[squote_i] - 1;
 			word_can = squote_tab.end[squote_i];
 		}
 		else if (dquote_i >= 0)
 		{
-			word_tab->end[i] = dquote_tab.end[dquote_i] - 2;
+			word_tab->end[i] = dquote_tab.end[dquote_i] - 1;
 			word_can = dquote_tab.end[dquote_i];
 		}
 		else
@@ -110,7 +110,7 @@ ssize_t	locate_words(char *args, t_mini *msh)
 			perror("Error allocating word pointer table");
 			return (-1);
 		}
-		search_word_candidate(msh->word_tab, *msh->squote_tab,
+		search_word_candidates(msh->word_tab, *msh->squote_tab,
 			*msh->dquote_tab);
 	}
 	if (msh->word_tab->count < 0)

@@ -14,25 +14,81 @@
 
 int	g_sig;
 
+static char	*getlastdir(void)
+{
+	char *last_dir;
+	char *pwd;
+
+	pwd = getenv("PWD");
+	last_dir = ft_strrchr(pwd, '/');
+	return (last_dir + (last_dir != ft_strlast(pwd)));
+}
+
+// TODO: Read hostname by executing hostname or uname -n
+// and redirecting its output to a string
+// TODO: Don't put whole PWD, just the current dir.
+static char	*assemble_prompt(char *prompt)
+{
+	size_t	len;
+	char	*prompt_parts[8];
+	size_t	i;
+
+	prompt_parts[0] = "[";
+	prompt_parts[1] = getenv("USER");
+	prompt_parts[2] = "@";
+	prompt_parts[3] = "hostname";
+	prompt_parts[4] = " ";
+	prompt_parts[5] = getlastdir();
+	prompt_parts[6] = "]$ ";
+	prompt_parts[7] = 0;
+	len = 0;
+	i = 0;
+	while (prompt_parts[i])
+		len += ft_strlen(prompt_parts[i++]);
+	prompt = ft_calloc(len + 1, sizeof(char));
+	if (!prompt)
+		return (NULL);
+	i = 0;
+	while (prompt_parts[i])
+		ft_strlcat(prompt, prompt_parts[i++], len + 1);
+	return (prompt);
+}
+
 // TODO: Read on rl_done global var
-static char	*read_input(char *args)
+static char	*read_input(char *args, char *prompt)
 {
 	extern int	rl_done;
 
+	if (args)
+	{
+		free(args);
+		args = NULL;
+	}
 	while (!args)
-		args = readline("minishell > ");
-	add_history(args);
+	{
+		if (prompt)
+		{
+			free(prompt);
+			prompt = NULL;
+		}
+		prompt = assemble_prompt(prompt);
+		args = readline(prompt);
+	}
+	if (args && *args)
+		add_history(args);
 	return (args);
 }
 
 static void	mini_loop(t_mini *msh)
 {
 	char	*args;
+	char	*prompt;
 
 	args = NULL;
+	prompt = NULL;
 	while (1)
 	{
-		args = read_input(args);
+		args = read_input(args, prompt);
 		args = expander(args, msh->squote_tab, msh->dquote_tab, msh->var_tab);
 		args = lexer(args, msh);
 		// TODO: Parser
@@ -40,9 +96,6 @@ static void	mini_loop(t_mini *msh)
 		// TODO: Exec
 		// minishell->exit_code = exec_input(minishell);
 		printf("%s\n", args);
-		if (args)
-			free(args);
-		args = NULL;
 		// TODO: Free allocated memory in pointer tables
 	}
 }

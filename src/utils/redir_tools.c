@@ -26,7 +26,7 @@ ssize_t is_redir(char *redir)
 	len = 0;
 	if (redir_char(c))
 	{
-		max_len = 2 - c == '|';
+		max_len = 2 - (c == '|');
 		while (len < max_len && redir[len] == c)
 			len++;
 	}

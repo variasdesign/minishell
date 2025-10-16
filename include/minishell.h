@@ -63,6 +63,7 @@ typedef struct s_mini
 extern int	g_sig;
 
 char		**split_vars(t_ptr_tab *var_tab);
+t_ptr_tab	*search_quotes_candidates(t_ptr_tab *quote_tab, char q);
 char		*expander(char *args, t_ptr_tab *squote_tab,
 				t_ptr_tab *dquote_tab, t_ptr_tab *var_tab);
 char		*lexer(char *args, t_mini *msh);

@@ -18,8 +18,8 @@
 // and (if I'm not mistaken) there should be more words than redirs.
 char	*lexer(char *args, t_mini *msh)
 {
-	locate_quotes(args, msh->squote_tab, '\'');
-	locate_quotes(args, msh->dquote_tab, '\"');
+	search_quotes_candidates(msh->squote_tab, '\'');
+	search_quotes_candidates(msh->dquote_tab, '\"');
 	locate_redirs(args, msh);
 	locate_words(args, msh);
 	return (args);

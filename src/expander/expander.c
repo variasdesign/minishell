@@ -14,10 +14,11 @@
 
 // Count the length of the split arguments with expanded vars, then allocate and
 // concatenate the split arguments into a single string.
-static char	*reassemble_args(char *args, char **split_args)
+static char	*reassemble_args(char **split_args)
 {
-	int	i;
-	int	new_len;
+	int		i;
+	int		new_len;
+	char	*args;
 
 	new_len = 0;
 	i = 0;
@@ -52,11 +53,11 @@ char	*expander(char *args, t_ptr_tab *squote_tab,
 		return (NULL);
 	if (var_tab->count > 0)
 	{
-		args = reassemble_args(args, split_vars(var_tab));
+		args = reassemble_args(split_vars(var_tab));
 		free((void *)orig);
+		squote_tab->orig = args;
+		dquote_tab->orig = args;
 	}
-	squote_tab = ft_tabfree(&squote_tab);
-	dquote_tab = ft_tabfree(&dquote_tab);
 	var_tab = ft_tabfree(&var_tab);
 	return (args);
 }

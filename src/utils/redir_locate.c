@@ -75,7 +75,7 @@ static char	*insert_redir_into_tab(char *redir_can, t_ptr_tab *redir_tab,
 	return (redir_strchr(redir_can + redir_len));
 }
 
-static void	search_redir_candidate(t_ptr_tab *redir_tab, t_ptr_tab squote_tab,
+static void	search_redir_candidates(t_ptr_tab *redir_tab, t_ptr_tab squote_tab,
 									t_ptr_tab dquote_tab)
 {
 	ssize_t	squote_i;
@@ -120,7 +120,7 @@ ssize_t	locate_redirs(char *args, t_mini *msh)
 			perror("Error allocating redirection pointer table");
 			return (-1);
 		}
-		search_redir_candidate(msh->redir_tab, *msh->squote_tab,
+		search_redir_candidates(msh->redir_tab, *msh->squote_tab,
 			*msh->dquote_tab);
 	}
 	if (msh->redir_tab->count < 0)
