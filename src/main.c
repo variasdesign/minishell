@@ -83,6 +83,7 @@ static void	mini_loop(t_mini *msh)
 {
 	char	*args;
 	char	*prompt;
+	t_list	*token_list;
 
 	args = NULL;
 	prompt = NULL;
@@ -90,9 +91,8 @@ static void	mini_loop(t_mini *msh)
 	{
 		args = read_input(args, prompt);
 		args = expander(args, msh->squote_tab, msh->dquote_tab, msh->var_tab);
-		args = lexer(args, msh);
-		// TODO: Parser
-		// args = parser(args, msh);
+		token_list = lexer(args, msh);
+		msh->first = parser(token_list);
 		// TODO: Exec
 		// minishell->exit_code = exec_input(minishell);
 		printf("%s\n", args);

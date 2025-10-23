@@ -1,0 +1,5 @@
+display redir_i
+display word_i
+display (char *)redir_tab->start[redir_i]
+display (char *)word_tab->start[word_i]
+display *(t_token *)curr_token->content

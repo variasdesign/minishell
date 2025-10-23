@@ -17,11 +17,11 @@ int	redir_char(char c)
 	return (c == '<' || c == '>' || c == '|');
 }
 
-ssize_t is_redir(char *redir)
+ssize_t	is_redir(char *redir)
 {
 	const char	c = *redir;
-    size_t		len;
-    size_t		max_len;
+	size_t		len;
+	size_t		max_len;
 
 	len = 0;
 	if (redir_char(c))

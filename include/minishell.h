@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/10 13:15:46 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/10/23 17:54:36 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,18 +21,26 @@
 
 typedef enum e_token_type
 {
+	TOKEN_NULL,
 	TOKEN_WORD,
 	TOKEN_PIPE,
 	TOKEN_REDIR_IN,
 	TOKEN_REDIR_OUT,
 	TOKEN_REDIR_APPEND,
 	TOKEN_REDIR_HEREDOC
-} t_token_type;
+}	t_token_type;
+
+typedef struct s_token
+{
+	t_token_type	type;
+	char			*start;
+	char			*end;
+}	t_token;
 
 typedef struct s_redir
 {
-	int		redir_type;
-	char	*file;
+	t_token_type	redir_type;
+	char			*file;
 }	t_redir;
 
 typedef struct s_cmd
@@ -63,23 +71,22 @@ typedef struct s_mini
 extern int	g_sig;
 
 char		**split_vars(t_ptr_tab *var_tab);
-t_ptr_tab	*search_quotes_candidates(t_ptr_tab *quote_tab, char q);
 char		*expander(char *args, t_ptr_tab *squote_tab,
 				t_ptr_tab *dquote_tab, t_ptr_tab *var_tab);
-char		*lexer(char *args, t_mini *msh);
+int			exec_input(t_mini *msh);
+t_cmd		*parser(t_list *token_list);
 int			quote_char(char c);
 int			redir_char(char c);
 int			redir_start(char *str);
-int			exec_input(t_mini *msh);
 ssize_t		is_redir(char *redir);
 ssize_t		locate_quotes(char *args, t_ptr_tab *quote_tab, char q);
-ssize_t		locate_vars(char *args, t_ptr_tab *var_tab,
-				t_ptr_tab squote_tab);
 ssize_t		locate_redirs(char *args, t_mini *msh);
+ssize_t		locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab);
 ssize_t		locate_words(char *args, t_mini *msh);
-ssize_t		validate_quotes(t_ptr_tab *squote_tab,
-				t_ptr_tab *dquote_tab);
+ssize_t		validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab);
+t_list		*lexer(char *args, t_mini *msh);
 t_mini		*allocate_minishell(void);
+t_ptr_tab	*search_quotes_candidates(t_ptr_tab *quote_tab, char q);
 void		catch_int(int sig_num);
 void		catch_suspend(int sig_num);
 

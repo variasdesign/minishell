@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 20:22:47 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/11 16:44:42 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/10/23 18:00:59 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,8 @@ t_ptr_tab	*search_quotes_candidates(t_ptr_tab *quote_tab, char q)
 	ssize_t	i;
 
 	i = 0;
-	quote_tab->start[i] = ft_strchr(quote_tab->orig, q);
+	if (quote_tab->count > 0)
+		quote_tab->start[i] = ft_strchr(quote_tab->orig, q);
 	while (i < quote_tab->count && quote_tab->start[i])
 	{
 		quote_tab->end[i] = ft_strchr(quote_tab->start[i] + 1, q);
