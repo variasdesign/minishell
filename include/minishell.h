@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/23 17:54:36 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/24 18:18:14 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ typedef struct s_cmd
 	int				pipe_in;
 	int				pipe_out;
 	char			*heredoc_fd;
-	struct s_cmd	*next;
 }	t_cmd;
 
 # define TABLE_NUM 5
@@ -60,7 +59,6 @@ typedef struct s_mini
 	char		*cwd;
 	char		*path;
 	int			exit_code;
-	t_cmd		*first;
 	t_ptr_tab	*redir_tab;
 	t_ptr_tab	*squote_tab;
 	t_ptr_tab	*dquote_tab;
@@ -74,7 +72,6 @@ char		**split_vars(t_ptr_tab *var_tab);
 char		*expander(char *args, t_ptr_tab *squote_tab,
 				t_ptr_tab *dquote_tab, t_ptr_tab *var_tab);
 int			exec_input(t_mini *msh);
-t_cmd		*parser(t_list *token_list);
 int			quote_char(char c);
 int			redir_char(char c);
 int			redir_start(char *str);
@@ -84,8 +81,11 @@ ssize_t		locate_redirs(char *args, t_mini *msh);
 ssize_t		locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab);
 ssize_t		locate_words(char *args, t_mini *msh);
 ssize_t		validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab);
+t_bool		validate_token_list(t_list token_list);
 t_list		*lexer(char *args, t_mini *msh);
+t_list		*parser(t_list *token_list);
 t_mini		*allocate_minishell(void);
+t_node	*find_token_node(t_list *list, t_node *offset, t_token_type type);
 t_ptr_tab	*search_quotes_candidates(t_ptr_tab *quote_tab, char q);
 void		catch_int(int sig_num);
 void		catch_suspend(int sig_num);
