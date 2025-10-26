@@ -7,7 +7,7 @@ Most of the prompt processing deals with string classification and manipulation.
 - Preprocessing
 - Expander
 - Lexer
-- Parser.
+- Parser
 
 ### Preprocessing
 - Quotes have to be validated. That is, we naively count all present quotes, store in pointer tables and evaluate if they're valid quotes. An example of needed validation is interleaved or nested quotes: '"$USER'" "'$USER"' "'$USER'" '"$USER"'. This string contains valid quoting, but since some of them are inside other quote range, they are taken as literal and thus must not be interpreted.
@@ -23,3 +23,44 @@ Most of the prompt processing deals with string classification and manipulation.
 
 ### Lexer
 - The lexer does categorization (also called tokenization) of arguments, taking into account special characters involved in process piping or redirections. Considering that double quotes escape everything but variables, I think double quotes should be handled by the lexer, since variables will be expanded by the expander.
+- The lexer generates a linked token list, with the following struct per node:
+	- Token type
+	- Start and end of token (char *)
+
+### Parser
+- The parser receives the token list from the lexer. There are two approaches to parsing the token list:
+	- AST: More involved and complex, but needed for bonus.
+	- Plain-old parsing: If bonus is not needed, prompt can be processed from left to right:
+		- Redirections:
+			- Input file (`< file`), output file by replacement (`> file`) and output file by appending (`>> file`).
+				- Files for input redirection must exist.
+				- Files for output redirection shall not exist, but must be created if they don't.
+					- Files already existing but used with `>` will be truncated with `O_TRUNC`.
+					- Files already existing but used with `>>` will be appended with `O_APPEND`.
+			- There can be any number of redirections of each type, but only the rightmost one will be taken into account.
+			- Redirections must be followed by a word.
+			- Both output tokens (`> and >>`) count as one type. That is, if `>> file` is specified first, followed by `> file`, `file` will be closed and opened again with `O_TRUNC`. Doesn't matter if filenames are different, only the last specified input or output file descriptor is taken into account.
+		- Pipes:
+			- Output of command becomes input of next command (`cmd1 | cmd2`).
+			- Pipes must be followed and preceded by a word. That also means that the prompt can't start or end with a pipe.
+		- Heredoc:
+			- Input is taken from the prompt itself, pressing newline (⏎) no longer sends the prompt. Instead, a delimiter is specified and more lines can be fed to the input until the delimiter is found **solely** in a line (<< DELIMITER).
+			-	```
+				cat << EOF
+				this is
+				some multine input!
+				this line won't stop heredoc EOF
+				but the following one will:
+				EOF
+				```
+
+- After validating and parsing the token list, a command linked list is assembled, containing the following:
+	- An 2D char array containing the command and its arguments.
+	- A redirection linked list with its node containing the redirection type and the filename.
+	- A input file descriptor.
+	- A output file descriptor.
+	- A heredoc filename.
+
+## Execution
+
+### Structure
