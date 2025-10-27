@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+//TODO: Segregate in different headers
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
@@ -45,11 +46,10 @@ typedef struct s_redir
 
 typedef struct s_cmd
 {
-	char			**args;
-	t_redir			*redirections;
-	int				pipe_in;
-	int				pipe_out;
-	char			*heredoc_fd;
+	char	**args;
+	t_list	*redir_list;
+	int		in;
+	int		out;
 }	t_cmd;
 
 # define TABLE_NUM 5
@@ -59,6 +59,7 @@ typedef struct s_mini
 	char		*cwd;
 	char		*path;
 	int			exit_code;
+	char		*heredoc_fd;
 	t_ptr_tab	*redir_tab;
 	t_ptr_tab	*squote_tab;
 	t_ptr_tab	*dquote_tab;
@@ -68,26 +69,28 @@ typedef struct s_mini
 
 extern int	g_sig;
 
-char		**split_vars(t_ptr_tab *var_tab);
-char		*expander(char *args, t_ptr_tab *squote_tab,
-				t_ptr_tab *dquote_tab, t_ptr_tab *var_tab);
-int			exec_input(t_mini *msh);
-int			quote_char(char c);
-int			redir_char(char c);
-int			redir_start(char *str);
-ssize_t		is_redir(char *redir);
-ssize_t		locate_quotes(char *args, t_ptr_tab *quote_tab, char q);
-ssize_t		locate_redirs(char *args, t_mini *msh);
-ssize_t		locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab);
-ssize_t		locate_words(char *args, t_mini *msh);
-ssize_t		validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab);
-t_bool		validate_token_list(t_list token_list);
-t_list		*lexer(char *args, t_mini *msh);
-t_list		*parser(t_list *token_list);
-t_mini		*allocate_minishell(void);
-t_node	*find_token_node(t_list *list, t_node *offset, t_token_type type);
-t_ptr_tab	*search_quotes_candidates(t_ptr_tab *quote_tab, char q);
-void		catch_int(int sig_num);
-void		catch_suspend(int sig_num);
+char			**split_vars(t_ptr_tab *var_tab);
+char			*expander(char *args, t_ptr_tab *squote_tab,
+					t_ptr_tab *dquote_tab, t_ptr_tab *var_tab);
+int				exec_input(t_mini *msh);
+int				quote_char(char c);
+int				redir_char(char c);
+int				redir_start(char *str);
+ssize_t			is_redir(char *redir);
+t_bool			is_redir_type(t_token_type type);
+ssize_t			locate_quotes(char *args, t_ptr_tab *quote_tab, char q);
+ssize_t			locate_redirs(char *args, t_mini *msh);
+ssize_t			locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab);
+ssize_t			locate_words(char *args, t_mini *msh);
+ssize_t			validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab);
+t_bool			validate_token_list(t_list token_list);
+t_list			*lexer(char *args, t_mini *msh);
+t_list			*parser(t_list *token_list);
+t_mini			*allocate_minishell(void);
+t_node			*find_token_node(t_node *offset, t_token_type type);
+t_token_type	get_token_type(t_node *token);
+t_ptr_tab		*search_quotes_candidates(t_ptr_tab *quote_tab, char q);
+void			catch_int(int sig_num);
+void			catch_suspend(int sig_num);
 
 #endif

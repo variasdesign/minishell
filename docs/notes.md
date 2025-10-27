@@ -26,6 +26,7 @@ Most of the prompt processing deals with string classification and manipulation.
 - The lexer generates a linked token list, with the following struct per node:
 	- Token type
 	- Start and end of token (char *)
+- Words are classified by whitespace, but quoting will agglomerate words, even if they are separated by whitespace (except newline).
 
 ### Parser
 - The parser receives the token list from the lexer. There are two approaches to parsing the token list:
@@ -38,8 +39,9 @@ Most of the prompt processing deals with string classification and manipulation.
 					- Files already existing but used with `>` will be truncated with `O_TRUNC`.
 					- Files already existing but used with `>>` will be appended with `O_APPEND`.
 			- There can be any number of redirections of each type, but only the rightmost one will be taken into account.
-			- Redirections must be followed by a word.
+			- Redirections must be followed by a word. The word is interpreted as the filename in the redirection, and after being used as argument, it's removed from the token list.
 			- Both output tokens (`> and >>`) count as one type. That is, if `>> file` is specified first, followed by `> file`, `file` will be closed and opened again with `O_TRUNC`. Doesn't matter if filenames are different, only the last specified input or output file descriptor is taken into account.
+				- https://stackoverflow.com/questions/20081653/two-redirection-operators-in-one-command#20081848
 		- Pipes:
 			- Output of command becomes input of next command (`cmd1 | cmd2`).
 			- Pipes must be followed and preceded by a word. That also means that the prompt can't start or end with a pipe.
@@ -53,6 +55,10 @@ Most of the prompt processing deals with string classification and manipulation.
 				but the following one will:
 				EOF
 				```
+		- Words:
+			- Words are processed as is, with no special consideration. Words used as arguments for redirections will be removed before words are parsed, and thus shouldn't pose an issue.
+			- Words are to be classified in groups, being the lead word the command name, and successive words its arguments.
+				- Groups of words are separated by pipes or newline, but not redirections.
 
 - After validating and parsing the token list, a command linked list is assembled, containing the following:
 	- An 2D char array containing the command and its arguments.

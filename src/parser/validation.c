@@ -15,44 +15,50 @@
 static t_bool	validate_pipes(t_list token_list)
 {
 	t_node	*curr_node;
-	t_token	*next_token;
-	t_token	*curr_token;
-	
-	curr_token = token_list.tail->content;
-	if (curr_token->type == TOKEN_PIPE)
-		return (f);
-	curr_token = token_list.head->content;
-	if (curr_token->type == TOKEN_PIPE)
-		return (f);
-	curr_node = token_list.head;
+
+	curr_node = find_token_node(token_list.head, TOKEN_PIPE);
 	while (curr_node)
 	{
-		curr_token = (t_token *)curr_node->content;
-		if (curr_token->type == TOKEN_PIPE)
+		if (get_token_type(curr_node) == TOKEN_PIPE)
 		{
-			next_token = (t_token *)curr_node->next->content;
-			if (next_token->type != TOKEN_WORD)
+			if (curr_node->prev && curr_node->next)
+			{
+				if (get_token_type(curr_node->prev) != TOKEN_WORD)
+					return (f);
+				if (get_token_type(curr_node->next) != TOKEN_WORD)
+					return (f);
+			}
+			else
 				return (f);
 		}
-		curr_node = curr_node->next;
+		curr_node = find_token_node(curr_node->next, TOKEN_PIPE);
 	}
 	return (t);
+}
+
+t_bool	is_redir_type(t_token_type type)
+{
+	if (type == TOKEN_REDIR_APPEND || type == TOKEN_REDIR_IN
+		|| type == TOKEN_REDIR_OUT || type == TOKEN_REDIR_HEREDOC)
+		return (t);
+	return (f);
 }
 
 static t_bool	validate_redirs(t_list token_list)
 {
 	t_node	*curr_node;
-	t_token	*next_token;
-	t_token	*curr_token;
-	
+
 	curr_node = token_list.head;
 	while (curr_node)
 	{
-		curr_token = curr_node->content;
-		if (curr_token->type == TOKEN_PIPE)
+		if (is_redir_type(get_token_type(curr_node)))
 		{
-			next_token = curr_node->next->content;
-			if (next_token->type != TOKEN_WORD)
+			if (curr_node->next)
+			{
+				if (get_token_type(curr_node->next) != TOKEN_WORD)
+					return (f);
+			}
+			else
 				return (f);
 		}
 		curr_node = curr_node->next;
