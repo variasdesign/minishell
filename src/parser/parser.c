@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 16:48:09 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/24 18:19:34 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/27 18:58:58 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,14 +29,23 @@ static t_node	*create_cmd(t_node *token_node)
 {
 	t_cmd			cmd;
 	t_node			cmd_node;
+	t_node			*current;
 	size_t			words;
 
 	cmd.in = 0;
 	cmd.out = 1;
 	if (token_node)
 	{
-		words = 1;
-		token_node = token_node->next;
+		words = 0;
+		current = token_node;
+		while (current && get_token_type(current) == TOKEN_WORD)
+		{
+			words++;
+			current = current->next;
+		}
+		cmd.args = malloc((words + 1) * sizeof(char *));
+		if (!cmd.args)
+			return (NULL);
 	}
 	else
 		 return (NULL);
