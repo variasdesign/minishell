@@ -6,63 +6,101 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 16:48:09 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/27 18:58:58 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/10/28 18:58:42 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_token_type	get_token_type(t_node *node)
+static size_t	count_words(t_node *cmd_node)
 {
-	t_token *token;
+	size_t	words;
 
-	if (node)
+	words = 0;
+	while (cmd_node && get_token_type(cmd_node) == TOKEN_WORD)
 	{
-		token = node->content;
-		return (token->type);
+		words++;
+		cmd_node = cmd_node->next;
 	}
-	else
-		return (TOKEN_NULL);
+	return (words);
 }
 
-static t_node	*create_cmd(t_node *token_node)
+static void	add_redir_node(t_list *redir_list, t_list *token_list,
+						t_token_type type, t_redir *redir)
 {
-	t_cmd			cmd;
-	t_node			cmd_node;
-	t_node			*current;
-	size_t			words;
+	t_node	*redir_node;
 
-	cmd.in = 0;
-	cmd.out = 1;
+	redir_node = find_token_node(token_list->tail, type, t);
+	if (redir_node)
+	{
+		redir->type = get_token_type(redir_node);
+		redir->file = token_content(redir_node->next);
+		ft_lstdel_node(redir_node->next, free);
+		redir_node = ft_lstnew_node(redir_list->data_size, &redir);
+		ft_lstadd_back(redir_list, redir_node);
+		free(redir->file);
+	}
+}
+
+// FIX: This wouldn't work because right now we don't have any way to select
+// the first word node of a word group.
+static t_list	*init_redir_list(t_list *token_list, t_node *token_node)
+{
+	t_list	*redir_list;
+	t_redir	redir;
+
+	redir_list = ft_lstnew_list(sizeof(t_redir));
+	if (token_node == find_token_node(token_list->head, TOKEN_WORD, f))
+		add_redir_node(redir_list, token_list, TOKEN_REDIR_IN, &redir);
+	if (token_node == find_token_node(token_list->tail, TOKEN_WORD, t))
+		add_redir_node(redir_list, token_list, TOKEN_REDIR_OUT, &redir);
+	if (redir_list->count < 1)
+	{
+		ft_lstdel_list(redir_list, free);
+		return (NULL);
+	}
+	return (redir_list);
+}
+
+static char	**insert_words_into_args(t_node *token_node, size_t word_count)
+{
+	char	**args;
+	size_t	i;
+
+	args = ft_calloc(word_count + 1, sizeof(char *));
+	if (!args)
+		return (NULL);
+	i = 0;
+	while (i < word_count && token_node)
+	{
+		args[i++] = token_content(token_node);
+		token_node = find_token_node(token_node->next, TOKEN_WORD, f);
+	}
+	return (args);
+}
+
+static t_node	*create_cmd(t_list *token_list, t_node *token_node)
+{
+	t_cmd	cmd;
+	t_node	*cmd_node;
+
 	if (token_node)
 	{
-		words = 0;
-		current = token_node;
-		while (current && get_token_type(current) == TOKEN_WORD)
-		{
-			words++;
-			current = current->next;
-		}
-		cmd.args = malloc((words + 1) * sizeof(char *));
+		cmd.redir_list = init_redir_list(token_list, token_node);
+		cmd.pipe_in = token_node != find_token_node(token_list->head,
+				TOKEN_WORD, f);
+		cmd.pipe_out = token_node != find_token_node(token_list->tail,
+				TOKEN_WORD, t);
+		cmd.args = insert_words_into_args(token_node,
+				count_words(token_node));
 		if (!cmd.args)
 			return (NULL);
+		cmd_node = ft_lstnew_node(sizeof(t_cmd), &cmd);
+		ft_freematrix((void **)cmd.args);
+		return (cmd_node);
 	}
 	else
-		 return (NULL);
-}
-
-t_node	*find_token_node(t_node *offset, t_token_type type)
-{
-	t_node	*node;
-
-	node = offset;
-	while (node)
-	{
-		if (get_token_type(node) == type)
-			return (node);
-		node = node->next;
-	}
-	return (NULL);
+		return (NULL);
 }
 
 static size_t	count_word_groups(t_list token_list)
@@ -71,13 +109,12 @@ static size_t	count_word_groups(t_list token_list)
 	size_t	count;
 
 	count = 0;
-	curr_node = find_token_node(token_list.head, TOKEN_WORD);
+	curr_node = find_token_node(token_list.head, TOKEN_WORD, f);
 	while (curr_node)
 	{
-		while (curr_node && get_token_type(curr_node) != TOKEN_PIPE)
-			curr_node = curr_node->next;
 		count++;
-		curr_node = find_token_node(curr_node, TOKEN_WORD);
+		curr_node = find_token_node(curr_node, TOKEN_PIPE, f);
+		curr_node = find_token_node(curr_node, TOKEN_WORD, f);
 	}
 	return (count);
 }
@@ -100,12 +137,13 @@ t_list	*parser(t_list *token_list)
 	}
 	cmd_list = ft_lstnew_list(sizeof(t_cmd));
 	word_groups = count_word_groups(*token_list);
-	token_node = find_token_node(token_list->head, TOKEN_WORD);
+	token_node = find_token_node(token_list->head, TOKEN_WORD, f);
 	while (word_groups > 0 && token_node)
 	{
-		cmd_node = create_cmd(token_node);
+		cmd_node = create_cmd(token_list, token_node);
 		ft_lstadd_back(cmd_list, cmd_node);
-		token_node = find_token_node(token_node->next, TOKEN_WORD);
+		while (get_token_type(token_node) == TOKEN_WORD)
+			token_node = token_node->next;
 		word_groups--;
 	}
 	ft_lstdel_list(token_list, free);

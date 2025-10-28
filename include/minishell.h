@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/24 18:18:14 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/28 18:32:06 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ typedef struct s_token
 
 typedef struct s_redir
 {
-	t_token_type	redir_type;
+	t_token_type	type;
 	char			*file;
 }	t_redir;
 
@@ -48,8 +48,8 @@ typedef struct s_cmd
 {
 	char	**args;
 	t_list	*redir_list;
-	int		in;
-	int		out;
+	t_bool	pipe_in;
+	t_bool	pipe_out;
 }	t_cmd;
 
 # define TABLE_NUM 5
@@ -60,6 +60,7 @@ typedef struct s_mini
 	char		*path;
 	int			exit_code;
 	char		*heredoc_fd;
+	t_list		*cmd_list;
 	t_ptr_tab	*redir_tab;
 	t_ptr_tab	*squote_tab;
 	t_ptr_tab	*dquote_tab;
@@ -72,6 +73,7 @@ extern int	g_sig;
 char			**split_vars(t_ptr_tab *var_tab);
 char			*expander(char *args, t_ptr_tab *squote_tab,
 					t_ptr_tab *dquote_tab, t_ptr_tab *var_tab);
+char			*token_content(t_node *node);
 int				exec_input(t_mini *msh);
 int				quote_char(char c);
 int				redir_char(char c);
@@ -80,14 +82,15 @@ ssize_t			is_redir(char *redir);
 t_bool			is_redir_type(t_token_type type);
 ssize_t			locate_quotes(char *args, t_ptr_tab *quote_tab, char q);
 ssize_t			locate_redirs(char *args, t_mini *msh);
-ssize_t			locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab);
+ssize_t			locate_vars(char *args, t_ptr_tab *var_tab,
+					t_ptr_tab squote_tab);
 ssize_t			locate_words(char *args, t_mini *msh);
 ssize_t			validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab);
 t_bool			validate_token_list(t_list token_list);
 t_list			*lexer(char *args, t_mini *msh);
 t_list			*parser(t_list *token_list);
 t_mini			*allocate_minishell(void);
-t_node			*find_token_node(t_node *offset, t_token_type type);
+t_node			*find_token_node(t_node *offset, t_token_type type, t_bool last);
 t_token_type	get_token_type(t_node *token);
 t_ptr_tab		*search_quotes_candidates(t_ptr_tab *quote_tab, char q);
 void			catch_int(int sig_num);

@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/11 18:21:59 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/10/28 18:32:14 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,7 @@ static void	mini_loop(t_mini *msh)
 		args = read_input(args, prompt);
 		args = expander(args, msh->squote_tab, msh->dquote_tab, msh->var_tab);
 		token_list = lexer(args, msh);
-		msh->first = parser(token_list);
+		msh->cmd_list = parser(token_list);
 		// TODO: Exec
 		// minishell->exit_code = exec_input(minishell);
 		printf("%s\n", args);

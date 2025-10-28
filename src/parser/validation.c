@@ -16,7 +16,7 @@ static t_bool	validate_pipes(t_list token_list)
 {
 	t_node	*curr_node;
 
-	curr_node = find_token_node(token_list.head, TOKEN_PIPE);
+	curr_node = find_token_node(token_list.head, TOKEN_PIPE, f);
 	while (curr_node)
 	{
 		if (get_token_type(curr_node) == TOKEN_PIPE)
@@ -31,7 +31,7 @@ static t_bool	validate_pipes(t_list token_list)
 			else
 				return (f);
 		}
-		curr_node = find_token_node(curr_node->next, TOKEN_PIPE);
+		curr_node = find_token_node(curr_node->next, TOKEN_PIPE, f);
 	}
 	return (t);
 }

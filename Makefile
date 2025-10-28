@@ -38,6 +38,7 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_LEX)/,	\
 
 BASE_SRCS		+= $(addprefix $(SRC_DIR_PAR)/,	\
 				  	parser.c					\
+				  	validation.c					\
 					)
 
 BASE_SRCS		+= $(addprefix $(SRC_DIR_SIG)/,	\
@@ -50,6 +51,7 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_UT)/,	\
 					quote_validation.c			\
 					redir_locate.c				\
 					redir_tools.c				\
+					token_tools.c				\
 					var_tools.c					\
 					word_locate.c				\
 					)
