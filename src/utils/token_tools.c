@@ -12,6 +12,34 @@
 
 #include "minishell.h"
 
+size_t	count_word_groups(t_list token_list)
+{
+	t_node	*curr_node;
+	size_t	count;
+
+	count = 0;
+	curr_node = find_token_node(token_list.head, TOKEN_WORD_CMD, f);
+	while (curr_node)
+	{
+		count++;
+		curr_node = find_token_node(curr_node, TOKEN_WORD_CMD, f);
+	}
+	return (count);
+}
+
+size_t	count_word_tokens(t_node *cmd_node)
+{
+	size_t	words;
+
+	words = 0;
+	while (cmd_node && is_word_type(get_token_type(cmd_node)))
+	{
+		words++;
+		cmd_node = cmd_node->next;
+	}
+	return (words);
+}
+
 t_token_type	get_token_type(t_node *node)
 {
 	t_token	*token;

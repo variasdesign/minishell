@@ -12,6 +12,21 @@
 
 #include "minishell.h"
 
+t_bool	is_redir_type(t_token_type type)
+{
+	if (type == TOKEN_REDIR_APPEND || type == TOKEN_REDIR_IN
+		|| type == TOKEN_REDIR_OUT || type == TOKEN_REDIR_HEREDOC)
+		return (t);
+	return (f);
+}
+
+t_bool	is_word_type(t_token_type type)
+{
+	if (type == TOKEN_WORD_CMD || type == TOKEN_WORD_ARG)
+		return (t);
+	return (f);
+}
+
 static t_bool	validate_pipes(t_list token_list)
 {
 	t_node	*curr_node;
@@ -23,9 +38,8 @@ static t_bool	validate_pipes(t_list token_list)
 		{
 			if (curr_node->prev && curr_node->next)
 			{
-				if (get_token_type(curr_node->prev) != TOKEN_WORD)
-					return (f);
-				if (get_token_type(curr_node->next) != TOKEN_WORD)
+				if (!(is_word_type(get_token_type(curr_node->prev)))
+				|| !(is_word_type(get_token_type(curr_node->next))))
 					return (f);
 			}
 			else
@@ -34,14 +48,6 @@ static t_bool	validate_pipes(t_list token_list)
 		curr_node = find_token_node(curr_node->next, TOKEN_PIPE, f);
 	}
 	return (t);
-}
-
-t_bool	is_redir_type(t_token_type type)
-{
-	if (type == TOKEN_REDIR_APPEND || type == TOKEN_REDIR_IN
-		|| type == TOKEN_REDIR_OUT || type == TOKEN_REDIR_HEREDOC)
-		return (t);
-	return (f);
 }
 
 static t_bool	validate_redirs(t_list token_list)
@@ -55,7 +61,7 @@ static t_bool	validate_redirs(t_list token_list)
 		{
 			if (curr_node->next)
 			{
-				if (get_token_type(curr_node->next) != TOKEN_WORD)
+				if (!(is_word_type(get_token_type(curr_node->next))))
 					return (f);
 			}
 			else
@@ -66,6 +72,8 @@ static t_bool	validate_redirs(t_list token_list)
 	return (t);
 }
 
+// TODO: Redir and word validation: Prompts can't start or end with a redir,
+// and (if I'm not mistaken) there should be more words than redirs.
 t_bool	validate_token_list(t_list token_list)
 {
 	if (!validate_pipes(token_list))

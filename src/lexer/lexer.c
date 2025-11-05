@@ -12,7 +12,16 @@
 
 #include "minishell.h"
 
-static t_token_type	find_token_type(char *start)
+static t_token_type	cmd_or_arg_word(t_token_type prev)
+{
+	if (is_redir_type(prev)
+		|| is_word_type(prev))
+		return (TOKEN_WORD_ARG);
+	else
+	 	return(TOKEN_WORD_CMD);
+}
+
+static t_token_type	find_token_type(char *start, t_token_type prev)
 {
 	const size_t	redir_len = is_redir(start);
 
@@ -37,14 +46,15 @@ static t_token_type	find_token_type(char *start)
 		else
 			return (TOKEN_NULL);
 	}
-	return (TOKEN_WORD);
+	return (cmd_or_arg_word(prev));
 }
 
-static t_node	*create_token(size_t data_size, t_ptr_tab *tab, size_t i)
+static t_node	*create_token(size_t data_size, t_ptr_tab *tab,
+							size_t i, t_token_type prev)
 {
 	t_token				tok;
 	t_node				*node;
-	const t_token_type	type = find_token_type(tab->start[i]);
+	const t_token_type	type = find_token_type(tab->start[i], prev);
 
 	tok.type = type;
 	tok.start = tab->start[i];
@@ -55,10 +65,11 @@ static t_node	*create_token(size_t data_size, t_ptr_tab *tab, size_t i)
 
 static t_list	*tokenize(t_ptr_tab *redir_tab, t_ptr_tab *word_tab)
 {
-	t_list	*tok_list;
-	t_node	*curr_token;
-	size_t	redir_i;
-	size_t	word_i;
+	t_list			*tok_list;
+	t_node			*curr_token;
+	t_token_type	prev_type;
+	size_t			redir_i;
+	size_t			word_i;
 
 	tok_list = ft_lstnew_list(sizeof(t_token));
 	if (!tok_list)
@@ -67,15 +78,13 @@ static t_list	*tokenize(t_ptr_tab *redir_tab, t_ptr_tab *word_tab)
 	word_i = 0;
 	while (redir_tab->start[redir_i] || word_tab->start[word_i])
 	{
-		if (redir_tab->start[redir_i]
-			&& (redir_tab->start[redir_i] < word_tab->start[word_i]
-				|| !word_tab->start[word_i]))
+		prev_type = get_token_type(tok_list->tail);
+		if (ft_tabcmp(redir_tab, word_tab, redir_i, word_i))
 			curr_token = create_token(tok_list->data_size,
-					redir_tab, redir_i++);
-		else if (word_tab->start[word_i]
-			&& (word_tab->start[word_i] < redir_tab->start[redir_i]
-				|| !redir_tab->start[redir_i]))
-			curr_token = create_token(tok_list->data_size, word_tab, word_i++);
+					redir_tab, redir_i++, prev_type);
+		else if (ft_tabcmp(word_tab, redir_tab, word_i, redir_i))
+			curr_token = create_token(tok_list->data_size,
+					word_tab, word_i++, prev_type);
 		ft_lstadd_back(tok_list, curr_token);
 	}
 	return (tok_list);

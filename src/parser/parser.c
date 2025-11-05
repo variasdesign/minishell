@@ -12,19 +12,6 @@
 
 #include "minishell.h"
 
-static size_t	count_words(t_node *cmd_node)
-{
-	size_t	words;
-
-	words = 0;
-	while (cmd_node && get_token_type(cmd_node) == TOKEN_WORD)
-	{
-		words++;
-		cmd_node = cmd_node->next;
-	}
-	return (words);
-}
-
 static void	add_redir_node(t_list *redir_list, t_list *token_list,
 						t_token_type type, t_redir *redir)
 {
@@ -36,23 +23,21 @@ static void	add_redir_node(t_list *redir_list, t_list *token_list,
 		redir->type = get_token_type(redir_node);
 		redir->file = token_content(redir_node->next);
 		ft_lstdel_node(redir_node->next, free);
-		redir_node = ft_lstnew_node(redir_list->data_size, &redir);
+		redir_node = ft_lstnew_node(redir_list->data_size, redir);
 		ft_lstadd_back(redir_list, redir_node);
 		free(redir->file);
 	}
 }
 
-// FIX: This wouldn't work because right now we don't have any way to select
-// the first word node of a word group.
 static t_list	*init_redir_list(t_list *token_list, t_node *token_node)
 {
 	t_list	*redir_list;
 	t_redir	redir;
 
 	redir_list = ft_lstnew_list(sizeof(t_redir));
-	if (token_node == find_token_node(token_list->head, TOKEN_WORD, f))
+	if (token_node == find_token_node(token_list->head, TOKEN_WORD_CMD, f))
 		add_redir_node(redir_list, token_list, TOKEN_REDIR_IN, &redir);
-	if (token_node == find_token_node(token_list->tail, TOKEN_WORD, t))
+	if (token_node == find_token_node(token_list->tail, TOKEN_WORD_CMD, t))
 		add_redir_node(redir_list, token_list, TOKEN_REDIR_OUT, &redir);
 	if (redir_list->count < 1)
 	{
@@ -74,7 +59,7 @@ static char	**insert_words_into_args(t_node *token_node, size_t word_count)
 	while (i < word_count && token_node)
 	{
 		args[i++] = token_content(token_node);
-		token_node = find_token_node(token_node->next, TOKEN_WORD, f);
+		token_node = find_token_node(token_node->next, TOKEN_WORD_ARG, f);
 	}
 	return (args);
 }
@@ -88,11 +73,11 @@ static t_node	*create_cmd(t_list *token_list, t_node *token_node)
 	{
 		cmd.redir_list = init_redir_list(token_list, token_node);
 		cmd.pipe_in = token_node != find_token_node(token_list->head,
-				TOKEN_WORD, f);
+				TOKEN_WORD_CMD, f);
 		cmd.pipe_out = token_node != find_token_node(token_list->tail,
-				TOKEN_WORD, t);
+				TOKEN_WORD_CMD, t);
 		cmd.args = insert_words_into_args(token_node,
-				count_words(token_node));
+				count_word_tokens(token_node));
 		if (!cmd.args)
 			return (NULL);
 		cmd_node = ft_lstnew_node(sizeof(t_cmd), &cmd);
@@ -103,25 +88,7 @@ static t_node	*create_cmd(t_list *token_list, t_node *token_node)
 		return (NULL);
 }
 
-static size_t	count_word_groups(t_list token_list)
-{
-	t_node	*curr_node;
-	size_t	count;
-
-	count = 0;
-	curr_node = find_token_node(token_list.head, TOKEN_WORD, f);
-	while (curr_node)
-	{
-		count++;
-		curr_node = find_token_node(curr_node, TOKEN_PIPE, f);
-		curr_node = find_token_node(curr_node, TOKEN_WORD, f);
-	}
-	return (count);
-}
-
-// TODO: Redir and word validation: Prompts can't start or end with a redir,
-// and (if I'm not mistaken) there should be more words than redirs.
-// TODO: Heredoc goes first before output and input redirs, even if it's last on prompt
+// TODO: Heredoc
 t_list	*parser(t_list *token_list)
 {
 	t_list	*cmd_list;
@@ -137,12 +104,12 @@ t_list	*parser(t_list *token_list)
 	}
 	cmd_list = ft_lstnew_list(sizeof(t_cmd));
 	word_groups = count_word_groups(*token_list);
-	token_node = find_token_node(token_list->head, TOKEN_WORD, f);
+	token_node = find_token_node(token_list->head, TOKEN_WORD_CMD, f);
 	while (word_groups > 0 && token_node)
 	{
 		cmd_node = create_cmd(token_list, token_node);
 		ft_lstadd_back(cmd_list, cmd_node);
-		while (get_token_type(token_node) == TOKEN_WORD)
+		while (get_token_type(token_node) == TOKEN_WORD_ARG)
 			token_node = token_node->next;
 		word_groups--;
 	}

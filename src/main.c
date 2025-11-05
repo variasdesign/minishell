@@ -93,6 +93,8 @@ static void	mini_loop(t_mini *msh)
 		args = expander(args, msh->squote_tab, msh->dquote_tab, msh->var_tab);
 		token_list = lexer(args, msh);
 		msh->cmd_list = parser(token_list);
+		if (!msh->cmd_list)
+			continue ;
 		// TODO: Exec
 		// minishell->exit_code = exec_input(minishell);
 		printf("%s\n", args);
@@ -100,6 +102,7 @@ static void	mini_loop(t_mini *msh)
 	}
 }
 
+// TODO: Norminette E V E R Y T H I N G
 int	main(int argc, char *argv[])
 {
 	t_mini	*msh;
