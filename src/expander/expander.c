@@ -58,6 +58,5 @@ char	*expander(char *args, t_ptr_tab *squote_tab,
 		squote_tab->orig = args;
 		dquote_tab->orig = args;
 	}
-	var_tab = ft_tabfree(&var_tab);
 	return (args);
 }

@@ -25,7 +25,6 @@ static void	add_redir_node(t_list *redir_list, t_list *token_list,
 		ft_lstdel_node(redir_node->next, free);
 		redir_node = ft_lstnew_node(redir_list->data_size, redir);
 		ft_lstadd_back(redir_list, redir_node);
-		free(redir->file);
 	}
 }
 
@@ -81,7 +80,6 @@ static t_node	*create_cmd(t_list *token_list, t_node *token_node)
 		if (!cmd.args)
 			return (NULL);
 		cmd_node = ft_lstnew_node(sizeof(t_cmd), &cmd);
-		ft_freematrix((void **)cmd.args);
 		return (cmd_node);
 	}
 	else
@@ -109,8 +107,7 @@ t_list	*parser(t_list *token_list)
 	{
 		cmd_node = create_cmd(token_list, token_node);
 		ft_lstadd_back(cmd_list, cmd_node);
-		while (get_token_type(token_node) == TOKEN_WORD_ARG)
-			token_node = token_node->next;
+		token_node = find_token_node(token_node->next, TOKEN_WORD_CMD, f);
 		word_groups--;
 	}
 	ft_lstdel_list(token_list, free);

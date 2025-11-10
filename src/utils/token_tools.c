@@ -22,7 +22,7 @@ size_t	count_word_groups(t_list token_list)
 	while (curr_node)
 	{
 		count++;
-		curr_node = find_token_node(curr_node, TOKEN_WORD_CMD, f);
+		curr_node = find_token_node(curr_node->next, TOKEN_WORD_CMD, f);
 	}
 	return (count);
 }
@@ -57,7 +57,7 @@ char	*token_content(t_node *node)
 {
 	const t_token	*token = node->content;
 	const char		*start = token->start;
-	const char		*end = token->start;
+	const char		*end = token->end;
 	const size_t	len = end - start;
 
 	return (ft_strndup(start, len));

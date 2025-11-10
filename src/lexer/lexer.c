@@ -98,10 +98,6 @@ t_list	*lexer(char *args, t_mini *msh)
 	search_quotes_candidates(msh->dquote_tab, '\"');
 	locate_redirs(args, msh);
 	locate_words(args, msh);
-	ft_tabfree(&msh->squote_tab);
-	ft_tabfree(&msh->dquote_tab);
 	token_list = tokenize(msh->redir_tab, msh->word_tab);
-	ft_tabfree(&msh->redir_tab);
-	ft_tabfree(&msh->word_tab);
 	return (token_list);
 }

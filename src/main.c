@@ -90,6 +90,7 @@ static void	mini_loop(t_mini *msh)
 	while (1)
 	{
 		args = read_input(args, prompt);
+		printf("%s\n", args);
 		args = expander(args, msh->squote_tab, msh->dquote_tab, msh->var_tab);
 		token_list = lexer(args, msh);
 		msh->cmd_list = parser(token_list);
@@ -97,7 +98,6 @@ static void	mini_loop(t_mini *msh)
 			continue ;
 		// TODO: Exec
 		// minishell->exit_code = exec_input(minishell);
-		printf("%s\n", args);
 		// TODO: Free allocated memory in pointer tables
 	}
 }
