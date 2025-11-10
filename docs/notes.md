@@ -59,6 +59,9 @@ Most of the prompt processing deals with string classification and manipulation.
 			- Words are processed as is, with no special consideration. Words used as arguments for redirections will be removed before words are parsed, and thus shouldn't pose an issue.
 			- Words are to be classified in groups, being the lead word the command name, and successive words its arguments.
 				- Groups of words are separated by pipes or newline, but not redirections.
+				- Further division on the word token classification can help with parsing commands or arguments:
+					- `TOKEN_WORD_CMD`
+					- `TOKEN_WORD_ARG`
 
 - After validating and parsing the token list, a command linked list is assembled, containing the following:
 	- An 2D char array containing the command and its arguments.
