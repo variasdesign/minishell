@@ -1,0 +1,2 @@
+display *(t_token *)token_node->content
+display *(t_cmd *)cmd_node->content
