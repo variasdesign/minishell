@@ -1,25 +1,14 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   signal.c                                           :+:      :+:    :+:   */
+/*   exec.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/04 21:39:52 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/17 19:09:13 by varias-c         ###   ########.fr       */
+/*   Created: 2025/11/17 19:09:19 by varias-c          #+#    #+#             */
+/*   Updated: 2025/11/17 19:09:26 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	catch_int(int sig_num)
-{
-	(void)sig_num;
-	return ;
-}
-
-void	catch_suspend(int sig_num)
-{
-	(void)sig_num;
-	return ;
-}

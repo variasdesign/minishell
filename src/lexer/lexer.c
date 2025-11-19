@@ -18,7 +18,7 @@ static t_token_type	cmd_or_arg_word(t_token_type prev)
 		|| is_word_type(prev))
 		return (TOKEN_WORD_ARG);
 	else
-	 	return(TOKEN_WORD_CMD);
+		return (TOKEN_WORD_CMD);
 }
 
 static t_token_type	find_token_type(char *start, t_token_type prev)

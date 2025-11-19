@@ -73,3 +73,26 @@ Most of the prompt processing deals with string classification and manipulation.
 ## Execution
 
 ### Structure
+
+- Exec receives a linked node list from parser containing at least one t_cmd. This struct contains information about the command to execute, a t_redir struct containing redir information (if any) and booleans as flags indicating if there's is any ingoing or outgoing pipe.
+- Exec iterates through this list, executing each command with its respective arguments by forking and then capturing its file descriptors to redirect input or output to or from the command.
+	- If the list contains a single element, that means that the user provided only a single command, and thus we only need to fork and execve.
+	- If the list contains more than one element, that means that the user provided multiple commands chained by pipes, and thus we have to fork, execute and pipe each command until the end of the list.
+
+### Pipex logic
+1. Pipex starts by checking arguments and its number, but minishell should take care of this beforehand.
+2. here_doc is checked by using strncmp and finding here_doc string in first argument. In the case of minishell, we should check if the << redirect is present and the parser should launch the here_doc logic.
+3. Next, checks for number of arguments and if there's extra arguments needed for here_doc, but again, this is checked by parser.
+4. Pipex initialization where argc and environment is passed to pipex struct, but this is taken care of by minishell. Then, files are opened. Again, minishell does this.
+5. Finally, children processes are deployed:
+	- Number of commands is calculated from an arithmetic formula. This is not needed in minishell because we have the length of the command list.
+	- pid_t array is initialized with number of commands.
+	- For each command, a fork_and_exec is called, except for the last one, which needs every file descriptor closed.
+	- Then, parent waits for children to finish executing, then disassembles itself and return the exit status of the last process of the pipe chain.
+	- Both children and parent enter fork_and_exec, and pipe() is called. The two file descriptors pipe returns are needed in both children and parent: the parent needs it to pass it to the next command, while the children needs it to write to it.
+	- fork() is called and the parent close the writing file descriptor of the pipe, as well as its internal input file descriptor, which is then replaced by the reading part of the pipe, making it ready for reading for the next command.
+	- Conversely, the children enters child_process, inside which the reading part of the pipe is closed, because pipex passes the input file descriptor, where it may be a input file from a redirector or a reading part of a pipe from a previous command.
+	- The children then duplicate the received file descriptors into the future program's input and output file descriptors, then closes the respective source file descriptors.
+	- Finally, exec_wrapper is called, where we obtain the arguments from the command to execute, as well as validate if the executable exists, is readable and is executable. This part should be checked either by the parser or the executor in minishell.
+
+- Another thing to take into account is how the pipex structure translates into the minishell structure, because the pipex structure is designed for one-time execution whenever the program is called.

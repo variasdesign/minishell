@@ -14,10 +14,10 @@
 
 int	g_sig;
 
-static char	*getlastdir(void)
+static char	*get_last_dir(void)
 {
-	char *last_dir;
-	char *pwd;
+	char	*last_dir;
+	char	*pwd;
 
 	pwd = getenv("PWD");
 	last_dir = ft_strrchr(pwd, '/');
@@ -26,7 +26,6 @@ static char	*getlastdir(void)
 
 // TODO: Read hostname by executing hostname or uname -n
 // and redirecting its output to a string
-// TODO: Don't put whole PWD, just the current dir.
 static char	*assemble_prompt(char *prompt)
 {
 	size_t	len;
@@ -38,7 +37,7 @@ static char	*assemble_prompt(char *prompt)
 	prompt_parts[2] = "@";
 	prompt_parts[3] = "hostname";
 	prompt_parts[4] = " ";
-	prompt_parts[5] = getlastdir();
+	prompt_parts[5] = get_last_dir();
 	prompt_parts[6] = "]$ ";
 	prompt_parts[7] = 0;
 	len = 0;

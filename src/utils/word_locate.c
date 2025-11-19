@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   word_locate.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-
-/*   Updated: 2025/10/23 18:41:25 by varias-c         ###   ########.fr       */
+/*   Created: 2025/11/17 19:08:30 by varias-c          #+#    #+#             */
+/*   Updated: 2025/11/17 19:08:32 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ static t_bool	check_char(char c)
 {
 	return (ft_isspace(c) || quote_char(c) || redir_char(c));
 }
+
 // Count words by checking if they are valid. Invalid words will
 // return word_len = 0. Words inside single or double quotes are counted as one.
 static ssize_t	count_words(char *args, t_ptr_tab squote_tab,

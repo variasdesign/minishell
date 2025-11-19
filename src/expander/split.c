@@ -41,7 +41,8 @@ static ssize_t	count_segments(t_ptr_tab var_tab)
 // Me llamo varias y soy en <- one space
 // echo Me llamo "$USER" y soy "$JOB" en "$COMPANY"
 // Me llamo varias y soy  en <- two spaces
-// https://askubuntu.com/questions/850971/bash-variable-expansion-behavior-when-using-single-or-double-spaces
+// https://askubuntu.com/questions/850971/bash-variable-expansion-
+// behavior-when-using-single-or-double-spaces
 static char	*expand_var(char *str, t_ptr_tab var_tab, size_t i)
 {
 	const ssize_t	var_len = var_tab.end[i] - (var_tab.start[i] + 1);

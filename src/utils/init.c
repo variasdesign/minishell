@@ -37,6 +37,7 @@ static t_mini	*allocate_tables(t_mini *msh, t_ptr_tab **tables)
 	return (msh);
 }
 
+// TODO: Initialize env list. Shell should make a copy of current env and work with that.
 t_mini	*allocate_minishell(void)
 {
 	t_mini		*msh;
