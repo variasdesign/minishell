@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 16:48:09 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/28 18:58:42 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/11/21 13:58:59 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,10 +71,6 @@ static t_node	*create_cmd(t_list *token_list, t_node *token_node)
 	if (token_node)
 	{
 		cmd.redir_list = init_redir_list(token_list, token_node);
-		cmd.pipe_in = token_node != find_token_node(token_list->head,
-				TOKEN_WORD_CMD, f);
-		cmd.pipe_out = token_node != find_token_node(token_list->tail,
-				TOKEN_WORD_CMD, t);
 		cmd.args = insert_words_into_args(token_node,
 				count_word_tokens(token_node));
 		if (!cmd.args)

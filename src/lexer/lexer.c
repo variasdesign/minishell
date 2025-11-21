@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 18:19:24 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/23 18:59:23 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/11/21 15:26:56 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,8 @@ static t_list	*tokenize(t_ptr_tab *redir_tab, t_ptr_tab *word_tab)
 		return (NULL);
 	redir_i = 0;
 	word_i = 0;
-	while (redir_tab->start[redir_i] || word_tab->start[word_i])
+	while ((redir_tab->count > 0 && redir_tab->start[redir_i])
+		|| (word_tab->count > 0 && word_tab->start[word_i]))
 	{
 		prev_type = get_token_type(tok_list->tail);
 		if (ft_tabcmp(redir_tab, word_tab, redir_i, word_i))

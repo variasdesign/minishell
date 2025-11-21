@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/28 18:32:06 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/11/21 14:44:54 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,8 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
+# include <sys/wait.h>
+# include <unistd.h>
 
 typedef enum e_token_type
 {
@@ -49,14 +51,15 @@ typedef struct s_cmd
 {
 	char	**args;
 	t_list	*redir_list;
-	t_bool	pipe_in;
-	t_bool	pipe_out;
+	int		pipe_in;
+	int		pipe_out;
 }	t_cmd;
 
 # define TABLE_NUM 5
 
 typedef struct s_mini
 {
+	char		**env;
 	char		*cwd;
 	char		*path;
 	int			exit_code;
@@ -72,13 +75,16 @@ typedef struct s_mini
 extern int	g_sig;
 
 char			**split_vars(t_ptr_tab *var_tab);
+char			**init_env(char **envp);
 char			*expander(char *args, t_ptr_tab *squote_tab,
 					t_ptr_tab *dquote_tab, t_ptr_tab *var_tab);
 char			*token_content(t_node *node);
-int				exec_input(t_mini *msh);
+char			*get_env(char **env_list, char *env);
+int				exec_input(t_list *cmd_list, char **env);
 int				quote_char(char c);
 int				redir_char(char c);
 int				redir_start(char *str);
+pid_t			fork_and_exec_single(t_cmd *cmd, char **env);
 size_t			count_word_groups(t_list token_list);
 size_t			count_word_tokens(t_node *cmd_node);
 ssize_t			is_redir(char *redir);

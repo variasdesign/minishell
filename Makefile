@@ -18,6 +18,7 @@ LIBS			= $(LIBFT) $(READLINE)
 
 SRC_DIR			= src
 SRC_DIR_EX		= src/expander
+SRC_DIR_EXE		= src/exec
 SRC_DIR_LEX		= src/lexer
 SRC_DIR_SIG		= src/signal
 SRC_DIR_PAR		= src/parser
@@ -30,6 +31,10 @@ BASE_SRCS		= $(addprefix $(SRC_DIR)/,		\
 BASE_SRCS		+= $(addprefix $(SRC_DIR_EX)/,	\
 				  	expander.c					\
 					split.c						\
+					)
+
+BASE_SRCS		+= $(addprefix $(SRC_DIR_EXE)/,	\
+				  	exec.c						\
 					)
 
 BASE_SRCS		+= $(addprefix $(SRC_DIR_LEX)/,	\
@@ -54,6 +59,8 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_UT)/,	\
 					token_tools.c				\
 					var_tools.c					\
 					word_locate.c				\
+					exec_tools.c				\
+					env_tools.c					\
 					)
 
 $(info BASE_SRCS: $(BASE_SRCS))
@@ -73,6 +80,11 @@ $(BUILD_BASE_DIR)/%.o:: $(SRC_DIR)/%.c $(LIBFT)
 	@$(CC) $(CFLAGS) -c $< $(INCLUDES) -o $@
 
 $(BUILD_BASE_DIR)/%.o:: $(SRC_DIR_EX)/%.c $(LIBFT)
+	@echo "Compiling $@..."
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) -c $< $(INCLUDES) -o $@
+
+$(BUILD_BASE_DIR)/%.o:: $(SRC_DIR_EXE)/%.c $(LIBFT)
 	@echo "Compiling $@..."
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -c $< $(INCLUDES) -o $@

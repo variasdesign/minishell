@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/28 18:32:14 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/11/21 15:23:52 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -89,20 +89,17 @@ static void	mini_loop(t_mini *msh)
 	while (1)
 	{
 		args = read_input(args, prompt);
-		printf("%s\n", args);
 		args = expander(args, msh->squote_tab, msh->dquote_tab, msh->var_tab);
 		token_list = lexer(args, msh);
 		msh->cmd_list = parser(token_list);
 		if (!msh->cmd_list)
 			continue ;
-		// TODO: Exec
-		// minishell->exit_code = exec_input(minishell);
-		// TODO: Free allocated memory in pointer tables
+		msh->exit_code = exec_input(msh->cmd_list, msh->env);
 	}
 }
 
 // TODO: Norminette E V E R Y T H I N G
-int	main(int argc, char *argv[])
+int	main(int argc, char *argv[], char *envp[])
 {
 	t_mini	*msh;
 
@@ -116,11 +113,13 @@ int	main(int argc, char *argv[])
 	if (!msh)
 		return (EXIT_FAILURE);
 	// TODO: Signal handler (setup_signals)
+	msh->env = init_env(envp);
 	msh->cwd = getcwd(NULL, 0);
 	msh->path = getenv("PATH");
 	signal(SIGINT, catch_int);
 	signal(SIGTSTP, catch_suspend);
 	mini_loop(msh);
+	// TODO: Free allocated memory in pointer tables
 	// TODO: Free all (PATH, cwd, envs, etc)
 	return (0);
 }
