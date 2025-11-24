@@ -13,7 +13,7 @@ BUILD_DIR		= ./.build
 BUILD_BASE_DIR	= $(BUILD_DIR)/base
 
 LIBFT			= $(LIBFT_DIR)/libft.a
-READLINE		= -lreadline -lhistory 
+READLINE		= -lreadline -lhistory
 LIBS			= $(LIBFT) $(READLINE)
 
 SRC_DIR			= src
@@ -43,7 +43,7 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_LEX)/,	\
 
 BASE_SRCS		+= $(addprefix $(SRC_DIR_PAR)/,	\
 				  	parser.c					\
-				  	validation.c					\
+				  	validation.c				\
 					)
 
 BASE_SRCS		+= $(addprefix $(SRC_DIR_SIG)/,	\
@@ -51,7 +51,11 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_SIG)/,	\
 					)
 
 BASE_SRCS		+= $(addprefix $(SRC_DIR_UT)/,	\
-				  	init.c						\
+					env_tools.c					\
+					error_tools.c				\
+					exec_tools.c				\
+					file_tools.c				\
+					init_tools.c				\
 					quote_locate.c				\
 					quote_validation.c			\
 					redir_locate.c				\
@@ -59,8 +63,6 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_UT)/,	\
 					token_tools.c				\
 					var_tools.c					\
 					word_locate.c				\
-					exec_tools.c				\
-					env_tools.c					\
 					)
 
 $(info BASE_SRCS: $(BASE_SRCS))

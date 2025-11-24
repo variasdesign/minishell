@@ -65,13 +65,23 @@ char	*token_content(t_node *node)
 
 t_node	*find_token_node(t_node *offset, t_token_type type, t_bool last)
 {
-	t_node	*node;
+	t_node			*node;
+	t_token_type	node_type;
 
 	node = offset;
 	while (node)
 	{
-		if (get_token_type(node) == type)
+		node_type = get_token_type(node);
+		if (node_type == type)
 			return (node);
+		else if (type == TOKEN_REDIR_IN_ALL)
+		{
+			if (node_type == TOKEN_REDIR_IN || node_type == TOKEN_REDIR_HEREDOC)
+				return (node);
+		}
+		else if (type == TOKEN_REDIR_OUT_ALL)
+			if (node_type == TOKEN_REDIR_OUT || node_type == TOKEN_REDIR_APPEND)
+				return (node);
 		if (last)
 			node = node->prev;
 		else

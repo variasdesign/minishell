@@ -17,27 +17,28 @@ static void	add_redir_node(t_list *redir_list, t_list *token_list,
 {
 	t_node	*redir_node;
 
-	redir_node = find_token_node(token_list->tail, type, t);
-	if (redir_node)
+	redir_node = find_token_node(token_list->head, type, f);
+	while (redir_node)
 	{
 		redir->type = get_token_type(redir_node);
 		redir->file = token_content(redir_node->next);
 		ft_lstdel_node(redir_node->next, free);
 		redir_node = ft_lstnew_node(redir_list->data_size, redir);
 		ft_lstadd_back(redir_list, redir_node);
+		redir_node = find_token_node(redir_node->next, type, f);
 	}
 }
 
 static t_list	*init_redir_list(t_list *token_list, t_node *token_node)
 {
-	t_list	*redir_list;
-	t_redir	redir;
+	t_list			*redir_list;
+	t_redir			redir;
 
 	redir_list = ft_lstnew_list(sizeof(t_redir));
 	if (token_node == find_token_node(token_list->head, TOKEN_WORD_CMD, f))
-		add_redir_node(redir_list, token_list, TOKEN_REDIR_IN, &redir);
+		add_redir_node(redir_list, token_list, TOKEN_REDIR_IN_ALL, &redir);
 	if (token_node == find_token_node(token_list->tail, TOKEN_WORD_CMD, t))
-		add_redir_node(redir_list, token_list, TOKEN_REDIR_OUT, &redir);
+		add_redir_node(redir_list, token_list, TOKEN_REDIR_OUT_ALL, &redir);
 	if (redir_list->count < 1)
 	{
 		ft_lstdel_list(redir_list, free);

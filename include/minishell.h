@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/21 14:44:54 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/11/24 20:01:25 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,31 @@
 # define MINISHELL_H
 
 # include "libft.h"
+# include <errno.h>
+# include <fcntl.h>
 # include <stdio.h>
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
 # include <sys/wait.h>
 # include <unistd.h>
+
+// Numbers of pointer tables to initialize
+# define TABLE_NUM 5
+
+// Error messages
+# define E_CHILD_ERR "Children exited with error\n"
+# define E_EXEC_FAILURE "Execution failed: %s\n"
+# define E_EXEC_NOT_FOUND "Executable not found in PATH: %s\n"
+# define E_FORK_FAILURE "Couldn't fork: %s\n"
+# define E_INVALID_ARGS "Invalid arguments\n"
+# define E_INVALID_EXEC "File not found: %s\n"
+# define E_PATH_FAILURE "PATH env not found\n"
+# define E_PIPE_FAILURE "Couldn't create pipes: %s\n"
+# define E_UNREADABLE_INPUT "Input is not readable: %s\n"
+# define E_UNWRITABLE_OUTPUT "Output is not writable: %s\n"
+# define E_HERE_DOC_FAILURE "heredoc couldn't be created or written to\n"
+# define E_INVALID_HERE_DOC "Invalid heredoc delimiter\n"
 
 typedef enum e_token_type
 {
@@ -29,9 +48,11 @@ typedef enum e_token_type
 	TOKEN_WORD_ARG,
 	TOKEN_PIPE,
 	TOKEN_REDIR_IN,
+	TOKEN_REDIR_HEREDOC,
 	TOKEN_REDIR_OUT,
 	TOKEN_REDIR_APPEND,
-	TOKEN_REDIR_HEREDOC
+	TOKEN_REDIR_IN_ALL,
+	TOKEN_REDIR_OUT_ALL,
 }	t_token_type;
 
 typedef struct s_token
@@ -51,11 +72,9 @@ typedef struct s_cmd
 {
 	char	**args;
 	t_list	*redir_list;
-	int		pipe_in;
-	int		pipe_out;
+	int		fd_in;
+	int		fd_out;
 }	t_cmd;
-
-# define TABLE_NUM 5
 
 typedef struct s_mini
 {
@@ -84,6 +103,7 @@ int				exec_input(t_list *cmd_list, char **env);
 int				quote_char(char c);
 int				redir_char(char c);
 int				redir_start(char *str);
+int				open_files(t_cmd *cmd);
 pid_t			fork_and_exec_single(t_cmd *cmd, char **env);
 size_t			count_word_groups(t_list token_list);
 size_t			count_word_tokens(t_node *cmd_node);
@@ -100,10 +120,13 @@ t_bool			validate_token_list(t_list token_list);
 t_list			*lexer(char *args, t_mini *msh);
 t_list			*parser(t_list *token_list);
 t_mini			*allocate_minishell(void);
-t_node			*find_token_node(t_node *offset, t_token_type type, t_bool last);
+t_node			*find_token_node(t_node *offset,
+					t_token_type type, t_bool last);
 t_ptr_tab		*search_quotes_candidates(t_ptr_tab *quote_tab, char q);
 t_token_type	get_token_type(t_node *token);
 void			catch_int(int sig_num);
 void			catch_suspend(int sig_num);
+void			exit_error(char *msg, char *err, int exit_code);
+void			print_error(char *msg, char *err);
 
 #endif
