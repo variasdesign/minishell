@@ -48,41 +48,46 @@ static ssize_t	count_words(char *args, t_ptr_tab squote_tab,
 	return (count);
 }
 
-static void	search_word_candidates(t_ptr_tab *word_tab, t_ptr_tab squote_tab,
-									t_ptr_tab dquote_tab)
+static void	check_words_inside_quotes(t_mini *msh, char *word_can, ssize_t i)
 {
-	char	*word_can;
-	ssize_t	i;
 	ssize_t	squote_i;
 	ssize_t	dquote_i;
 
-	word_can = (char *)word_tab->orig;
+	msh->word_tab->start[i] = word_can;
+	squote_i = ft_tabfind(word_can, *msh->squote_tab);
+	dquote_i = ft_tabfind(word_can, *msh->dquote_tab);
+	if (squote_i >= 0)
+	{
+		msh->word_tab->end[i] = msh->squote_tab->end[squote_i] - 1;
+		word_can = msh->squote_tab->end[squote_i];
+	}
+	else if (dquote_i >= 0)
+	{
+		msh->word_tab->end[i] = msh->dquote_tab->end[dquote_i] - 1;
+		word_can = msh->dquote_tab->end[dquote_i];
+	}
+	else
+	{
+		while (*word_can && !check_char(*word_can))
+			word_can++;
+		msh->word_tab->end[i] = word_can;
+	}
+}
+
+static void	search_word_candidates(t_mini *msh)
+{
+	char	*word_can;
+	ssize_t	i;
+
+	word_can = (char *)msh->word_tab->orig;
 	i = -1;
-	while (*word_can && ++i < word_tab->count)
+	while (*word_can && ++i < msh->word_tab->count)
 	{
 		while (*word_can && check_char(*word_can))
 			word_can++;
 		if (!*word_can)
 			break ;
-		word_tab->start[i] = word_can;
-		squote_i = ft_tabfind(word_can, squote_tab);
-		dquote_i = ft_tabfind(word_can, dquote_tab);
-		if (squote_i >= 0)
-		{
-			word_tab->end[i] = squote_tab.end[squote_i] - 1;
-			word_can = squote_tab.end[squote_i];
-		}
-		else if (dquote_i >= 0)
-		{
-			word_tab->end[i] = dquote_tab.end[dquote_i] - 1;
-			word_can = dquote_tab.end[dquote_i];
-		}
-		else
-		{
-			while (*word_can && !check_char(*word_can))
-				word_can++;
-			word_tab->end[i] = word_can;
-		}
+		check_words_inside_quotes(msh, word_can, i);
 	}
 }
 
@@ -111,8 +116,7 @@ ssize_t	locate_words(char *args, t_mini *msh)
 			perror("Error allocating word pointer table");
 			return (-1);
 		}
-		search_word_candidates(msh->word_tab, *msh->squote_tab,
-			*msh->dquote_tab);
+		search_word_candidates(msh);
 	}
 	if (msh->word_tab->count < 0)
 		printf("Error locating words.\n");

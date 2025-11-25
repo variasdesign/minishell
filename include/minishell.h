@@ -28,7 +28,7 @@
 # define TABLE_NUM 5
 
 // Error messages
-# define E_CHILD_ERR "Children exited with error\n"
+# define E_CHILD_ERR "Children exited with error.\n"
 # define E_EXEC_FAILURE "Execution failed: %s\n"
 # define E_EXEC_NOT_FOUND "Executable not found in PATH: %s\n"
 # define E_FORK_FAILURE "Couldn't fork: %s\n"
@@ -38,7 +38,7 @@
 # define E_PIPE_FAILURE "Couldn't create pipes: %s\n"
 # define E_UNREADABLE_INPUT "Input is not readable: %s\n"
 # define E_UNWRITABLE_OUTPUT "Output is not writable: %s\n"
-# define E_HERE_DOC_FAILURE "heredoc couldn't be created or written to\n"
+# define E_HEREDOC_FAILURE "heredoc couldn't be created or written to.\n"
 # define E_INVALID_HERE_DOC "Invalid heredoc delimiter\n"
 
 typedef enum e_token_type
@@ -80,13 +80,13 @@ typedef struct s_mini
 {
 	char		**env;
 	char		*cwd;
+	char		*heredoc_fd;
 	char		*path;
 	int			exit_code;
-	char		*heredoc_fd;
 	t_list		*cmd_list;
+	t_ptr_tab	*dquote_tab;
 	t_ptr_tab	*redir_tab;
 	t_ptr_tab	*squote_tab;
-	t_ptr_tab	*dquote_tab;
 	t_ptr_tab	*var_tab;
 	t_ptr_tab	*word_tab;
 }	t_mini;
@@ -99,12 +99,14 @@ char			*expander(char *args, t_ptr_tab *squote_tab,
 					t_ptr_tab *dquote_tab, t_ptr_tab *var_tab);
 char			*token_content(t_node *node);
 char			*get_env(char **env_list, char *env);
+int				check_fd_errors(t_cmd *cmd);
 int				exec_input(t_list *cmd_list, char **env);
 int				quote_char(char c);
 int				redir_char(char c);
 int				redir_start(char *str);
 int				open_files(t_cmd *cmd);
-pid_t			fork_and_exec_single(t_cmd *cmd, char **env);
+pid_t			fork_and_exec(t_cmd *cmd, char **env);
+pid_t			fork_and_exec_last(t_cmd *cmd, char **env);
 size_t			count_word_groups(t_list token_list);
 size_t			count_word_tokens(t_node *cmd_node);
 ssize_t			is_redir(char *redir);

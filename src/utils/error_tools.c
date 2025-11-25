@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <unistd.h>
 
 void	exit_error(char *msg, char *err, int exit_code)
 {
@@ -28,4 +29,17 @@ void	print_error(char *msg, char *err)
 		ft_printf(2, msg);
 	else
 		ft_printf(2, msg, err);
+}
+
+int	check_fd_errors(t_cmd *cmd)
+{
+	if (cmd->fd_in < 0 || cmd->fd_out < 0)
+	{
+		if (cmd->fd_in >= 0)
+			close(cmd->fd_in);
+		if (cmd->fd_out >= 0)
+			close(cmd->fd_out);
+		return (-1);
+	}
+	return (0);
 }

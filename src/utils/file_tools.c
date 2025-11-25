@@ -11,6 +11,48 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
+#include <fcntl.h>
+
+static int	open_heredoc(void)
+{
+	int	hd_fd;
+
+	hd_fd = open("/tmp/heredoc", O_WRONLY | O_TRUNC | O_CREAT, 0640);
+	if (hd_fd < 0)
+	{
+		print_error(E_HEREDOC_FAILURE, NULL);
+		return (-1);
+	}
+	return (hd_fd);
+}
+
+static int	heredoc(char *lim)
+{
+	const int	heredoc_fd = open_heredoc();
+	const int	lim_len = ft_strlen(lim);
+	char		*line;
+
+	if (heredoc_fd < 0)
+		return (-1);
+	while (t)
+	{
+		line = get_next_line(0);
+		if (!line)
+		{
+			print_error(E_HEREDOC_FAILURE, NULL);
+			return (-1);
+		}
+		if (!ft_strncmp(line, lim, lim_len) && line[lim_len] == '\n')
+		{
+			free(line);
+			break ;
+		}
+		write(heredoc_fd, line, ft_strlen(line));
+		free(line);
+	}
+	close(heredoc_fd);
+	return (0);
+}
 
 static int	open_input(char *path)
 {
@@ -28,9 +70,7 @@ static int	open_output(char *path, t_bool append)
 	if (access(path, W_OK))
 	{
 		if (errno != ENOENT)
-		{
 			return (ft_printf(2, E_UNWRITABLE_OUTPUT, strerror(errno)), 1);
-		}
 		else
 		{
 			out = open(path, O_WRONLY | O_CREAT, 0640);
@@ -49,19 +89,6 @@ static int	open_output(char *path, t_bool append)
 	}
 }
 
-static int	check_fd_errors(t_cmd *cmd)
-{
-	if (cmd->fd_in < 0 || cmd->fd_out < 0)
-	{
-		if (cmd->fd_in >= 0)
-			close(cmd->fd_in);
-		if (cmd->fd_out >= 0)
-			close(cmd->fd_out);
-		return (-1);
-	}
-	return (0);
-}
-
 int	open_files(t_cmd *cmd)
 {
 	t_node			*node;
@@ -69,23 +96,22 @@ int	open_files(t_cmd *cmd)
 	char			*path;
 
 	node = cmd->redir_list->head;
-	cmd->fd_in = STDIN_FILENO;
-	cmd->fd_out = STDOUT_FILENO;
 	while (node)
 	{
 		type = get_token_type(node);
 		path = ((t_redir *)(node->content))->file;
-		if (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_HEREDOC)
-		{
-			close(STDIN_FILENO);
+		if (type == TOKEN_REDIR_IN)
 			cmd->fd_in = open_input(path);
+		else if (type == TOKEN_REDIR_HEREDOC)
+		{
+			if (heredoc(path))
+				cmd->fd_in = open_input(path);
 		}
 		else if (type == TOKEN_REDIR_OUT || type == TOKEN_REDIR_APPEND)
-		{
-			close(STDOUT_FILENO);
 			cmd->fd_out = open_output(path, type == TOKEN_REDIR_APPEND);
-		}
 		node = node->next;
 	}
+	dup2(cmd->fd_in, STDIN_FILENO);
+	dup2(cmd->fd_out, STDOUT_FILENO);
 	return (check_fd_errors(cmd));
 }

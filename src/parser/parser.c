@@ -22,7 +22,7 @@ static void	add_redir_node(t_list *redir_list, t_list *token_list,
 	{
 		redir->type = get_token_type(redir_node);
 		redir->file = token_content(redir_node->next);
-		ft_lstdel_node(redir_node->next, free);
+		ft_lstdel_wrapper(token_list, redir_node->next, free);
 		redir_node = ft_lstnew_node(redir_list->data_size, redir);
 		ft_lstadd_back(redir_list, redir_node);
 		redir_node = find_token_node(redir_node->next, type, f);
@@ -76,6 +76,8 @@ static t_node	*create_cmd(t_list *token_list, t_node *token_node)
 				count_word_tokens(token_node));
 		if (!cmd.args)
 			return (NULL);
+		cmd.fd_in = 0;
+		cmd.fd_out = 1;
 		cmd_node = ft_lstnew_node(sizeof(t_cmd), &cmd);
 		return (cmd_node);
 	}
@@ -83,7 +85,6 @@ static t_node	*create_cmd(t_list *token_list, t_node *token_node)
 		return (NULL);
 }
 
-// TODO: Heredoc
 t_list	*parser(t_list *token_list)
 {
 	t_list	*cmd_list;
