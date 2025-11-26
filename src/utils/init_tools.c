@@ -37,8 +37,25 @@ static t_mini	*allocate_tables(t_mini *msh, t_ptr_tab **tables)
 	return (msh);
 }
 
-// TODO: Initialize env list. Shell should make a copy of current env and work with that.
-t_mini	*allocate_minishell(void)
+static char	**init_env(char **envp)
+{
+	char	**env_copy;
+	size_t	env_count;
+
+	env_count = 0;
+	while (envp[env_count])
+		env_count++;
+	env_copy = ft_calloc(env_count + 1, sizeof(char *));
+	env_count = 0;
+	while (envp[env_count])
+	{
+		env_copy[env_count] = ft_strdup(envp[env_count]);
+		env_count++;
+	}
+	return (env_copy);
+}
+
+t_mini	*allocate_minishell(char **envp)
 {
 	t_mini		*msh;
 	t_ptr_tab	*tables[TABLE_NUM];
@@ -52,6 +69,7 @@ t_mini	*allocate_minishell(void)
 	msh = allocate_tables(msh, tables);
 	if (!msh)
 		return (NULL);
+	msh->env = init_env(envp);
 	msh->squote_tab = tables[0];
 	msh->dquote_tab = tables[1];
 	msh->var_tab = tables[2];

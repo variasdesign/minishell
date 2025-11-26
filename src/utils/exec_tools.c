@@ -68,75 +68,65 @@ static int	exec_wrapper(t_cmd *cmd, char **env)
 	return (-1);
 }
 
-static int	child_process(t_cmd *cmd, char **env, int fd[2])
+static int	child_process(t_cmd *cmd, char **env, int fd[2], t_bool last)
 {
-	close(fd[0]);
-	if (dup2(px->in, STDIN_FILENO) < 0 || dup2(fd[1], STDOUT_FILENO) < 0)
+	if (!last)
+		close(fd[0]);
+	if (open_files(cmd, fd, last) < 0
+		|| dup2(cmd->fd_in, STDIN_FILENO) < 0
+		|| dup2(cmd->fd_out, STDOUT_FILENO) < 0
+		|| exec_wrapper(cmd, env) < 0)
 	{
-		close(fd[1]);
-		close(px->in);
-		return (-1);
-	}
-	close(fd[1]);
-	close(px->in);
-	if (exec_wrapper(px, arg) < 0)
-	{
-		close(STDOUT_FILENO);
 		print_error(E_EXEC_FAILURE, strerror(errno));
 		return (-1);
 	}
 	return (0);
 }
 
-pid_t	fork_and_exec(t_cmd *cmd, char **env)
+pid_t	fork_and_exec(t_node *cmd, char **env, t_bool last)
 {
 	pid_t	pid;
 	int		fd[2];
+	t_cmd	*next;
 
-	if (pipe(fd) < 0)
-	{
-		print_error(E_PIPE_FAILURE, strerror(errno));
-		return (-1);
-	}
+	if (!last && pipe(fd) < 0)
+		return (print_error(E_PIPE_FAILURE, strerror(errno)), -1);
 	pid = fork();
 	if (pid < 0)
-	{
-		print_error(E_FORK_FAILURE, strerror(errno));
-		return (-1);
-	}
+		return (print_error(E_FORK_FAILURE, strerror(errno)), -1);
 	if (pid == 0)
-		if (child_process(cmd, env, fd) < 0)
-			disassemble_child(cmd, t, f);
+		if (child_process(cmd->content, env, fd, last) < 0)
+			exit_error(E_EXEC_FAILURE, strerror(errno), 127);
 	close(fd[1]);
-	close(cmd->fd_in);
+	if (!last)
+	{
+		next = cmd->next->content;
+		next->fd_in = fd[0];
+	}
+	else
+		close(fd[0]);
 	return (pid);
 }
 
-pid_t	fork_and_exec_last(t_cmd *cmd, char **env)
-{
-	pid_t	pid;
-
-	pid = fork();
-	if (pid < 0)
-	{
-		print_error(E_FORK_FAILURE, strerror(errno));
-		return (-1);
-	}
-	if (pid == 0)
-	{
-		if (dup2(cmd->fd_in, STDIN_FILENO) < 0 || dup2(cmd->fd_out, STDOUT_FILENO) < 0)
-			disassemble_child(px, f, t);
-		close(cmd->fd_in);
-		close(cmd->fd_out);
-		if (open_files(cmd) < 0 || exec_wrapper(cmd, env) < 0)
-		{
-			close(STDOUT_FILENO);
-			print_error(E_EXEC_FAILURE, strerror(errno));
-			disassemble_child(px, f, t);
-			exit(127);
-		}
-	}
-	close(cmd->fd_in);
-	close(cmd->fd_out);
-	return (pid);
-}
+// pid_t	fork_and_exec_last(t_cmd *cmd, char **env)
+// {
+// 	pid_t	pid;
+//
+// 	pid = fork();
+// 	if (pid < 0)
+// 	{
+// 		print_error(E_FORK_FAILURE, strerror(errno));
+// 		return (-1);
+// 	}
+// 	if (pid == 0)
+// 	{
+// 		if (dup2(cmd->fd_in, STDIN_FILENO) < 0
+// 			|| dup2(cmd->fd_out, STDOUT_FILENO) < 0
+// 			|| open_files(cmd) < 0 || exec_wrapper(cmd, env) < 0)
+// 		{
+// 			print_error(E_EXEC_FAILURE, strerror(errno));
+// 			exit(127);
+// 		}
+// 	}
+// 	return (pid);
+// }

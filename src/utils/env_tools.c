@@ -19,26 +19,8 @@ char	*get_env(char **env_list, char *env)
 	while (*env_list)
 	{
 		if (!ft_strncmp(*env_list, env, len))
-			return (*env_list);
+			return (*env_list + len + 1);
 		env_list++;
 	}
 	return (NULL);
-}
-
-char	**init_env(char **envp)
-{
-	char	**environ;
-	size_t	env_count;
-
-	env_count = 0;
-	while (envp[env_count])
-		env_count++;
-	environ = ft_calloc(env_count + 1, sizeof(char *));
-	env_count = 0;
-	while (envp[env_count])
-	{
-		environ[env_count] = ft_strdup(envp[env_count]);
-		env_count++;
-	}
-	return (environ);
 }

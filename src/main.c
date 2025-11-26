@@ -26,14 +26,14 @@ static char	*get_last_dir(void)
 
 // TODO: Read hostname by executing hostname or uname -n
 // and redirecting its output to a string
-static char	*assemble_prompt(char *prompt)
+static char	*assemble_prompt(char **env_list, char *prompt)
 {
 	size_t	len;
 	char	*prompt_parts[8];
 	size_t	i;
 
 	prompt_parts[0] = "[";
-	prompt_parts[1] = getenv("USER");
+	prompt_parts[1] = get_env(env_list, "USER");
 	prompt_parts[2] = "@";
 	prompt_parts[3] = "hostname";
 	prompt_parts[4] = " ";
@@ -54,7 +54,7 @@ static char	*assemble_prompt(char *prompt)
 }
 
 // TODO: Read on rl_done global var
-static char	*read_input(char *args, char *prompt)
+static char	*read_input(char *args, char **env_list, char *prompt)
 {
 	extern int	rl_done;
 
@@ -70,7 +70,7 @@ static char	*read_input(char *args, char *prompt)
 			free(prompt);
 			prompt = NULL;
 		}
-		prompt = assemble_prompt(prompt);
+		prompt = assemble_prompt(env_list, prompt);
 		args = readline(prompt);
 	}
 	if (args && *args)
@@ -88,7 +88,7 @@ static void	mini_loop(t_mini *msh)
 	prompt = NULL;
 	while (1)
 	{
-		args = read_input(args, prompt);
+		args = read_input(args, msh->env, prompt);
 		args = expander(args, msh->squote_tab, msh->dquote_tab, msh->var_tab);
 		token_list = lexer(args, msh);
 		msh->cmd_list = parser(token_list);
@@ -109,13 +109,12 @@ int	main(int argc, char *argv[], char *envp[])
 		return (1);
 	}
 	g_sig = 0;
-	msh = allocate_minishell();
+	msh = allocate_minishell(envp);
 	if (!msh)
 		return (EXIT_FAILURE);
 	// TODO: Signal handler (setup_signals)
-	msh->env = init_env(envp);
 	msh->cwd = getcwd(NULL, 0);
-	msh->path = getenv("PATH");
+	msh->path = get_env(msh->env, "PATH");
 	signal(SIGINT, catch_int);
 	signal(SIGTSTP, catch_suspend);
 	mini_loop(msh);

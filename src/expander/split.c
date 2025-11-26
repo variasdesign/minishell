@@ -37,10 +37,10 @@ static ssize_t	count_segments(t_ptr_tab var_tab)
 // TODO: Obtain exit status from last executed cmd
 // split = ft_itoa(WEXITSTATUS(status));
 // TODO: Research word splitting when empty var names:
-// echo Me llamo $USER y soy $JOB en $COMPANY
-// Me llamo varias y soy en <- one space
-// echo Me llamo "$USER" y soy "$JOB" en "$COMPANY"
-// Me llamo varias y soy  en <- two spaces
+// echo My name is $USER and I work as $JOB in $COMPANY
+// My name is varias and I work as in <- one space
+// echo My name is "$USER" and I work as "$JOB" in "$COMPANY"
+// My name is varias and I work as  in <- two spaces
 // https://askubuntu.com/questions/850971/bash-variable-expansion-
 // behavior-when-using-single-or-double-spaces
 static char	*expand_var(char *str, t_ptr_tab var_tab, size_t i)

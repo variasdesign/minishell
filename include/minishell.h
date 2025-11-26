@@ -32,14 +32,14 @@
 # define E_EXEC_FAILURE "Execution failed: %s\n"
 # define E_EXEC_NOT_FOUND "Executable not found in PATH: %s\n"
 # define E_FORK_FAILURE "Couldn't fork: %s\n"
-# define E_INVALID_ARGS "Invalid arguments\n"
 # define E_INVALID_EXEC "File not found: %s\n"
-# define E_PATH_FAILURE "PATH env not found\n"
+# define E_INVALID_PROMPT "Invalid prompt.\n"
+# define E_PATH_FAILURE "PATH env not found.\n"
 # define E_PIPE_FAILURE "Couldn't create pipes: %s\n"
 # define E_UNREADABLE_INPUT "Input is not readable: %s\n"
 # define E_UNWRITABLE_OUTPUT "Output is not writable: %s\n"
 # define E_HEREDOC_FAILURE "heredoc couldn't be created or written to.\n"
-# define E_INVALID_HERE_DOC "Invalid heredoc delimiter\n"
+# define E_INVALID_HERE_DOC "Invalid heredoc delimiter.\n"
 
 typedef enum e_token_type
 {
@@ -80,7 +80,6 @@ typedef struct s_mini
 {
 	char		**env;
 	char		*cwd;
-	char		*heredoc_fd;
 	char		*path;
 	int			exit_code;
 	t_list		*cmd_list;
@@ -94,7 +93,6 @@ typedef struct s_mini
 extern int	g_sig;
 
 char			**split_vars(t_ptr_tab *var_tab);
-char			**init_env(char **envp);
 char			*expander(char *args, t_ptr_tab *squote_tab,
 					t_ptr_tab *dquote_tab, t_ptr_tab *var_tab);
 char			*token_content(t_node *node);
@@ -104,9 +102,8 @@ int				exec_input(t_list *cmd_list, char **env);
 int				quote_char(char c);
 int				redir_char(char c);
 int				redir_start(char *str);
-int				open_files(t_cmd *cmd);
-pid_t			fork_and_exec(t_cmd *cmd, char **env);
-pid_t			fork_and_exec_last(t_cmd *cmd, char **env);
+int				open_files(t_cmd *cmd, int fd[2], t_bool last);
+pid_t			fork_and_exec(t_node *cmd, char **env, t_bool last);
 size_t			count_word_groups(t_list token_list);
 size_t			count_word_tokens(t_node *cmd_node);
 ssize_t			is_redir(char *redir);
@@ -121,7 +118,7 @@ t_bool			is_word_type(t_token_type type);
 t_bool			validate_token_list(t_list token_list);
 t_list			*lexer(char *args, t_mini *msh);
 t_list			*parser(t_list *token_list);
-t_mini			*allocate_minishell(void);
+t_mini			*allocate_minishell(char **envp);
 t_node			*find_token_node(t_node *offset,
 					t_token_type type, t_bool last);
 t_ptr_tab		*search_quotes_candidates(t_ptr_tab *quote_tab, char q);

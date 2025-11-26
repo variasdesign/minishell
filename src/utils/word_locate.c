@@ -48,7 +48,7 @@ static ssize_t	count_words(char *args, t_ptr_tab squote_tab,
 	return (count);
 }
 
-static void	check_words_inside_quotes(t_mini *msh, char *word_can, ssize_t i)
+static char	*check_words_inside_quotes(t_mini *msh, char *word_can, ssize_t i)
 {
 	ssize_t	squote_i;
 	ssize_t	dquote_i;
@@ -72,6 +72,7 @@ static void	check_words_inside_quotes(t_mini *msh, char *word_can, ssize_t i)
 			word_can++;
 		msh->word_tab->end[i] = word_can;
 	}
+	return (word_can);
 }
 
 static void	search_word_candidates(t_mini *msh)
@@ -87,7 +88,7 @@ static void	search_word_candidates(t_mini *msh)
 			word_can++;
 		if (!*word_can)
 			break ;
-		check_words_inside_quotes(msh, word_can, i);
+		word_can = check_words_inside_quotes(msh, word_can, i);
 	}
 }
 

@@ -11,7 +11,6 @@
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <fcntl.h>
 
 static int	open_heredoc(void)
 {
@@ -89,29 +88,28 @@ static int	open_output(char *path, t_bool append)
 	}
 }
 
-int	open_files(t_cmd *cmd)
+int	open_files(t_cmd *cmd, int fd[2], t_bool last)
 {
 	t_node			*node;
 	t_token_type	type;
 	char			*path;
 
-	node = cmd->redir_list->head;
-	while (node)
+	if (cmd->redir_list)
 	{
-		type = get_token_type(node);
-		path = ((t_redir *)(node->content))->file;
-		if (type == TOKEN_REDIR_IN)
-			cmd->fd_in = open_input(path);
-		else if (type == TOKEN_REDIR_HEREDOC)
+		node = cmd->redir_list->head;
+		while (node)
 		{
-			if (heredoc(path))
+			type = get_token_type(node);
+			path = ((t_redir *)(node->content))->file;
+			if (type == TOKEN_REDIR_IN
+				|| (type == TOKEN_REDIR_HEREDOC && heredoc(path)))
 				cmd->fd_in = open_input(path);
+			else if (type == TOKEN_REDIR_OUT || type == TOKEN_REDIR_APPEND)
+				cmd->fd_out = open_output(path, type == TOKEN_REDIR_APPEND);
+			node = node->next;
 		}
-		else if (type == TOKEN_REDIR_OUT || type == TOKEN_REDIR_APPEND)
-			cmd->fd_out = open_output(path, type == TOKEN_REDIR_APPEND);
-		node = node->next;
 	}
-	dup2(cmd->fd_in, STDIN_FILENO);
-	dup2(cmd->fd_out, STDOUT_FILENO);
+	if (!last)
+		cmd->fd_out = fd[1];
 	return (check_fd_errors(cmd));
 }

@@ -72,13 +72,7 @@ static t_bool	validate_redirs(t_list token_list)
 	return (t);
 }
 
-// TODO: Redir and word validation: Prompts can't start or end with a redir,
-// and (if I'm not mistaken) there should be more words than redirs.
 t_bool	validate_token_list(t_list token_list)
 {
-	if (!validate_pipes(token_list))
-		return (f);
-	else if (!validate_redirs(token_list))
-		return (f);
-	return (t);
+	return (validate_pipes(token_list) && validate_redirs(token_list));
 }

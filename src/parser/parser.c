@@ -66,19 +66,22 @@ static char	**insert_words_into_args(t_node *token_node, size_t word_count)
 
 static t_node	*create_cmd(t_list *token_list, t_node *token_node)
 {
-	t_cmd	cmd;
+	t_cmd	ref;
 	t_node	*cmd_node;
+	t_cmd	*cmd;
 
 	if (token_node)
 	{
-		cmd.redir_list = init_redir_list(token_list, token_node);
-		cmd.args = insert_words_into_args(token_node,
+		ref.redir_list = init_redir_list(token_list, token_node);
+		ref.args = insert_words_into_args(token_node,
 				count_word_tokens(token_node));
-		if (!cmd.args)
+		if (!ref.args)
 			return (NULL);
-		cmd.fd_in = 0;
-		cmd.fd_out = 1;
-		cmd_node = ft_lstnew_node(sizeof(t_cmd), &cmd);
+		ref.fd_in = 0;
+		ref.fd_out = 1;
+		cmd_node = ft_lstnew_node(sizeof(t_cmd), &ref);
+		cmd = cmd_node->content;
+		cmd->parent = cmd_node;
 		return (cmd_node);
 	}
 	else
@@ -94,7 +97,7 @@ t_list	*parser(t_list *token_list)
 
 	if (!validate_token_list(*token_list))
 	{
-		printf("Invalid prompt.\n");
+		printf(E_INVALID_PROMPT);
 		ft_lstdel_list(token_list, free);
 		return (NULL);
 	}
