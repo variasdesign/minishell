@@ -64,29 +64,46 @@ static int	exec_wrapper(t_cmd *cmd, char **env)
 	cmd->args[0] = exec_path;
 	if (execve(cmd->args[0], cmd->args, env))
 		ft_freematrix((void **)cmd->args);
-	perror(NULL);
 	return (-1);
 }
 
 static int	child_process(t_cmd *cmd, char **env, int fd[2], t_bool last)
 {
+	if (open_files(cmd, fd, last) < 0)
+	{
+		print_error(E_FILE_FAILURE, strerror(errno));
+		return (-1);
+	}
+	if (dup2(cmd->fd_in, STDIN_FILENO) < 0
+		|| dup2(cmd->fd_out, STDOUT_FILENO) < 0)
+	{
+		print_error(E_DUP_FAILURE, strerror(errno));
+		return (-1);
+	}
 	if (!last)
 		close(fd[0]);
-	if (open_files(cmd, fd, last) < 0
-		|| dup2(cmd->fd_in, STDIN_FILENO) < 0
-		|| dup2(cmd->fd_out, STDOUT_FILENO) < 0
-		|| exec_wrapper(cmd, env) < 0)
+	if (cmd->redir_list)
+	{
+		close(cmd->fd_in);
+		close(cmd->fd_out);
+	}
+	if (exec_wrapper(cmd, env) < 0)
 	{
 		print_error(E_EXEC_FAILURE, strerror(errno));
+		close(STDOUT_FILENO);
 		return (-1);
 	}
 	return (0);
 }
 
-pid_t	fork_and_exec(t_node *cmd, char **env, t_bool last)
+// FIX: Children should clean all allocated memory too
+// FIX: Use flags to signal when to pipe (and close pipe fds),
+// when to open files for redirs (and close redir fds).
+pid_t	fork_and_exec(t_node *cmd_node, char **env, t_bool last)
 {
 	pid_t	pid;
 	int		fd[2];
+	t_cmd	*curr;
 	t_cmd	*next;
 
 	if (!last && pipe(fd) < 0)
@@ -95,38 +112,17 @@ pid_t	fork_and_exec(t_node *cmd, char **env, t_bool last)
 	if (pid < 0)
 		return (print_error(E_FORK_FAILURE, strerror(errno)), -1);
 	if (pid == 0)
-		if (child_process(cmd->content, env, fd, last) < 0)
-			exit_error(E_EXEC_FAILURE, strerror(errno), 127);
+		if (child_process(cmd_node->content, env, fd, last) < 0)
+			exit(127);
+	curr = cmd_node->content;
+	close(curr->fd_in);
 	close(fd[1]);
 	if (!last)
 	{
-		next = cmd->next->content;
+		next = cmd_node->next->content;
 		next->fd_in = fd[0];
 	}
 	else
-		close(fd[0]);
+		close(curr->fd_out);
 	return (pid);
 }
-
-// pid_t	fork_and_exec_last(t_cmd *cmd, char **env)
-// {
-// 	pid_t	pid;
-//
-// 	pid = fork();
-// 	if (pid < 0)
-// 	{
-// 		print_error(E_FORK_FAILURE, strerror(errno));
-// 		return (-1);
-// 	}
-// 	if (pid == 0)
-// 	{
-// 		if (dup2(cmd->fd_in, STDIN_FILENO) < 0
-// 			|| dup2(cmd->fd_out, STDOUT_FILENO) < 0
-// 			|| open_files(cmd) < 0 || exec_wrapper(cmd, env) < 0)
-// 		{
-// 			print_error(E_EXEC_FAILURE, strerror(errno));
-// 			exit(127);
-// 		}
-// 	}
-// 	return (pid);
-// }

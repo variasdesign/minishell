@@ -30,6 +30,8 @@
 // Error messages
 # define E_CHILD_ERR "Children exited with error.\n"
 # define E_EXEC_FAILURE "Execution failed: %s\n"
+# define E_FILE_FAILURE "Opening of redirections failed: %s\n"
+# define E_DUP_FAILURE "Duplication of file descriptors failed: %s\n"
 # define E_EXEC_NOT_FOUND "Executable not found in PATH: %s\n"
 # define E_FORK_FAILURE "Couldn't fork: %s\n"
 # define E_INVALID_EXEC "File not found: %s\n"

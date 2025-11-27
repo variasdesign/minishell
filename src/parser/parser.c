@@ -68,7 +68,6 @@ static t_node	*create_cmd(t_list *token_list, t_node *token_node)
 {
 	t_cmd	ref;
 	t_node	*cmd_node;
-	t_cmd	*cmd;
 
 	if (token_node)
 	{
@@ -80,8 +79,6 @@ static t_node	*create_cmd(t_list *token_list, t_node *token_node)
 		ref.fd_in = 0;
 		ref.fd_out = 1;
 		cmd_node = ft_lstnew_node(sizeof(t_cmd), &ref);
-		cmd = cmd_node->content;
-		cmd->parent = cmd_node;
 		return (cmd_node);
 	}
 	else
