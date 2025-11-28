@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/21 15:23:52 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/11/28 14:50:12 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,12 +14,12 @@
 
 int	g_sig;
 
-static char	*get_last_dir(void)
+static char	*get_last_dir(char **env_list)
 {
 	char	*last_dir;
 	char	*pwd;
 
-	pwd = getenv("PWD");
+	pwd = get_env(env_list, "PWD");
 	last_dir = ft_strrchr(pwd, '/');
 	return (last_dir + (last_dir != ft_strlast(pwd)));
 }
@@ -37,7 +37,7 @@ static char	*assemble_prompt(char **env_list, char *prompt)
 	prompt_parts[2] = "@";
 	prompt_parts[3] = "hostname";
 	prompt_parts[4] = " ";
-	prompt_parts[5] = get_last_dir();
+	prompt_parts[5] = get_last_dir(env_list);
 	prompt_parts[6] = "]$ ";
 	prompt_parts[7] = 0;
 	len = 0;
@@ -73,7 +73,7 @@ static char	*read_input(char *args, char **env_list, char *prompt)
 		prompt = assemble_prompt(env_list, prompt);
 		args = readline(prompt);
 	}
-	if (args && *args)
+	if (args && !ft_isspace(*args))
 		add_history(args);
 	return (args);
 }
@@ -86,7 +86,7 @@ static void	mini_loop(t_mini *msh)
 
 	args = NULL;
 	prompt = NULL;
-	while (1)
+	while (msh->loop)
 	{
 		args = read_input(args, msh->env, prompt);
 		args = expander(args, msh->squote_tab, msh->dquote_tab, msh->var_tab);
@@ -95,7 +95,10 @@ static void	mini_loop(t_mini *msh)
 		if (!msh->cmd_list)
 			continue ;
 		msh->exit_code = exec_input(msh->cmd_list, msh->env);
+		msh->cmd_list = ft_lstdel_list(msh->cmd_list, free);
 	}
+	if (prompt)
+		free(prompt);
 }
 
 // TODO: Norminette E V E R Y T H I N G
@@ -113,12 +116,10 @@ int	main(int argc, char *argv[], char *envp[])
 	if (!msh)
 		return (EXIT_FAILURE);
 	// TODO: Signal handler (setup_signals)
-	msh->cwd = getcwd(NULL, 0);
-	msh->path = get_env(msh->env, "PATH");
 	signal(SIGINT, catch_int);
 	signal(SIGTSTP, catch_suspend);
 	mini_loop(msh);
-	// TODO: Free allocated memory in pointer tables
 	// TODO: Free all (PATH, cwd, envs, etc)
+	free_all(msh);
 	return (0);
 }

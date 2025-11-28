@@ -96,3 +96,17 @@ Most of the prompt processing deals with string classification and manipulation.
 	- Finally, exec_wrapper is called, where we obtain the arguments from the command to execute, as well as validate if the executable exists, is readable and is executable. This part should be checked either by the parser or the executor in minishell.
 
 - Another thing to take into account is how the pipex structure translates into the minishell structure, because the pipex structure is designed for one-time execution whenever the program is called.
+
+### Execution order
+1. Allocate a pid array and iterate over it, calling fork_and_exec and iterating again calling waitpid.
+2. If cmd->pipe_to = 1, it means that it must pipe its output to another command, and thus call pipe(fd) and store the generated pipe fds into an int array of length 2.
+3. Fork:
+	a. Child:
+		1. If there are redirections, try to open their paths and assign corresponding file descriptors to cmd->fd_in and cmd->fd_in, respectively. If instead of redirections, cmd->pipe_from or cmd->pipe_to are true, assign the pipe fds respectively.
+		2. Duplicate cmd->fd_in and cmd->fd_out into the child's STDIN_FILENO and STDOUT_FILENO. If there are no redirections or pipes, meaning that cmd->fd_in is already equal to STDIN_FILENO and cmd->fd_out is already equal to STDOUT_FILENO, dup2 does nothing and returns the fd. 
+		3. Check if cmd->fd_in or cmd->fd_out were changed from their default values and close the file descriptors if not.
+		4. Call exec_wrapper, which checks the executable against PATH and launches the executable.
+	b. Parent: 
+		1. Close writing end of pipe and pass reading end to the fd_in of the next command.
+		2. Return pid of fork for waitpid.
+

@@ -51,6 +51,7 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_SIG)/,	\
 					)
 
 BASE_SRCS		+= $(addprefix $(SRC_DIR_UT)/,	\
+					cleanup_tools.c				\
 					env_tools.c					\
 					error_tools.c				\
 					exec_tools.c				\

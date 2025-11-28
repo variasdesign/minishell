@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 18:31:31 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/24 19:59:29 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/11/28 14:49:41 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,7 +88,7 @@ static int	open_output(char *path, t_bool append)
 	}
 }
 
-int	open_files(t_cmd *cmd, int fd[2], t_bool last)
+int	open_files(t_cmd *cmd, int fd[2])
 {
 	t_node			*node;
 	t_token_type	type;
@@ -103,13 +103,23 @@ int	open_files(t_cmd *cmd, int fd[2], t_bool last)
 			path = ((t_redir *)(node->content))->file;
 			if (type == TOKEN_REDIR_IN
 				|| (type == TOKEN_REDIR_HEREDOC && heredoc(path)))
+			{
+				if (cmd->fd_in != STDIN_FILENO)
+					close(cmd->fd_in);
 				cmd->fd_in = open_input(path);
+			}
 			else if (type == TOKEN_REDIR_OUT || type == TOKEN_REDIR_APPEND)
+			{
+				if (cmd->fd_out != STDOUT_FILENO)
+					close(cmd->fd_out);
 				cmd->fd_out = open_output(path, type == TOKEN_REDIR_APPEND);
+			}
 			node = node->next;
 		}
 	}
-	if (!last)
+	if (cmd->pipe_from)
+		cmd->fd_in = fd[0];
+	if (cmd->pipe_to)
 		cmd->fd_out = fd[1];
 	return (check_fd_errors(cmd));
 }

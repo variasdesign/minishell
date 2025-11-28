@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static int	exec_multiple(t_list *cmd_list, char **env)
+static int	exec_cmd_list(t_list *cmd_list, char **env)
 {
 	pid_t	*pids;
 	int		i;
@@ -23,31 +23,16 @@ static int	exec_multiple(t_list *cmd_list, char **env)
 	pids = ft_calloc(cmd_list->count + 1, sizeof(pid_t));
 	cmd = cmd_list->head;
 	while (i < cmd_list->count && cmd)
-	// while (i < cmd_list->count - 1)
 	{
-		pids[i] = fork_and_exec(cmd, env, !cmd->next);
+		pids[i] = fork_and_exec(cmd, env);
 		i++;
 		cmd = cmd->next;
 	}
-	// pids[i] = fork_and_exec_last(ft_lstfind_node(cmd_list, i)->content, env);
 	i = 0;
 	while (i < cmd_list->count)
 		waitpid(pids[i++], &status, 0);
+	free(pids);
 	if (WIFEXITED(status))
-		return (WEXITSTATUS(status));
-	else
-		return (-1);
-}
-
-static int	exec_single(t_node *cmd, char **env)
-{
-	pid_t	pid;
-	int		status;
-
-	pid = fork_and_exec(cmd, env, !cmd->next);
-	// pid = fork_and_exec_last(cmd, env);
-	waitpid(pid, &status, 0);
-	if (WIFEXITED(status) && pid != -1)
 		return (WEXITSTATUS(status));
 	else
 		return (-1);
@@ -55,10 +40,8 @@ static int	exec_single(t_node *cmd, char **env)
 
 int	exec_input(t_list *cmd_list, char **env)
 {
-	if (cmd_list->count > 1)
-		return (exec_multiple(cmd_list, env));
-	else if (cmd_list->count == 1)
-		return (exec_single(cmd_list->head, env));
+	if (cmd_list->count > 0)
+		return (exec_cmd_list(cmd_list, env));
 	else
 		return (-1);
 }

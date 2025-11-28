@@ -67,9 +67,9 @@ static int	exec_wrapper(t_cmd *cmd, char **env)
 	return (-1);
 }
 
-static int	child_process(t_cmd *cmd, char **env, int fd[2], t_bool last)
+static int	child_process(t_cmd *cmd, char **env, int fd[2])
 {
-	if (open_files(cmd, fd, last) < 0)
+	if (open_files(cmd, fd) < 0)
 	{
 		print_error(E_FILE_FAILURE, strerror(errno));
 		return (-1);
@@ -80,13 +80,10 @@ static int	child_process(t_cmd *cmd, char **env, int fd[2], t_bool last)
 		print_error(E_DUP_FAILURE, strerror(errno));
 		return (-1);
 	}
-	if (!last)
-		close(fd[0]);
-	if (cmd->redir_list)
-	{
+	if (cmd->fd_in != STDIN_FILENO)
 		close(cmd->fd_in);
+	if (cmd->fd_out != STDOUT_FILENO)
 		close(cmd->fd_out);
-	}
 	if (exec_wrapper(cmd, env) < 0)
 	{
 		print_error(E_EXEC_FAILURE, strerror(errno));
@@ -96,33 +93,28 @@ static int	child_process(t_cmd *cmd, char **env, int fd[2], t_bool last)
 	return (0);
 }
 
-// FIX: Children should clean all allocated memory too
-// FIX: Use flags to signal when to pipe (and close pipe fds),
-// when to open files for redirs (and close redir fds).
-pid_t	fork_and_exec(t_node *cmd_node, char **env, t_bool last)
+// FIX: If child_process fails, children should clean all allocated memory too
+pid_t	fork_and_exec(t_node *cmd_node, char **env)
 {
 	pid_t	pid;
 	int		fd[2];
 	t_cmd	*curr;
 	t_cmd	*next;
 
-	if (!last && pipe(fd) < 0)
+	curr = cmd_node->content;
+	if (curr->pipe_to && pipe(fd) < 0)
 		return (print_error(E_PIPE_FAILURE, strerror(errno)), -1);
 	pid = fork();
 	if (pid < 0)
 		return (print_error(E_FORK_FAILURE, strerror(errno)), -1);
 	if (pid == 0)
-		if (child_process(cmd_node->content, env, fd, last) < 0)
+		if (child_process(cmd_node->content, env, fd) < 0)
 			exit(127);
-	curr = cmd_node->content;
-	close(curr->fd_in);
-	close(fd[1]);
-	if (!last)
+	if (curr->pipe_to)
 	{
+		close(fd[1]);
 		next = cmd_node->next->content;
 		next->fd_in = fd[0];
 	}
-	else
-		close(curr->fd_out);
 	return (pid);
 }

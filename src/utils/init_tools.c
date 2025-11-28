@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init.c                                             :+:      :+:    :+:   */
+/*   init_tools.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 19:27:26 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/13 13:44:48 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/11/28 14:42:29 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,5 +75,9 @@ t_mini	*allocate_minishell(char **envp)
 	msh->var_tab = tables[2];
 	msh->redir_tab = tables[3];
 	msh->word_tab = tables[4];
+	msh->exit_code = 0;
+	msh->cwd = getcwd(NULL, 0);
+	msh->path = get_env(msh->env, "PATH");
+	msh->loop = t;
 	return (msh);
 }

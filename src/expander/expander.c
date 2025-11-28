@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 13:21:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/13 13:53:36 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/11/28 14:27:12 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,8 +45,8 @@ char	*expander(char *args, t_ptr_tab *squote_tab,
 	if ((squote_tab->count > 0 && dquote_tab->count > 0)
 		&& validate_quotes(squote_tab, dquote_tab) < 0)
 	{
-		squote_tab = ft_tabfree(&squote_tab);
-		dquote_tab = ft_tabfree(&dquote_tab);
+		squote_tab = ft_tabfree(&squote_tab, f);
+		dquote_tab = ft_tabfree(&dquote_tab, f);
 		return (NULL);
 	}
 	if (locate_vars(args, var_tab, *squote_tab) < 0)

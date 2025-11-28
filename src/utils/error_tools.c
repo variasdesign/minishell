@@ -6,12 +6,11 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 18:38:08 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/24 18:38:15 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/11/28 14:49:43 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-#include <unistd.h>
 
 void	exit_error(char *msg, char *err, int exit_code)
 {

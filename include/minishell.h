@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/24 20:01:25 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/11/28 14:35:35 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,6 +76,8 @@ typedef struct s_cmd
 	t_list	*redir_list;
 	int		fd_in;
 	int		fd_out;
+	t_bool	pipe_from;
+	t_bool	pipe_to;
 }	t_cmd;
 
 typedef struct s_mini
@@ -84,6 +86,7 @@ typedef struct s_mini
 	char		*cwd;
 	char		*path;
 	int			exit_code;
+	t_bool		loop;
 	t_list		*cmd_list;
 	t_ptr_tab	*dquote_tab;
 	t_ptr_tab	*redir_tab;
@@ -104,8 +107,8 @@ int				exec_input(t_list *cmd_list, char **env);
 int				quote_char(char c);
 int				redir_char(char c);
 int				redir_start(char *str);
-int				open_files(t_cmd *cmd, int fd[2], t_bool last);
-pid_t			fork_and_exec(t_node *cmd, char **env, t_bool last);
+int				open_files(t_cmd *cmd, int fd[2]);
+pid_t			fork_and_exec(t_node *cmd, char **env);
 size_t			count_word_groups(t_list token_list);
 size_t			count_word_tokens(t_node *cmd_node);
 ssize_t			is_redir(char *redir);
@@ -128,6 +131,7 @@ t_token_type	get_token_type(t_node *token);
 void			catch_int(int sig_num);
 void			catch_suspend(int sig_num);
 void			exit_error(char *msg, char *err, int exit_code);
+void			free_all(t_mini *msh);
 void			print_error(char *msg, char *err);
 
 #endif

@@ -76,9 +76,14 @@ static t_node	*create_cmd(t_list *token_list, t_node *token_node)
 				count_word_tokens(token_node));
 		if (!ref.args)
 			return (NULL);
-		ref.fd_in = 0;
-		ref.fd_out = 1;
+		ref.fd_in = STDIN_FILENO;
+		ref.fd_out = STDOUT_FILENO;
+		ref.pipe_from = token_node
+			!= find_token_node(token_list->head, TOKEN_WORD_CMD, f);
+		ref.pipe_to = token_node
+			!= find_token_node(token_list->tail, TOKEN_WORD_CMD, t);
 		cmd_node = ft_lstnew_node(sizeof(t_cmd), &ref);
+		ft_freematrix((void **)ref.args);
 		return (cmd_node);
 	}
 	else
