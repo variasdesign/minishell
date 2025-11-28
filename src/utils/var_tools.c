@@ -26,8 +26,12 @@ static ssize_t	is_variable(char *var)
 
 	len = 0;
 	if (!ft_isdigit((++var)[len]))
+	{
+		if (var[len] == '?')
+			return (++len);
 		while (var[len] && (ft_isalnum(var[len]) || var[len] == '_'))
 			len++;
+	}
 	return (len);
 }
 

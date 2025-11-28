@@ -89,7 +89,7 @@ static void	mini_loop(t_mini *msh)
 	while (msh->loop)
 	{
 		args = read_input(args, msh->env, prompt);
-		args = expander(args, msh->squote_tab, msh->dquote_tab, msh->var_tab);
+		args = expander(args, msh);
 		token_list = lexer(args, msh);
 		msh->cmd_list = parser(token_list);
 		if (!msh->cmd_list)

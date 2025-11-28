@@ -34,29 +34,28 @@ static char	*reassemble_args(char **split_args)
 	return (args);
 }
 
-char	*expander(char *args, t_ptr_tab *squote_tab,
-					t_ptr_tab *dquote_tab, t_ptr_tab *var_tab)
+char	*expander(char *args, t_mini *msh)
 {
 	const char	*orig = args;
 
-	if (locate_quotes(args, squote_tab, '\'') < 0
-		|| locate_quotes(args, dquote_tab, '\"') < 0)
+	if (locate_quotes(args, msh->squote_tab, '\'') < 0
+		|| locate_quotes(args, msh->dquote_tab, '\"') < 0)
 		return (NULL);
-	if ((squote_tab->count > 0 && dquote_tab->count > 0)
-		&& validate_quotes(squote_tab, dquote_tab) < 0)
+	if ((msh->squote_tab->count > 0 && msh->dquote_tab->count > 0)
+		&& validate_quotes(msh->squote_tab, msh->dquote_tab) < 0)
 	{
-		squote_tab = ft_tabfree(&squote_tab, f);
-		dquote_tab = ft_tabfree(&dquote_tab, f);
+		msh->squote_tab = ft_tabfree(&msh->squote_tab, f);
+		msh->dquote_tab = ft_tabfree(&msh->dquote_tab, f);
 		return (NULL);
 	}
-	if (locate_vars(args, var_tab, *squote_tab) < 0)
+	if (locate_vars(args, msh->var_tab, *msh->squote_tab) < 0)
 		return (NULL);
-	if (var_tab->count > 0)
+	if (msh->var_tab->count > 0)
 	{
-		args = reassemble_args(split_vars(var_tab));
+		args = reassemble_args(split_vars(msh));
 		free((void *)orig);
-		squote_tab->orig = args;
-		dquote_tab->orig = args;
+		msh->squote_tab->orig = args;
+		msh->dquote_tab->orig = args;
 	}
 	return (args);
 }

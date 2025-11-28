@@ -83,7 +83,6 @@ static t_node	*create_cmd(t_list *token_list, t_node *token_node)
 		ref.pipe_to = token_node
 			!= find_token_node(token_list->tail, TOKEN_WORD_CMD, t);
 		cmd_node = ft_lstnew_node(sizeof(t_cmd), &ref);
-		ft_freematrix((void **)ref.args);
 		return (cmd_node);
 	}
 	else

@@ -97,9 +97,8 @@ typedef struct s_mini
 
 extern int	g_sig;
 
-char			**split_vars(t_ptr_tab *var_tab);
-char			*expander(char *args, t_ptr_tab *squote_tab,
-					t_ptr_tab *dquote_tab, t_ptr_tab *var_tab);
+char			**split_vars(t_mini *msh);
+char			*expander(char *args, t_mini *msh);
 char			*token_content(t_node *node);
 char			*get_env(char **env_list, char *env);
 int				check_fd_errors(t_cmd *cmd);
