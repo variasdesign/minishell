@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/29 14:04:19 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/11/29 18:05:29 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,28 @@ static char	*read_input(char *args, char **env_list, char **prompt)
 			*prompt = NULL;
 		}
 		*prompt = assemble_prompt(env_list, *prompt);
+		input_signal();
 		args = readline(*prompt);
+		
+		/* MANEJAR CTRL+C PRIMERO - puede devolver NULL o cadena vacía */
+		if (g_sig == 130)
+		{
+			/* Limpiar y resetear antes de continuar */
+			if (args)
+			{
+				free(args);
+				args = NULL;
+			}
+			g_sig = 0;  /* IMPORTANTE: resetear aqui para mostrar nuevo prompt */
+			continue;
+		}
+		
+		/* Manejar EOF (Ctrl+D) - SOLO si NO fue Ctrl+C */
+		if (!args && g_sig != 130)
+		{
+			printf("exit\n");
+			exit(0);
+		}
 	}
 	if (args && !ft_isspace(*args))
 		add_history(args);

@@ -6,11 +6,31 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/04 21:39:52 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/29 13:59:54 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/11/29 18:06:29 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+// https://docs.rtems.org/releases/4.5.1-pre3/toolsdoc/gdb-5.0-docs/readline/readline00030.html
+
+/* Handler que se reinstala automaticamente para prevenir exit del proceso */
+void	auto_reinstall_handler(int sig)
+{
+	if (sig == SIGINT)
+	{
+		g_sig = 130;
+		write(STDOUT_FILENO, "\n", 1);
+		
+		/* Limpiar readline */
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+		
+		/* Reinstalar handler */
+		signal(SIGINT, auto_reinstall_handler);
+	}
+}
 
 void	interrupt(int signal)
 {
@@ -50,6 +70,7 @@ void	exec_signal(void)
 
 void	input_signal(void)
 {
-	signal(SIGINT, redisplay);
+	rl_catch_signals = 0;
+	signal(SIGINT, auto_reinstall_handler);
 	signal(SIGQUIT, SIG_IGN);
 }
