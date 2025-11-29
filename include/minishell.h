@@ -28,9 +28,8 @@
 # define TABLE_NUM 5
 
 // Error messages
+# define E_SHELL_PERROR "minishell: %s: %s\n"
 # define E_CHILD_ERR "Children exited with error.\n"
-# define E_EXEC_FAILURE "Execution failed: %s\n"
-# define E_FILE_FAILURE "Opening of redirections failed: %s\n"
 # define E_DUP_FAILURE "Duplication of file descriptors failed: %s\n"
 # define E_EXEC_NOT_FOUND "Executable not found in PATH: %s\n"
 # define E_FORK_FAILURE "Couldn't fork: %s\n"
@@ -128,6 +127,7 @@ t_node			*find_token_node(t_node *offset,
 t_ptr_tab		*search_quotes_candidates(t_ptr_tab *quote_tab, char q);
 t_token_type	get_token_type(t_node *token);
 void			exec_signal(void);
+void			child_cleanup_and_exit(int exit_code);
 void			input_signal(void);
 void			interrupt(int signal);
 void			quit(int signal);

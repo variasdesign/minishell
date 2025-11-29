@@ -55,7 +55,7 @@ static int	exec_wrapper(t_cmd *cmd, char **env)
 	exec_path = valid_exec(cmd->args[0], path_list);
 	if (!exec_path)
 	{
-		printf("Executable not found: %s.\n", cmd->args[0]);
+		printf(E_SHELL_PERROR, cmd->args[0], strerror(errno));
 		ft_freematrix((void **)cmd->args);
 		return (-1);
 	}
@@ -70,10 +70,7 @@ static int	exec_wrapper(t_cmd *cmd, char **env)
 static int	child_process(t_cmd *cmd, char **env, int fd[2])
 {
 	if (open_files(cmd, fd) < 0)
-	{
-		print_error(E_FILE_FAILURE, strerror(errno));
 		return (-1);
-	}
 	if (dup2(cmd->fd_in, STDIN_FILENO) < 0
 		|| dup2(cmd->fd_out, STDOUT_FILENO) < 0)
 	{
@@ -85,11 +82,7 @@ static int	child_process(t_cmd *cmd, char **env, int fd[2])
 	if (cmd->fd_out != STDOUT_FILENO)
 		close(cmd->fd_out);
 	if (exec_wrapper(cmd, env) < 0)
-	{
-		print_error(E_EXEC_FAILURE, strerror(errno));
-		close(STDOUT_FILENO);
 		return (-1);
-	}
 	return (0);
 }
 
@@ -110,6 +103,7 @@ pid_t	fork_and_exec(t_node *cmd_node, char **env)
 	if (pid == 0)
 		if (child_process(cmd_node->content, env, fd) < 0)
 			exit(127);
+			//child_cleanup_and_exit(127);
 	if (curr->pipe_to)
 	{
 		close(fd[1]);

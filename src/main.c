@@ -54,7 +54,7 @@ static char	*assemble_prompt(char **env_list, char *prompt)
 }
 
 // TODO: Read on rl_done global var
-static char	*read_input(char *args, char **env_list, char *prompt)
+static char	*read_input(char *args, char **env_list, char **prompt)
 {
 	extern int	rl_done;
 
@@ -65,13 +65,13 @@ static char	*read_input(char *args, char **env_list, char *prompt)
 	}
 	while (!args)
 	{
-		if (prompt)
+		if (*prompt)
 		{
-			free(prompt);
-			prompt = NULL;
+			free(*prompt);
+			*prompt = NULL;
 		}
-		prompt = assemble_prompt(env_list, prompt);
-		args = readline(prompt);
+		*prompt = assemble_prompt(env_list, *prompt);
+		args = readline(*prompt);
 	}
 	if (args && !ft_isspace(*args))
 		add_history(args);
@@ -88,7 +88,7 @@ static void	mini_loop(t_mini *msh)
 	prompt = NULL;
 	while (msh->loop)
 	{
-		args = read_input(args, msh->env, prompt);
+		args = read_input(args, msh->env, &prompt);
 		args = expander(args, msh);
 		token_list = lexer(args, msh);
 		msh->cmd_list = parser(token_list);

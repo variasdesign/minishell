@@ -58,7 +58,10 @@ static int	open_input(char *path)
 	if (!access(path, F_OK | R_OK))
 		return (open(path, O_RDONLY));
 	else
-		print_error(E_UNREADABLE_INPUT, strerror(errno));
+	{
+		ft_printf(2, E_SHELL_PERROR, path, strerror(errno));
+		return (-1);
+	}
 	return (0);
 }
 
@@ -69,23 +72,20 @@ static int	open_output(char *path, t_bool append)
 	if (access(path, W_OK))
 	{
 		if (errno != ENOENT)
-			return (ft_printf(2, E_UNWRITABLE_OUTPUT, strerror(errno)), 1);
+			return (ft_printf(2, E_SHELL_PERROR, path, strerror(errno)), -1);
 		else
-		{
 			out = open(path, O_WRONLY | O_CREAT, 0640);
-			if (out < 0)
-				return (ft_printf(2, E_UNWRITABLE_OUTPUT, strerror(errno)), 1);
-			else
-				return (out);
-		}
 	}
 	else
 	{
 		if (append)
-			return (open(path, O_WRONLY | O_APPEND));
+			out = open(path, O_WRONLY | O_APPEND);
 		else
-			return (open(path, O_WRONLY | O_TRUNC));
+			out = open(path, O_WRONLY | O_TRUNC);
 	}
+	if (out < 0)
+		return (ft_printf(2, E_SHELL_PERROR, path, strerror(errno)), -1);
+	return (out);
 }
 
 int	open_files(t_cmd *cmd, int fd[2])
@@ -117,8 +117,6 @@ int	open_files(t_cmd *cmd, int fd[2])
 			node = node->next;
 		}
 	}
-	if (cmd->pipe_from)
-		cmd->fd_in = fd[0];
 	if (cmd->pipe_to)
 		cmd->fd_out = fd[1];
 	return (check_fd_errors(cmd));
