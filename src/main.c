@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/28 14:50:12 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/11/29 14:04:19 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,9 +115,7 @@ int	main(int argc, char *argv[], char *envp[])
 	msh = allocate_minishell(envp);
 	if (!msh)
 		return (EXIT_FAILURE);
-	// TODO: Signal handler (setup_signals)
-	signal(SIGINT, catch_int);
-	signal(SIGTSTP, catch_suspend);
+	input_signal();
 	mini_loop(msh);
 	// TODO: Free all (PATH, cwd, envs, etc)
 	free_all(msh);

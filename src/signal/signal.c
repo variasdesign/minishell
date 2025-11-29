@@ -3,23 +3,53 @@
 /*                                                        :::      ::::::::   */
 /*   signal.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/04 21:39:52 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/17 19:09:13 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/11/29 13:59:54 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-void	catch_int(int sig_num)
+void	interrupt(int signal)
 {
-	(void)sig_num;
-	return ;
+	if (signal == SIGINT)
+	{
+		g_sig = 130;
+		printf("^C\n");
+	}
 }
 
-void	catch_suspend(int sig_num)
+void	quit(int signal)
 {
-	(void)sig_num;
-	return ;
+	if (signal == SIGQUIT)
+	{
+		g_sig = 131;
+		printf("minishell: quit process\n");
+	}
+}
+
+void	redisplay(int signal)
+{
+	if (signal == SIGINT)
+	{
+		g_sig = 130;
+		printf("\n");
+		rl_on_new_line();
+		rl_replace_line("", 0);
+		rl_redisplay();
+	}
+}
+
+void	exec_signal(void)
+{
+	signal(SIGINT, interrupt);
+	signal(SIGQUIT, quit);
+}
+
+void	input_signal(void)
+{
+	signal(SIGINT, redisplay);
+	signal(SIGQUIT, SIG_IGN);
 }

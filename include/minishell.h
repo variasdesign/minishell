@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/28 14:35:35 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/11/29 13:59:29 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,8 +127,11 @@ t_node			*find_token_node(t_node *offset,
 					t_token_type type, t_bool last);
 t_ptr_tab		*search_quotes_candidates(t_ptr_tab *quote_tab, char q);
 t_token_type	get_token_type(t_node *token);
-void			catch_int(int sig_num);
-void			catch_suspend(int sig_num);
+void			exec_signal(void);
+void			input_signal(void);
+void			interrupt(int signal);
+void			quit(int signal);
+void			redisplay(int signal);
 void			exit_error(char *msg, char *err, int exit_code);
 void			free_all(t_mini *msh);
 void			print_error(char *msg, char *err);
