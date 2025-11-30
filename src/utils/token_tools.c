@@ -53,7 +53,7 @@ t_token_type	get_token_type(t_node *node)
 		return (TOKEN_NULL);
 }
 
-char	*token_content(t_node *node)
+char	*dup_token_content(t_node *node)
 {
 	const t_token	*token = node->content;
 	const char		*start = token->start;
@@ -78,7 +78,7 @@ t_node	*find_token_node(t_node *offset, t_token_type type, t_bool last)
 		{
 			if (node_type == TOKEN_REDIR_IN || node_type == TOKEN_REDIR_HEREDOC)
 				return (node);
-		}
+	}
 		else if (type == TOKEN_REDIR_OUT_ALL)
 			if (node_type == TOKEN_REDIR_OUT || node_type == TOKEN_REDIR_APPEND)
 				return (node);

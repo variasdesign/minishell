@@ -21,7 +21,7 @@ static void	add_redir_node(t_list *redir_list, t_list *token_list,
 	while (redir_node)
 	{
 		redir->type = get_token_type(redir_node);
-		redir->file = token_content(redir_node->next);
+		redir->file = dup_token_content(redir_node->next);
 		ft_lstdel_wrapper(token_list, redir_node->next, free);
 		redir_node = ft_lstnew_node(redir_list->data_size, redir);
 		ft_lstadd_back(redir_list, redir_node);
@@ -40,10 +40,7 @@ static t_list	*init_redir_list(t_list *token_list, t_node *token_node)
 	if (token_node == find_token_node(token_list->tail, TOKEN_WORD_CMD, t))
 		add_redir_node(redir_list, token_list, TOKEN_REDIR_OUT_ALL, &redir);
 	if (redir_list->count < 1)
-	{
-		ft_lstdel_list(redir_list, free);
-		return (NULL);
-	}
+		return (ft_lstdel_list(redir_list, free));
 	return (redir_list);
 }
 
@@ -58,8 +55,9 @@ static char	**insert_words_into_args(t_node *token_node, size_t word_count)
 	i = 0;
 	while (i < word_count && token_node)
 	{
-		args[i++] = token_content(token_node);
+		args[i] = dup_token_content(token_node);
 		token_node = find_token_node(token_node->next, TOKEN_WORD_ARG, f);
+		i++;
 	}
 	return (args);
 }
@@ -85,8 +83,7 @@ static t_node	*create_cmd(t_list *token_list, t_node *token_node)
 		cmd_node = ft_lstnew_node(sizeof(t_cmd), &ref);
 		return (cmd_node);
 	}
-	else
-		return (NULL);
+	return (NULL);
 }
 
 t_list	*parser(t_list *token_list)

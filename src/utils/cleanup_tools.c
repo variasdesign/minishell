@@ -12,12 +12,23 @@
 
 #include "minishell.h"
 
+void	free_cmd_list(void *cmd_ptr)
+{
+	t_cmd *cmd;
+
+	cmd = cmd_ptr;
+	ft_freematrix((void **)cmd->args);
+	ft_lstdel_list(cmd->redir_list, free);
+	free(cmd);
+}
+
 void	free_all(t_mini *msh)
 {
 	t_ptr_tab	*tables[TABLE_NUM];
 	int			i;
 
 	msh->env = (char **)ft_freematrix((void **)msh->env);
+	free(msh->cwd);
 	tables[0] = msh->squote_tab;
 	tables[1] = msh->dquote_tab;
 	tables[2] = msh->var_tab;

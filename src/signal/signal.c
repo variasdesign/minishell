@@ -14,7 +14,6 @@
 
 volatile sig_atomic_t	g_sig;
 
-// FIX: SIGQUIT doesn't work; it exits but doesn't print exit
 void	prompt_handler(int signum)
 {
 	g_sig = signum;
@@ -27,8 +26,6 @@ void	prompt_handler(int signum)
 		rl_redisplay();
 		signal(SIGINT, prompt_handler);
 	}
-	if (signum == SIGQUIT)
-		write(STDOUT_FILENO, "\nexit\n", 6);
 }
 
 void	exec_signal(void)

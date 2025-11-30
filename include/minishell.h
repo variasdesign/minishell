@@ -100,7 +100,7 @@ extern volatile sig_atomic_t	g_sig;
 
 char			**split_vars(t_mini *msh);
 char			*expander(char *args, t_mini *msh);
-char			*token_content(t_node *node);
+char			*dup_token_content(t_node *node);
 char			*get_env(char **env_list, char *env);
 int				check_fd_errors(t_cmd *cmd);
 int				exec_input(t_list *cmd_list, char **env);
@@ -130,6 +130,7 @@ t_ptr_tab		*search_quotes_candidates(t_ptr_tab *quote_tab, char q);
 t_token_type	get_token_type(t_node *token);
 void			exec_signal(void);
 void			child_cleanup_and_exit(int exit_code);
+void			free_cmd_list(void *cmd_ptr);
 void			input_signal(void);
 void			interrupt(int signal);
 void			quit(int signal);

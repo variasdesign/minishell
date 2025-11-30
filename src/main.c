@@ -96,7 +96,7 @@ static void	mini_loop(t_mini *msh)
 			else
 			{
 				msh->exit_code = exec_input(msh->cmd_list, msh->env);
-				msh->cmd_list = ft_lstdel_list(msh->cmd_list, free);
+				msh->cmd_list = ft_lstdel_list(msh->cmd_list, free_cmd_list);
 			}
 		}
 	}
@@ -121,5 +121,6 @@ int	main(int argc, char *argv[], char *envp[])
 	mini_loop(msh);
 	// TODO: Free all (PATH, cwd, envs, etc)
 	free_all(msh);
+	write(STDOUT_FILENO, "exit\n", 5);
 	return (0);
 }
