@@ -28,19 +28,20 @@
 # define TABLE_NUM 5
 
 // Error messages
-# define E_SHELL_PERROR "minishell: %s: %s\n"
+# define E_ARGS_NOT_TAKEN "This program doesn't take any arguments.\n"
 # define E_CHILD_ERR "Children exited with error.\n"
 # define E_DUP_FAILURE "Duplication of file descriptors failed: %s\n"
 # define E_EXEC_NOT_FOUND "Executable not found in PATH: %s\n"
 # define E_FORK_FAILURE "Couldn't fork: %s\n"
+# define E_HEREDOC_FAILURE "heredoc couldn't be created or written to.\n"
 # define E_INVALID_EXEC "File not found: %s\n"
+# define E_INVALID_HERE_DOC "Invalid heredoc delimiter.\n"
 # define E_INVALID_PROMPT "Invalid prompt.\n"
 # define E_PATH_FAILURE "PATH env not found.\n"
 # define E_PIPE_FAILURE "Couldn't create pipes: %s\n"
+# define E_SHELL_PERROR "minishell: %s: %s\n"
 # define E_UNREADABLE_INPUT "Input is not readable: %s\n"
 # define E_UNWRITABLE_OUTPUT "Output is not writable: %s\n"
-# define E_HEREDOC_FAILURE "heredoc couldn't be created or written to.\n"
-# define E_INVALID_HERE_DOC "Invalid heredoc delimiter.\n"
 
 typedef enum e_token_type
 {
@@ -87,6 +88,7 @@ typedef struct s_mini
 	int			exit_code;
 	t_bool		loop;
 	t_list		*cmd_list;
+	t_list		*token_list;
 	t_ptr_tab	*dquote_tab;
 	t_ptr_tab	*redir_tab;
 	t_ptr_tab	*squote_tab;
@@ -94,7 +96,7 @@ typedef struct s_mini
 	t_ptr_tab	*word_tab;
 }	t_mini;
 
-extern int	g_sig;
+extern volatile sig_atomic_t	g_sig;
 
 char			**split_vars(t_mini *msh);
 char			*expander(char *args, t_mini *msh);
@@ -131,7 +133,7 @@ void			child_cleanup_and_exit(int exit_code);
 void			input_signal(void);
 void			interrupt(int signal);
 void			quit(int signal);
-void			redisplay(int signal);
+void			prompt_handler(int signal);
 void			exit_error(char *msg, char *err, int exit_code);
 void			free_all(t_mini *msh);
 void			print_error(char *msg, char *err);

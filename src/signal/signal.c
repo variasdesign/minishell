@@ -6,71 +6,39 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/04 21:39:52 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/29 18:06:29 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/11/29 13:59:54 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-// https://docs.rtems.org/releases/4.5.1-pre3/toolsdoc/gdb-5.0-docs/readline/readline00030.html
+volatile sig_atomic_t	g_sig;
 
-/* Handler que se reinstala automaticamente para prevenir exit del proceso */
-void	auto_reinstall_handler(int sig)
+// FIX: SIGQUIT doesn't work; it exits but doesn't print exit
+void	prompt_handler(int signum)
 {
-	if (sig == SIGINT)
+	g_sig = signum;
+	if (signum == SIGINT)
 	{
-		g_sig = 130;
+		g_sig = SIGINT;
 		write(STDOUT_FILENO, "\n", 1);
-		
-		/* Limpiar readline */
 		rl_on_new_line();
 		rl_replace_line("", 0);
 		rl_redisplay();
-		
-		/* Reinstalar handler */
-		signal(SIGINT, auto_reinstall_handler);
+		signal(SIGINT, prompt_handler);
 	}
-}
-
-void	interrupt(int signal)
-{
-	if (signal == SIGINT)
-	{
-		g_sig = 130;
-		printf("^C\n");
-	}
-}
-
-void	quit(int signal)
-{
-	if (signal == SIGQUIT)
-	{
-		g_sig = 131;
-		printf("minishell: quit process\n");
-	}
-}
-
-void	redisplay(int signal)
-{
-	if (signal == SIGINT)
-	{
-		g_sig = 130;
-		printf("\n");
-		rl_on_new_line();
-		rl_replace_line("", 0);
-		rl_redisplay();
-	}
+	if (signum == SIGQUIT)
+		write(STDOUT_FILENO, "\nexit\n", 6);
 }
 
 void	exec_signal(void)
 {
-	signal(SIGINT, interrupt);
-	signal(SIGQUIT, quit);
+	signal(SIGINT, SIG_DFL);
+	signal(SIGQUIT, SIG_DFL);
 }
 
 void	input_signal(void)
 {
-	rl_catch_signals = 0;
-	signal(SIGINT, auto_reinstall_handler);
-	signal(SIGQUIT, SIG_IGN);
+	signal(SIGINT, prompt_handler);
+	signal(SIGQUIT, prompt_handler);
 }

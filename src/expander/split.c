@@ -34,8 +34,6 @@ static ssize_t	count_segments(t_ptr_tab var_tab)
 }
 
 // Obtain var value, checking also for special variable $? (exit status)
-// TODO: Obtain exit status from last executed cmd
-// split = ft_itoa(WEXITSTATUS(status));
 // TODO: Research word splitting when empty var names:
 // echo My name is $USER and I work as $JOB in $COMPANY
 // My name is varias and I work as in <- one space

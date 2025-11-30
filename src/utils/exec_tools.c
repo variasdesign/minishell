@@ -55,7 +55,7 @@ static int	exec_wrapper(t_cmd *cmd, char **env)
 	exec_path = valid_exec(cmd->args[0], path_list);
 	if (!exec_path)
 	{
-		printf(E_SHELL_PERROR, cmd->args[0], strerror(errno));
+		printf(E_SHELL_PERROR, cmd->args[0], "command not found");
 		ft_freematrix((void **)cmd->args);
 		return (-1);
 	}

@@ -95,10 +95,10 @@ t_list	*lexer(char *args, t_mini *msh)
 {
 	t_list	*token_list;
 
-	search_quotes_candidates(msh->squote_tab, '\'');
-	search_quotes_candidates(msh->dquote_tab, '\"');
-	locate_redirs(args, msh);
-	locate_words(args, msh);
+	msh->squote_tab = search_quotes_candidates(msh->squote_tab, '\'');
+	msh->dquote_tab = search_quotes_candidates(msh->dquote_tab, '\"');
+	msh->redir_tab->count = locate_redirs(args, msh);
+	msh->word_tab->count = locate_words(args, msh);
 	token_list = tokenize(msh->redir_tab, msh->word_tab);
 	return (token_list);
 }

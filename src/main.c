@@ -12,8 +12,6 @@
 
 #include "minishell.h"
 
-int	g_sig;
-
 static char	*get_last_dir(char **env_list)
 {
 	char	*last_dir;
@@ -26,6 +24,8 @@ static char	*get_last_dir(char **env_list)
 
 // TODO: Read hostname by executing hostname or uname -n
 // and redirecting its output to a string
+// FIX: When interrupting a running process (e.g. cat without arguments),
+// the prompt is printed twice.
 static char	*assemble_prompt(char **env_list, char *prompt)
 {
 	size_t	len;
@@ -53,70 +53,51 @@ static char	*assemble_prompt(char **env_list, char *prompt)
 	return (prompt);
 }
 
-// TODO: Read on rl_done global var
 static char	*read_input(char *args, char **env_list, char **prompt)
 {
-	extern int	rl_done;
-
 	if (args)
 	{
 		free(args);
 		args = NULL;
 	}
-	while (!args)
+	if (*prompt)
 	{
-		if (*prompt)
-		{
-			free(*prompt);
-			*prompt = NULL;
-		}
-		*prompt = assemble_prompt(env_list, *prompt);
-		input_signal();
-		args = readline(*prompt);
-		
-		/* MANEJAR CTRL+C PRIMERO - puede devolver NULL o cadena vacía */
-		if (g_sig == 130)
-		{
-			/* Limpiar y resetear antes de continuar */
-			if (args)
-			{
-				free(args);
-				args = NULL;
-			}
-			g_sig = 0;  /* IMPORTANTE: resetear aqui para mostrar nuevo prompt */
-			continue;
-		}
-		
-		/* Manejar EOF (Ctrl+D) - SOLO si NO fue Ctrl+C */
-		if (!args && g_sig != 130)
-		{
-			printf("exit\n");
-			exit(0);
-		}
+		free(*prompt);
+		*prompt = NULL;
 	}
-	if (args && !ft_isspace(*args))
+	*prompt = assemble_prompt(env_list, *prompt);
+	input_signal();
+	args = readline(*prompt);
+	if (args && *args && !ft_isspace(*args))
 		add_history(args);
 	return (args);
 }
 
+// TODO: Error check against -1 in exec_input return
 static void	mini_loop(t_mini *msh)
 {
 	char	*args;
 	char	*prompt;
-	t_list	*token_list;
 
 	args = NULL;
 	prompt = NULL;
 	while (msh->loop)
 	{
 		args = read_input(args, msh->env, &prompt);
-		args = expander(args, msh);
-		token_list = lexer(args, msh);
-		msh->cmd_list = parser(token_list);
-		if (!msh->cmd_list)
-			continue ;
-		msh->exit_code = exec_input(msh->cmd_list, msh->env);
-		msh->cmd_list = ft_lstdel_list(msh->cmd_list, free);
+		msh->loop = args != NULL;
+		if (args && *args)
+		{
+			args = expander(args, msh);
+			msh->token_list = lexer(args, msh);
+			msh->cmd_list = parser(msh->token_list);
+			if (!msh->cmd_list)
+				continue ;
+			else
+			{
+				msh->exit_code = exec_input(msh->cmd_list, msh->env);
+				msh->cmd_list = ft_lstdel_list(msh->cmd_list, free);
+			}
+		}
 	}
 	if (prompt)
 		free(prompt);
@@ -129,14 +110,13 @@ int	main(int argc, char *argv[], char *envp[])
 
 	if (argc > 1 || argv[1])
 	{
-		printf("This program doesn't take arguments.\n");
+		printf(E_ARGS_NOT_TAKEN);
 		return (1);
 	}
 	g_sig = 0;
 	msh = allocate_minishell(envp);
 	if (!msh)
 		return (EXIT_FAILURE);
-	input_signal();
 	mini_loop(msh);
 	// TODO: Free all (PATH, cwd, envs, etc)
 	free_all(msh);

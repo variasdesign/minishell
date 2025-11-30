@@ -34,8 +34,7 @@ static int	exec_cmd_list(t_list *cmd_list, char **env)
 	free(pids);
 	if (WIFEXITED(status))
 		return (WEXITSTATUS(status));
-	else
-		return (-1);
+	return (-1);
 }
 
 int	exec_input(t_list *cmd_list, char **env)
