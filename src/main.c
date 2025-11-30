@@ -74,6 +74,7 @@ static char	*read_input(char *args, char **env_list, char **prompt)
 }
 
 // TODO: Error check against -1 in exec_input return
+// TODO: Is msh->exit_code the same as g_sig?
 static void	mini_loop(t_mini *msh)
 {
 	char	*args;
