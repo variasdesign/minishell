@@ -1,7 +1,7 @@
-display word_tab->count
+display msh->word_tab->count
 display i
 display word_can
-display (char *)word_tab->start[i]
-display (char *)word_tab->end[i]
-display (char *)word_tab->start[0]@word_tab->count + 1
-display (char *)word_tab->end[0]@word_tab->count + 1
+display (char *)msh->word_tab->start[i]
+display (char *)msh->word_tab->end[i]
+display (char *)msh->word_tab->start[0]@msh->word_tab->count + 1
+display (char *)msh->word_tab->end[0]@msh->word_tab->count + 1

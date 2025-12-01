@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   token_utils.c                                      :+:      :+:    :+:   */
+/*   token_tools.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/28 18:16:54 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/28 18:17:53 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/01 13:33:03 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,7 +78,7 @@ t_node	*find_token_node(t_node *offset, t_token_type type, t_bool last)
 		{
 			if (node_type == TOKEN_REDIR_IN || node_type == TOKEN_REDIR_HEREDOC)
 				return (node);
-	}
+		}
 		else if (type == TOKEN_REDIR_OUT_ALL)
 			if (node_type == TOKEN_REDIR_OUT || node_type == TOKEN_REDIR_APPEND)
 				return (node);

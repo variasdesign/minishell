@@ -6,50 +6,22 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 18:31:31 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/28 14:49:41 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/01 12:51:52 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	open_heredoc(void)
+static int	check_fd_errors(t_cmd *cmd)
 {
-	int	hd_fd;
-
-	hd_fd = open("/tmp/heredoc", O_WRONLY | O_TRUNC | O_CREAT, 0640);
-	if (hd_fd < 0)
+	if (cmd->fd_in < 0 || cmd->fd_out < 0)
 	{
-		print_error(E_HEREDOC_FAILURE, NULL);
+		if (cmd->fd_in >= 0)
+			close(cmd->fd_in);
+		if (cmd->fd_out >= 0)
+			close(cmd->fd_out);
 		return (-1);
 	}
-	return (hd_fd);
-}
-
-static int	heredoc(char *lim)
-{
-	const int	heredoc_fd = open_heredoc();
-	const int	lim_len = ft_strlen(lim);
-	char		*line;
-
-	if (heredoc_fd < 0)
-		return (-1);
-	while (t)
-	{
-		line = get_next_line(0);
-		if (!line)
-		{
-			print_error(E_HEREDOC_FAILURE, NULL);
-			return (-1);
-		}
-		if (!ft_strncmp(line, lim, lim_len) && line[lim_len] == '\n')
-		{
-			free(line);
-			break ;
-		}
-		write(heredoc_fd, line, ft_strlen(line));
-		free(line);
-	}
-	close(heredoc_fd);
 	return (0);
 }
 
@@ -88,36 +60,40 @@ static int	open_output(char *path, t_bool append)
 	return (out);
 }
 
-int	open_files(t_cmd *cmd, int fd[2])
+static void	open_redirections(t_cmd *cmd)
 {
 	t_node			*node;
 	t_token_type	type;
 	char			*path;
 
-	if (cmd->redir_list)
+	node = cmd->redir_list->head;
+	while (node)
 	{
-		node = cmd->redir_list->head;
-		while (node)
+		type = get_token_type(node);
+		path = ((t_redir *)(node->content))->file;
+		if (!cmd->pipe_from && (type == TOKEN_REDIR_IN
+				|| (type == TOKEN_REDIR_HEREDOC && heredoc(path))))
 		{
-			type = get_token_type(node);
-			path = ((t_redir *)(node->content))->file;
-			if (type == TOKEN_REDIR_IN
-				|| (type == TOKEN_REDIR_HEREDOC && heredoc(path)))
-			{
-				if (cmd->fd_in != STDIN_FILENO)
-					close(cmd->fd_in);
-				cmd->fd_in = open_input(path);
-			}
-			else if (type == TOKEN_REDIR_OUT || type == TOKEN_REDIR_APPEND)
-			{
-				if (cmd->fd_out != STDOUT_FILENO)
-					close(cmd->fd_out);
-				cmd->fd_out = open_output(path, type == TOKEN_REDIR_APPEND);
-			}
-			node = node->next;
+			if (cmd->fd_in != STDIN_FILENO)
+				close(cmd->fd_in);
+			cmd->fd_in = open_input(path);
 		}
+		else if (!cmd->pipe_to
+			&& (type == TOKEN_REDIR_OUT || type == TOKEN_REDIR_APPEND))
+		{
+			if (cmd->fd_out != STDOUT_FILENO)
+				close(cmd->fd_out);
+			cmd->fd_out = open_output(path, type == TOKEN_REDIR_APPEND);
+		}
+		node = node->next;
 	}
-	if (cmd->pipe_to)
-		cmd->fd_out = fd[1];
+}
+
+int	open_files(t_cmd *cmd, char **env)
+{
+	if (get_exec_path(cmd, env) < 0)
+		return (-1);
+	if (cmd->redir_list)
+		open_redirections(cmd);
 	return (check_fd_errors(cmd));
 }

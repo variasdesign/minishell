@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 20:22:47 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/23 18:00:59 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/01 13:43:56 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ static ssize_t	count_quotes(char *args, char q)
 	return (count);
 }
 
-t_ptr_tab	*search_quotes_candidates(t_ptr_tab *quote_tab, char q)
+t_ptr_tab	*search_quote_candidates(t_ptr_tab *quote_tab, char q)
 {
 	ssize_t	i;
 
@@ -67,7 +67,7 @@ ssize_t	locate_quotes(char *args, t_ptr_tab *quote_tab, char q)
 			printf("Error allocating %c quote pointer table\n", q);
 			return (-1);
 		}
-		quote_tab = search_quotes_candidates(quote_tab, q);
+		quote_tab = search_quote_candidates(quote_tab, q);
 	}
 	if (quote_tab->count < 0)
 	{

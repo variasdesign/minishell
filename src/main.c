@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/29 18:05:29 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/12/01 13:55:01 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,12 +53,12 @@ static char	*assemble_prompt(char **env_list, char *prompt)
 	return (prompt);
 }
 
-static char	*read_input(char *args, char **env_list, char **prompt)
+static char	*read_input(char **args, char **env_list, char **prompt)
 {
-	if (args)
+	if (*args)
 	{
-		free(args);
-		args = NULL;
+		free(*args);
+		*args = NULL;
 	}
 	if (*prompt)
 	{
@@ -67,41 +67,35 @@ static char	*read_input(char *args, char **env_list, char **prompt)
 	}
 	*prompt = assemble_prompt(env_list, *prompt);
 	input_signal();
-	args = readline(*prompt);
-	if (args && *args && !ft_isspace(*args))
-		add_history(args);
-	return (args);
+	*args = readline(*prompt);
+	if (args && *args && !ft_isspace(**args))
+		add_history(*args);
+	return (*args);
 }
 
-// TODO: Error check against -1 in exec_input return
+// TODO: Error check against -1 in exec_cmd_list return
 // TODO: Is msh->exit_code the same as g_sig?
 static void	mini_loop(t_mini *msh)
 {
-	char	*args;
-	char	*prompt;
-
-	args = NULL;
-	prompt = NULL;
 	while (msh->loop)
 	{
-		args = read_input(args, msh->env, &prompt);
-		msh->loop = args != NULL;
-		if (args && *args)
+		msh->input = read_input(&msh->input, msh->env, &msh->prompt);
+		msh->loop = msh->input != NULL;
+		if (msh->input && *msh->input)
 		{
-			args = expander(args, msh);
-			msh->token_list = lexer(args, msh);
+			msh->input = expander(msh->input, msh);
+			msh->token_list = lexer(msh->input, msh);
 			msh->cmd_list = parser(msh->token_list);
+			free_tables(msh, f);
 			if (!msh->cmd_list)
 				continue ;
 			else
 			{
-				msh->exit_code = exec_input(msh->cmd_list, msh->env);
+				msh->exit_code = exec_cmd_list(msh, msh->cmd_list, msh->env);
 				msh->cmd_list = ft_lstdel_list(msh->cmd_list, free_cmd_list);
 			}
 		}
 	}
-	if (prompt)
-		free(prompt);
 }
 
 // TODO: Norminette E V E R Y T H I N G

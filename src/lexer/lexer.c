@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 18:19:24 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/21 15:26:56 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/01 13:39:12 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,8 +95,8 @@ t_list	*lexer(char *args, t_mini *msh)
 {
 	t_list	*token_list;
 
-	msh->squote_tab = search_quotes_candidates(msh->squote_tab, '\'');
-	msh->dquote_tab = search_quotes_candidates(msh->dquote_tab, '\"');
+	msh->squote_tab = search_quote_candidates(msh->squote_tab, '\'');
+	msh->dquote_tab = search_quote_candidates(msh->dquote_tab, '\"');
 	msh->redir_tab->count = locate_redirs(args, msh);
 	msh->word_tab->count = locate_words(args, msh);
 	token_list = tokenize(msh->redir_tab, msh->word_tab);

@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/29 13:59:29 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/12/01 13:39:12 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,7 +85,10 @@ typedef struct s_mini
 	char		**env;
 	char		*cwd;
 	char		*path;
+	char		*input;
+	char		*prompt;
 	int			exit_code;
+	pid_t		*pids;
 	t_bool		loop;
 	t_list		*cmd_list;
 	t_list		*token_list;
@@ -99,16 +102,17 @@ typedef struct s_mini
 extern volatile sig_atomic_t	g_sig;
 
 char			**split_vars(t_mini *msh);
-char			*expander(char *args, t_mini *msh);
 char			*dup_token_content(t_node *node);
+char			*expander(char *args, t_mini *msh);
 char			*get_env(char **env_list, char *env);
-int				check_fd_errors(t_cmd *cmd);
-int				exec_input(t_list *cmd_list, char **env);
+int				exec_cmd_list(t_mini *msh, t_list *cmd_list, char **env);
+int				get_exec_path(t_cmd *cmd, char **env);
+int				heredoc(char *lim);
+int				open_files(t_cmd *cmd, char **env);
 int				quote_char(char c);
 int				redir_char(char c);
 int				redir_start(char *str);
-int				open_files(t_cmd *cmd, int fd[2]);
-pid_t			fork_and_exec(t_node *cmd, char **env);
+pid_t			fork_and_exec(t_mini *msh, t_node *cmd, char **env);
 size_t			count_word_groups(t_list token_list);
 size_t			count_word_tokens(t_node *cmd_node);
 ssize_t			is_redir(char *redir);
@@ -126,17 +130,18 @@ t_list			*parser(t_list *token_list);
 t_mini			*allocate_minishell(char **envp);
 t_node			*find_token_node(t_node *offset,
 					t_token_type type, t_bool last);
-t_ptr_tab		*search_quotes_candidates(t_ptr_tab *quote_tab, char q);
+t_ptr_tab		*search_quote_candidates(t_ptr_tab *quote_tab, char q);
 t_token_type	get_token_type(t_node *token);
+void			child_cleanup_and_exit(t_mini *msh, int exit_code);
 void			exec_signal(void);
-void			child_cleanup_and_exit(int exit_code);
-void			free_cmd_list(void *cmd_ptr);
-void			input_signal(void);
-void			interrupt(int signal);
-void			quit(int signal);
-void			prompt_handler(int signal);
 void			exit_error(char *msg, char *err, int exit_code);
 void			free_all(t_mini *msh);
+void			free_cmd_list(void *cmd_ptr);
+void			free_tables(t_mini *msh, t_bool free_full_table);
+void			input_signal(void);
+void			interrupt(int signal);
 void			print_error(char *msg, char *err);
+void			prompt_handler(int signal);
+void			quit(int signal);
 
 #endif

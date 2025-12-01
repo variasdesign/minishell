@@ -48,6 +48,18 @@ static ssize_t	count_words(char *args, t_ptr_tab squote_tab,
 	return (count);
 }
 
+// FIX: echo 'hello'hello produces echo hello
+// The problem lies in how the words-inside-quotes logic works.
+// Words can continue after quotes and should be taken into account
+// as a single word. But just extending until end of words would
+// duplicate the quotes when token list is generated.
+// So either we change the token list generation logic by checking
+// presence of quotes against their respective pointer tables,
+// or we remove quotes on-the-fly whenever needed.
+// e.g. echo 'hello'hello
+// current behavior: echo hello
+// behavior after extending until end of words: echo hello'hello
+// correct behavior: echo hellohello
 static char	*check_words_inside_quotes(t_mini *msh, char *word_can, ssize_t i)
 {
 	ssize_t	squote_i;
@@ -58,8 +70,8 @@ static char	*check_words_inside_quotes(t_mini *msh, char *word_can, ssize_t i)
 	dquote_i = ft_tabfind(word_can, *msh->dquote_tab);
 	if (squote_i >= 0)
 	{
-		msh->word_tab->end[i] = msh->squote_tab->end[squote_i] - 1;
 		word_can = msh->squote_tab->end[squote_i];
+		msh->word_tab->end[i] = msh->squote_tab->end[squote_i] - 1;
 	}
 	else if (dquote_i >= 0)
 	{
