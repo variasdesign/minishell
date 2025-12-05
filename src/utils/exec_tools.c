@@ -21,7 +21,7 @@ static int	child_process(t_cmd *cmd, char **env, int fd[2])
 	if (dup2(cmd->fd_in, STDIN_FILENO) < 0
 		|| dup2(cmd->fd_out, STDOUT_FILENO) < 0)
 	{
-		print_error(E_DUP_FAILURE, strerror(errno));
+		ft_perror(E_DUP_FAILURE, strerror(errno), f, 0);
 		return (-1);
 	}
 	if (cmd->fd_in != STDIN_FILENO)
@@ -33,7 +33,6 @@ static int	child_process(t_cmd *cmd, char **env, int fd[2])
 	return (0);
 }
 
-// FIX: If child_process fails, children should clean all allocated memory too
 pid_t	fork_and_exec(t_mini *msh, t_node *cmd_node, char **env)
 {
 	pid_t	pid;
@@ -43,10 +42,10 @@ pid_t	fork_and_exec(t_mini *msh, t_node *cmd_node, char **env)
 
 	curr = cmd_node->content;
 	if (curr->pipe_to && pipe(fd) < 0)
-		return (print_error(E_PIPE_FAILURE, strerror(errno)), -1);
+		return (ft_perror(E_PIPE_FAILURE, strerror(errno), f, 0), -1);
 	pid = fork();
 	if (pid < 0)
-		return (print_error(E_FORK_FAILURE, strerror(errno)), -1);
+		return (ft_perror(E_FORK_FAILURE, strerror(errno), f, 0), -1);
 	if (pid == 0)
 		if (child_process(cmd_node->content, env, fd) < 0)
 			child_cleanup_and_exit(msh, 127);

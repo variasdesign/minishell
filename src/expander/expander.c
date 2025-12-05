@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 13:21:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/28 14:27:12 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/03 18:42:22 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,28 +34,30 @@ static char	*reassemble_args(char **split_args)
 	return (args);
 }
 
-char	*expander(char *args, t_mini *msh)
+char	*expander(t_mini *msh)
 {
-	const char	*orig = args;
+	const char	*orig = msh->input;
 
-	if (locate_quotes(args, msh->squote_tab, '\'') < 0
-		|| locate_quotes(args, msh->dquote_tab, '\"') < 0)
+	if (locate_quotes(msh->input, msh->squote_tab, '\'') < 0
+		|| locate_quotes(msh->input, msh->dquote_tab, '\"') < 0)
 		return (NULL);
-	if ((msh->squote_tab->count > 0 && msh->dquote_tab->count > 0)
+	if ((msh->squote_tab->count > 0 || msh->dquote_tab->count > 0)
 		&& validate_quotes(msh->squote_tab, msh->dquote_tab) < 0)
 	{
 		msh->squote_tab = ft_tabfree(&msh->squote_tab, f);
 		msh->dquote_tab = ft_tabfree(&msh->dquote_tab, f);
 		return (NULL);
 	}
-	if (locate_vars(args, msh->var_tab, *msh->squote_tab) < 0)
+	if (locate_vars(msh->input, msh->var_tab, *msh->squote_tab) < 0)
 		return (NULL);
 	if (msh->var_tab->count > 0)
 	{
-		args = reassemble_args(split_vars(msh));
+		msh->input = reassemble_args(split_vars(msh));
 		free((void *)orig);
-		msh->squote_tab->orig = args;
-		msh->dquote_tab->orig = args;
+		msh->squote_tab->orig = msh->input;
+		msh->dquote_tab->orig = msh->input;
 	}
-	return (args);
+	msh->squote_tab = search_quote_candidates(msh->squote_tab, '\'');
+	msh->dquote_tab = search_quote_candidates(msh->dquote_tab, '\"');
+	return (msh->input);
 }

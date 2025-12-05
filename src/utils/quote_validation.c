@@ -39,6 +39,19 @@ ssize_t	find_and_del_quotes(t_ptr_tab *lead_tab, t_ptr_tab *second_tab)
 	return (lead_tab->count + second_tab->count);
 }
 
+static t_bool	check_quotes_parity(t_ptr_tab quote_tab)
+{
+	if (quote_tab.count > 0)
+	{
+		if (!quote_tab.end[quote_tab.count - 1])
+		{
+			printf(E_QUOTE_PARITY, *(char *)quote_tab.start[0]);
+			return (f);
+		}
+	}
+	return (t);
+}
+
 // Quote validation:
 // 1. Determine lead quote type by looking at leftmost char
 // 2. Iterate over second quote type pointer table and search
@@ -48,25 +61,25 @@ ssize_t	find_and_del_quotes(t_ptr_tab *lead_tab, t_ptr_tab *second_tab)
 // second quote table.
 ssize_t	validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab)
 {
-	const t_bool	lead_quote = squote_tab->start[0] > dquote_tab->start[0];
-	ssize_t			new_count;
+	t_bool	lead_quote;
+	ssize_t	new_count;
 
 	new_count = squote_tab->count + dquote_tab->count;
-	if (!lead_quote)
+	if (squote_tab->count > 0 && dquote_tab->count > 0)
 	{
-		new_count = find_and_del_quotes(squote_tab, dquote_tab);
-		new_count = find_and_del_quotes(dquote_tab, squote_tab);
+		lead_quote = squote_tab->start[0] > dquote_tab->start[0];
+		if (!lead_quote)
+		{
+			new_count = find_and_del_quotes(squote_tab, dquote_tab);
+			new_count = find_and_del_quotes(dquote_tab, squote_tab);
+		}
+		else
+		{
+			new_count = find_and_del_quotes(dquote_tab, squote_tab);
+			new_count = find_and_del_quotes(squote_tab, dquote_tab);
+		}
 	}
-	else
-	{
-		new_count = find_and_del_quotes(dquote_tab, squote_tab);
-		new_count = find_and_del_quotes(squote_tab, dquote_tab);
-	}
-	if (!squote_tab->end[squote_tab->count - 1]
-		|| !dquote_tab->end[dquote_tab->count - 1])
-	{
-		printf("Invalid number of quotes.\n");
+	if (!check_quotes_parity(*squote_tab) || !check_quotes_parity(*dquote_tab))
 		return (-1);
-	}
 	return (new_count);
 }

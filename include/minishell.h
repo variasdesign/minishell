@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/01 13:39:12 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/05 21:11:11 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
+#include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
 
@@ -39,6 +40,7 @@
 # define E_INVALID_PROMPT "Invalid prompt.\n"
 # define E_PATH_FAILURE "PATH env not found.\n"
 # define E_PIPE_FAILURE "Couldn't create pipes: %s\n"
+# define E_QUOTE_PARITY "Invalid number of %c quotes.\n"
 # define E_SHELL_PERROR "minishell: %s: %s\n"
 # define E_UNREADABLE_INPUT "Input is not readable: %s\n"
 # define E_UNWRITABLE_OUTPUT "Output is not writable: %s\n"
@@ -103,7 +105,7 @@ extern volatile sig_atomic_t	g_sig;
 
 char			**split_vars(t_mini *msh);
 char			*dup_token_content(t_node *node);
-char			*expander(char *args, t_mini *msh);
+char			*expander(t_mini *msh);
 char			*get_env(char **env_list, char *env);
 int				exec_cmd_list(t_mini *msh, t_list *cmd_list, char **env);
 int				get_exec_path(t_cmd *cmd, char **env);
@@ -121,17 +123,22 @@ ssize_t			locate_redirs(char *args, t_mini *msh);
 ssize_t			locate_vars(char *args, t_ptr_tab *var_tab,
 					t_ptr_tab squote_tab);
 ssize_t			locate_words(char *args, t_mini *msh);
+ssize_t			skip_word(char *str, ssize_t *word_len_ptr);
+ssize_t			skip_quoted_word(char *str, t_ptr_tab quote_tab,
+					ssize_t *word_len_ptr);
 ssize_t			validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab);
+t_bool			check_non_word_char(char c);
 t_bool			is_redir_type(t_token_type type);
 t_bool			is_word_type(t_token_type type);
 t_bool			validate_token_list(t_list token_list);
-t_list			*lexer(char *args, t_mini *msh);
+t_list			*lexer(t_mini *msh);
 t_list			*parser(t_list *token_list);
 t_mini			*allocate_minishell(char **envp);
 t_node			*find_token_node(t_node *offset,
 					t_token_type type, t_bool last);
 t_ptr_tab		*search_quote_candidates(t_ptr_tab *quote_tab, char q);
 t_token_type	get_token_type(t_node *token);
+t_token_type	find_token_type(char *start, t_token_type prev);
 void			child_cleanup_and_exit(t_mini *msh, int exit_code);
 void			exec_signal(void);
 void			exit_error(char *msg, char *err, int exit_code);
@@ -143,5 +150,6 @@ void			interrupt(int signal);
 void			print_error(char *msg, char *err);
 void			prompt_handler(int signal);
 void			quit(int signal);
+void			save_word(char *word[2], t_ptr_tab *word_tab, ssize_t i);
 
 #endif

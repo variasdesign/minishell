@@ -10,6 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "libft.h"
 #include "minishell.h"
 
 static int	open_heredoc(void)
@@ -19,7 +20,7 @@ static int	open_heredoc(void)
 	hd_fd = open("/tmp/heredoc", O_WRONLY | O_TRUNC | O_CREAT, 0640);
 	if (hd_fd < 0)
 	{
-		print_error(E_HEREDOC_FAILURE, NULL);
+		ft_perror(E_HEREDOC_FAILURE, NULL, f, 0);
 		return (-1);
 	}
 	return (hd_fd);
@@ -38,7 +39,7 @@ int	heredoc(char *lim)
 		line = get_next_line(0);
 		if (!line)
 		{
-			print_error(E_HEREDOC_FAILURE, NULL);
+			ft_perror(E_HEREDOC_FAILURE, NULL, f, 0);
 			return (-1);
 		}
 		if (!ft_strncmp(line, lim, lim_len) && line[lim_len] == '\n')

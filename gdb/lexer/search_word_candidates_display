@@ -1,6 +1,8 @@
 display msh->word_tab->count
 display i
-display word_can
+display word[0]
+display word[1]
+display word_len
 display (char *)msh->word_tab->start[i]
 display (char *)msh->word_tab->end[i]
 display (char *)msh->word_tab->start[0]@msh->word_tab->count + 1

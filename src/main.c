@@ -83,17 +83,18 @@ static void	mini_loop(t_mini *msh)
 		msh->loop = msh->input != NULL;
 		if (msh->input && *msh->input)
 		{
-			msh->input = expander(msh->input, msh);
-			msh->token_list = lexer(msh->input, msh);
+			msh->input = expander(msh);
+			if (!msh->input)
+				continue ;
+			msh->token_list = lexer(msh);
+			if (!msh->token_list)
+				continue ;
 			msh->cmd_list = parser(msh->token_list);
 			free_tables(msh, f);
 			if (!msh->cmd_list)
 				continue ;
-			else
-			{
-				msh->exit_code = exec_cmd_list(msh, msh->cmd_list, msh->env);
-				msh->cmd_list = ft_lstdel_list(msh->cmd_list, free_cmd_list);
-			}
+			msh->exit_code = exec_cmd_list(msh, msh->cmd_list, msh->env);
+			msh->cmd_list = ft_lstdel_list(msh->cmd_list, free_cmd_list);
 		}
 	}
 }

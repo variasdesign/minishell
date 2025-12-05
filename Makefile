@@ -53,7 +53,6 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_SIG)/,	\
 BASE_SRCS		+= $(addprefix $(SRC_DIR_UT)/,	\
 					cleanup_tools.c				\
 					env_tools.c					\
-					error_tools.c				\
 					exec_tools.c				\
 					file_tools.c				\
 					heredoc_tools.c				\
@@ -64,8 +63,10 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_UT)/,	\
 					redir_locate.c				\
 					redir_tools.c				\
 					token_tools.c				\
+					token_tools_2.c				\
 					var_tools.c					\
 					word_locate.c				\
+					word_tools.c				\
 					)
 
 $(info BASE_SRCS: $(BASE_SRCS))
