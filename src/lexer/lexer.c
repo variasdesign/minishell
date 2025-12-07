@@ -12,13 +12,66 @@
 
 #include "minishell.h"
 
-static void	unquote_word(t_mini *msh, t_token *tok,
-						t_ptr_tab *word_tab, size_t i)
+static char	*copy_quote_content(t_ptr_tab quote_tab, char **str, char *word_str,
+								size_t *len)
 {
+	ssize_t	quote_i;
+
+	quote_i = ft_tabfind(word_str, quote_tab);
+	if (quote_i >= 0)
+	{
+		while (++word_str != quote_tab.end[quote_i] - 1)
+			*((*str)++) = *(word_str);
+		*len -= 2;
+		return (quote_tab.end[quote_i]);
+	}
+	return (word_str);
 }
 
-// TODO: If is_word_type(type), remove quotes if they belong to
-// squote_tab or dquote_tab before creating the token node
+static char	*unquote_rewrite(t_mini *msh, char *word_str, size_t len)
+{
+	char	*str;
+	char	*orig;
+
+	str = ft_calloc(len + 1, sizeof(char));
+	if (!str)
+		return (NULL);
+	orig = str;
+	while (str < &orig[len])
+	{
+		while (*word_str && !quote_char(*word_str))
+			*str++ = *word_str++;
+		while (*word_str && quote_char(*word_str))
+		{
+			if (*word_str == '\'')
+				word_str = copy_quote_content(*msh->squote_tab,
+						&str, word_str, &len);
+			else
+				word_str = copy_quote_content(*msh->dquote_tab,
+						&str, word_str, &len);
+		}
+	}
+	return (orig);
+}
+
+static void	unquote_word(t_mini *msh, t_token *tok,
+						t_ptr_tab word_tab, size_t i)
+{
+	const size_t	len = word_tab.end[i] - word_tab.start[i];
+
+	if (ft_strnchr(word_tab.start[i], '\'', len)
+		|| ft_strnchr(word_tab.start[i], '\"', len))
+	{
+		tok->start = unquote_rewrite(msh, word_tab.start[i], len);
+		tok->end = tok->start + ft_strlen(tok->start);
+	}
+	else
+	{
+		tok->start = word_tab.start[i];
+		tok->end = word_tab.end[i];
+	}
+}
+
 static t_node	*create_token(t_mini *msh, t_ptr_tab *tab,
 							size_t i, t_token_type prev)
 {
@@ -28,7 +81,7 @@ static t_node	*create_token(t_mini *msh, t_ptr_tab *tab,
 
 	tok.type = type;
 	if (is_word_type(type))
-		unquote_word(msh, &tok, tab, i);
+		unquote_word(msh, &tok, *tab, i);
 	else
 	{
 		tok.start = tab->start[i];
