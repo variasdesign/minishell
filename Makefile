@@ -23,6 +23,7 @@ SRC_DIR_LEX		= src/lexer
 SRC_DIR_SIG		= src/signal
 SRC_DIR_PAR		= src/parser
 SRC_DIR_UT		= src/utils
+SRC_DIR_BU		= src/builtins
 
 BASE_SRCS		= $(addprefix $(SRC_DIR)/,		\
 					main.c						\
@@ -48,6 +49,13 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_PAR)/,	\
 
 BASE_SRCS		+= $(addprefix $(SRC_DIR_SIG)/,	\
 				  	signal.c					\
+					)
+
+BASE_SRCS		+= $(addprefix $(SRC_DIR_BU)/,	\
+					builtins.c					\
+					cd.c						\
+					pwd.c						\
+					exit.c						\
 					)
 
 BASE_SRCS		+= $(addprefix $(SRC_DIR_UT)/,	\
@@ -106,6 +114,11 @@ $(BUILD_BASE_DIR)/%.o:: $(SRC_DIR_PAR)/%.c $(LIBFT)
 	@$(CC) $(CFLAGS) -c $< $(INCLUDES) -o $@
 
 $(BUILD_BASE_DIR)/%.o:: $(SRC_DIR_SIG)/%.c $(LIBFT)
+	@echo "Compiling $@..."
+	@mkdir -p $(dir $@)
+	@$(CC) $(CFLAGS) -c $< $(INCLUDES) -o $@
+
+$(BUILD_BASE_DIR)/%.o:: $(SRC_DIR_BU)/%.c $(LIBFT)
 	@echo "Compiling $@..."
 	@mkdir -p $(dir $@)
 	@$(CC) $(CFLAGS) -c $< $(INCLUDES) -o $@

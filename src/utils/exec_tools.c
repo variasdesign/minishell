@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_tools.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:28:50 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/01 13:13:51 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/08 15:11:57 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,24 @@
 
 static int	child_process(t_cmd *cmd, char **env, int fd[2])
 {
+	// Verificar si es un built-in ANTES de open_files (que modifica el path)
+	if (cmd->args && cmd->args[0] && is_builtin(cmd->args[0]))
+	{
+		if (cmd->pipe_to)
+			cmd->fd_out = fd[1];
+		if (dup2(cmd->fd_in, STDIN_FILENO) < 0
+			|| dup2(cmd->fd_out, STDOUT_FILENO) < 0)
+		{
+			ft_perror(E_DUP_FAILURE, strerror(errno), f, 0);
+			return (-1);
+		}
+		if (cmd->fd_in != STDIN_FILENO)
+			close(cmd->fd_in);
+		if (cmd->fd_out != STDOUT_FILENO)
+			close(cmd->fd_out);
+		exit(exec_builtin(cmd->args, &env));
+	}
+	
 	if (open_files(cmd, env) < 0)
 		return (-1);
 	if (cmd->pipe_to)
@@ -28,6 +46,7 @@ static int	child_process(t_cmd *cmd, char **env, int fd[2])
 		close(cmd->fd_in);
 	if (cmd->fd_out != STDOUT_FILENO)
 		close(cmd->fd_out);
+	
 	if (execve(cmd->args[0], cmd->args, env))
 		return (-1);
 	return (0);
