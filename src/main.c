@@ -24,8 +24,6 @@ static char	*get_last_dir(char **env_list)
 
 // TODO: Read hostname by executing hostname or uname -n
 // and redirecting its output to a string
-// FIX: When interrupting a running process (e.g. cat without arguments),
-// the prompt is printed twice.
 static char	*assemble_prompt(char **env_list, char *prompt)
 {
 	size_t	len;

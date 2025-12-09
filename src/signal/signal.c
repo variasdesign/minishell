@@ -37,5 +37,5 @@ void	exec_signal(void)
 void	input_signal(void)
 {
 	signal(SIGINT, prompt_handler);
-	signal(SIGQUIT, prompt_handler);
+	signal(SIGQUIT, SIG_IGN);
 }

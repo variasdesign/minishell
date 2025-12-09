@@ -118,10 +118,11 @@ ssize_t	locate_redirs(char *args, t_mini *msh)
 		if (!msh->redir_tab)
 		{
 			perror("Error allocating redirection pointer table");
-			return (-1);
+			msh->redir_tab->count = -1;
 		}
-		search_redir_candidates(msh->redir_tab, *msh->squote_tab,
-			*msh->dquote_tab);
+		else
+			search_redir_candidates(msh->redir_tab, *msh->squote_tab,
+				*msh->dquote_tab);
 	}
 	if (msh->redir_tab->count < 0)
 		printf("Error locating redirections.\n");

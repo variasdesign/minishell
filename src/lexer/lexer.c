@@ -91,14 +91,15 @@ static t_node	*create_token(t_mini *msh, t_ptr_tab *tab,
 	return (node);
 }
 
-static t_list	*tokenize(t_mini *msh)
+t_list	*lexer(t_mini *msh)
 {
-	t_list			*tok_list;
-	t_node			*curr_token;
-	t_token_type	prev_type;
-	size_t			redir_i;
-	size_t			word_i;
+	t_list	*tok_list;
+	t_node	*curr_token;
+	size_t	redir_i;
+	size_t	word_i;
 
+	if (locate_redirs(msh->input, msh) < 0 || locate_words(msh->input, msh) < 0)
+		return (NULL);
 	tok_list = ft_lstnew_list(sizeof(t_token));
 	if (!tok_list)
 		return (NULL);
@@ -107,25 +108,13 @@ static t_list	*tokenize(t_mini *msh)
 	while ((msh->redir_tab->count > 0 && msh->redir_tab->start[redir_i])
 		|| (msh->word_tab->count > 0 && msh->word_tab->start[word_i]))
 	{
-		prev_type = get_token_type(tok_list->tail);
 		if (ft_tabcmp(msh->redir_tab, msh->word_tab, redir_i, word_i))
 			curr_token = create_token(msh,
-					msh->redir_tab, redir_i++, prev_type);
+					msh->redir_tab, redir_i++, get_token_type(tok_list->tail));
 		else if (ft_tabcmp(msh->word_tab, msh->redir_tab, word_i, redir_i))
 			curr_token = create_token(msh,
-					msh->word_tab, word_i++, prev_type);
+					msh->word_tab, word_i++, get_token_type(tok_list->tail));
 		ft_lstadd_back(tok_list, curr_token);
 	}
 	return (tok_list);
-}
-
-// TODO: Error check redir_tab and word_tab count before calling tokenize
-t_list	*lexer(t_mini *msh)
-{
-	t_list	*token_list;
-
-	msh->redir_tab->count = locate_redirs(msh->input, msh);
-	msh->word_tab->count = locate_words(msh->input, msh);
-	token_list = tokenize(msh);
-	return (token_list);
 }
