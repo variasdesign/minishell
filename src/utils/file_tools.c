@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 18:31:31 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/01 12:51:52 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/10 19:30:08 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ static void	open_redirections(t_cmd *cmd)
 
 int	open_files(t_cmd *cmd, char **env)
 {
-	if (get_exec_path(cmd, env) < 0)
+	if (!is_builtin(cmd) && get_exec_path(cmd, env) < 0)
 		return (-1);
 	if (cmd->redir_list)
 		open_redirections(cmd);

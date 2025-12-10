@@ -6,11 +6,19 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 14:03:24 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/01 13:32:04 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/10 19:00:56 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+t_bool	check_exit(t_cmd *cmd)
+{
+	if (ft_strlen(cmd->args[0]) == 4
+		&& !ft_strncmp(cmd->args[0], "exit", 4))
+		return (t);
+	return (f);
+}
 
 void	free_cmd_list(void *cmd_ptr)
 {

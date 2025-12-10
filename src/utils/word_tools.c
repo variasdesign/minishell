@@ -24,6 +24,7 @@ ssize_t	skip_word(char *str, ssize_t *word_len_ptr)
 	*word_len_ptr += word_len;
 	return (word_len);
 }
+
 ssize_t	skip_quoted_word(char *str, t_ptr_tab quote_tab, ssize_t *word_len_ptr)
 {
 	ssize_t	quote_i;

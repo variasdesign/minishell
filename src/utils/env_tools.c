@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 14:11:40 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/21 14:38:34 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/10 20:04:14 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,4 +23,19 @@ char	*get_env(char **env_list, char *env)
 		env_list++;
 	}
 	return (NULL);
+}
+
+ssize_t	get_env_index(char **env_list, char *env)
+{
+	const size_t	len = ft_strlen(env);
+	ssize_t			i;
+
+	i = 0;
+	while (env_list[i])
+	{
+		if (!ft_strncmp(env_list[i], env, len))
+			return (i);
+		i++;
+	}
+	return (-1);
 }

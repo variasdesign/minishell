@@ -1,28 +1,13 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   pwd.c                                              :+:      :+:    :+:   */
+/*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/08 00:00:00 by jmellado          #+#    #+#             */
-/*   Updated: 2025/12/10 19:55:13 by varias-c         ###   ########.fr       */
+/*   Created: 2025/12/10 17:09:18 by varias-c          #+#    #+#             */
+/*   Updated: 2025/12/10 17:33:30 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
-
-int	builtin_pwd(void)
-{
-	char	*pwd;
-
-	pwd = getcwd(NULL, 0);
-	if (!pwd)
-	{
-		perror("minishell: pwd");
-		return (1);
-	}
-	printf("%s\n", pwd);
-	free(pwd);
-	return (0);
-}

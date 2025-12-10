@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 00:00:00 by jmellado          #+#    #+#             */
-/*   Updated: 2025/12/08 15:07:29 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/12/10 20:01:56 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,41 +24,36 @@ static char	*get_cmd_name(char *cmd)
 	return (cmd);
 }
 
-int	is_builtin(char *cmd)
+int	is_builtin(t_cmd *cmd)
 {
 	char	*cmd_name;
 
-	cmd_name = get_cmd_name(cmd);
+	cmd_name = get_cmd_name(cmd->args[0]);
 	if (!cmd_name)
 		return (0);
 	if (ft_strncmp(cmd_name, "cd", 2) == 0 && ft_strlen(cmd_name) == 2)
 		return (1);
 	if (ft_strncmp(cmd_name, "pwd", 3) == 0 && ft_strlen(cmd_name) == 3)
 		return (1);
-	if (ft_strncmp(cmd_name, "echo", 4) == 0 && ft_strlen(cmd_name) == 4)
-		return (1);
 	if (ft_strncmp(cmd_name, "exit", 4) == 0 && ft_strlen(cmd_name) == 4)
 		return (1);
 	return (0);
 }
 
-int	exec_builtin(char **args, char ***env)
+int	exec_builtin(t_cmd *cmd, char ***env)
 {
 	char	*cmd_name;
 
-	if (!args || !args[0])
+	if (!cmd->args || !cmd->args[0])
 		return (1);
-	
-	cmd_name = get_cmd_name(args[0]);
+	cmd_name = get_cmd_name(cmd->args[0]);
 	if (!cmd_name)
 		return (1);
-	
 	if (ft_strncmp(cmd_name, "cd", 2) == 0 && ft_strlen(cmd_name) == 2)
-		return (builtin_cd(args, env));
+		return (builtin_cd(cmd->args, env));
 	if (ft_strncmp(cmd_name, "pwd", 3) == 0 && ft_strlen(cmd_name) == 3)
-		return (builtin_pwd(args, env));
+		return (builtin_pwd());
 	if (ft_strncmp(cmd_name, "exit", 4) == 0 && ft_strlen(cmd_name) == 4)
-		return (builtin_exit(args, env));
-	
+		return (builtin_exit(cmd->args));
 	return (1);
 }

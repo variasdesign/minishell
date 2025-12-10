@@ -66,6 +66,7 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_UT)/,	\
 					heredoc_tools.c				\
 					init_tools.c				\
 					path_tools.c				\
+					prompt_tools.c				\
 					quote_locate.c				\
 					quote_validation.c			\
 					redir_locate.c				\

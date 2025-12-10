@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/08 14:58:30 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/12/10 20:02:10 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 # define E_CHILD_ERR "Children exited with error.\n"
 # define E_DUP_FAILURE "Duplication of file descriptors failed: %s\n"
 # define E_EXEC_NOT_FOUND "Executable not found in PATH: %s\n"
+# define E_EXEC_FAILURE "Children didn't exit correctly.\n"
 # define E_FORK_FAILURE "Couldn't fork: %s\n"
 # define E_HEREDOC_FAILURE "heredoc couldn't be created or written to.\n"
 # define E_INVALID_EXEC "File not found: %s\n"
@@ -104,6 +105,7 @@ typedef struct s_mini
 extern volatile sig_atomic_t	g_sig;
 
 char			**split_vars(t_mini *msh);
+char			*assemble_prompt(char **env_list, char *prompt);
 char			*dup_token_content(t_node *node);
 char			*expander(t_mini *msh);
 char			*get_env(char **env_list, char *env);
@@ -117,6 +119,7 @@ int				redir_start(char *str);
 pid_t			fork_and_exec(t_mini *msh, t_node *cmd, char **env);
 size_t			count_word_groups(t_list token_list);
 size_t			count_word_tokens(t_node *cmd_node);
+ssize_t			get_env_index(char **env_list, char *env);
 ssize_t			is_redir(char *redir);
 ssize_t			locate_quotes(char *args, t_ptr_tab *quote_tab, char q);
 ssize_t			locate_redirs(char *args, t_mini *msh);
@@ -127,6 +130,7 @@ ssize_t			skip_word(char *str, ssize_t *word_len_ptr);
 ssize_t			skip_quoted_word(char *str, t_ptr_tab quote_tab,
 					ssize_t *word_len_ptr);
 ssize_t			validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab);
+t_bool			check_exit(t_cmd *cmd);
 t_bool			check_non_word_char(char c);
 t_bool			is_redir_type(t_token_type type);
 t_bool			is_word_type(t_token_type type);
@@ -154,9 +158,9 @@ void			save_word(char *word[2], t_ptr_tab *word_tab, ssize_t i);
 
 // Built-ins
 int				builtin_cd(char **args, char ***env);
-int				builtin_pwd(char **args, char ***env);
-int				builtin_exit(char **args, char ***env);
-int				exec_builtin(char **args, char ***env);
-int				is_builtin(char *cmd);
+int				builtin_pwd(void);
+int				builtin_exit(char **args);
+int				exec_builtin(t_cmd *cmd, char ***env);
+int				is_builtin(t_cmd *cmd);
 
 #endif
