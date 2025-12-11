@@ -12,6 +12,14 @@
 
 #include "minishell.h"
 
+t_bool	check_exit(t_cmd *cmd)
+{
+	if (ft_strlen(cmd->args[0]) == 4
+		&& !ft_strncmp(cmd->args[0], "exit", 4))
+		return (t);
+	return (f);
+}
+
 int	builtin_exit(char **args)
 {
 	int	exit_code;

@@ -53,7 +53,7 @@ static char	*expand_var(t_mini *msh, char *str, t_ptr_tab var_tab, size_t i)
 		if (*first_char != '?')
 		{
 			tmp_env = ft_strndup(first_char, var_len);
-			env = get_env(msh->env, tmp_env);
+			env = get_env(msh->env, tmp_env)->value;
 			if (!env)
 				str = ft_strdup("");
 			else

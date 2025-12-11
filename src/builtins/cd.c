@@ -12,11 +12,11 @@
 
 #include "minishell.h"
 
-static char	*get_home_path(char **env)
+static char	*get_home_path(t_list *env_list)
 {
 	char	*home;
 
-	home = get_env(env, "HOME");
+	home = get_env(env_list, "HOME")->value;
 	if (!home)
 	{
 		printf("minishell: cd: HOME not set\n");
@@ -25,25 +25,22 @@ static char	*get_home_path(char **env)
 	return (home);
 }
 
-static char	*change_pwd(char ***env)
+static char	*change_pwd(t_list *env_list)
 {
-	ssize_t	pwd_var;
 	char	*new_cwd;
 
-	pwd_var = get_env_index(*env, "PWD");
-	if (pwd_var > 0)
+	new_cwd = getcwd(NULL, 0);
+	env_list = modify_env(env_list, "PWD", new_cwd);
+	free(new_cwd);
+	if (!env_list)
 	{
-		free((*env)[pwd_var]);
-		new_cwd = getcwd(NULL, 0);
-		(*env)[pwd_var] = ft_strjoin("PWD=", new_cwd);
-		free(new_cwd);
-		return ((*env)[pwd_var]);
+		printf("minishell: cd: PWD not found\n");
+		return (NULL);
 	}
-	printf("minishell: cd: PWD not found\n");
-	return (NULL);
+	return (get_env(env_list, "PWD")->value);
 }
 
-int	builtin_cd(char **args, char ***env)
+int	builtin_cd(char **args, t_list *env_list)
 {
 	char	*path;
 
@@ -54,7 +51,7 @@ int	builtin_cd(char **args, char ***env)
 	}
 	if (!args[1])
 	{
-		path = get_home_path(*env);
+		path = get_home_path(env_list);
 		if (!path)
 			return (0);
 	}
@@ -65,7 +62,7 @@ int	builtin_cd(char **args, char ***env)
 		printf("minishell: cd: %s: %s\n", path, strerror(errno));
 		return (1);
 	}
-	if (!change_pwd(env))
+	if (!change_pwd(env_list))
 		return (1);
 	return (0);
 }

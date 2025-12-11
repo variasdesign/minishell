@@ -67,6 +67,12 @@ typedef struct s_token
 	char			*end;
 }	t_token;
 
+typedef struct s_env
+{
+	char	*key;
+	char	*value;
+}	t_env;
+
 typedef struct s_redir
 {
 	t_token_type	type;
@@ -85,7 +91,6 @@ typedef struct s_cmd
 
 typedef struct s_mini
 {
-	char		**env;
 	char		*cwd;
 	char		*path;
 	char		*input;
@@ -93,6 +98,7 @@ typedef struct s_mini
 	pid_t		*pids;
 	t_bool		loop;
 	t_list		*cmd_list;
+	t_list		*env;
 	t_list		*token_list;
 	t_ptr_tab	*dquote_tab;
 	t_ptr_tab	*redir_tab;
@@ -104,21 +110,21 @@ typedef struct s_mini
 extern volatile sig_atomic_t	g_sig;
 
 char			**split_vars(t_mini *msh);
-char			*assemble_prompt(char **env_list, char *prompt);
+char			**reassemble_env(t_list *env_list);
+char			*assemble_prompt(t_list *env, char *prompt);
 char			*dup_token_content(t_node *node);
 char			*expander(t_mini *msh);
-char			*get_env(char **env_list, char *env);
-int				exec_cmd_list(t_mini *msh, t_list *cmd_list, char **env);
-int				get_exec_path(t_cmd *cmd, char **env);
+int				exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env);
+int				get_exec_path(t_cmd *cmd, t_list *env_list);
 int				heredoc(char *lim);
-int				open_files(t_cmd *cmd, char **env);
+int				open_files(t_cmd *cmd, t_list *env_list);
 int				quote_char(char c);
 int				redir_char(char c);
 int				redir_start(char *str);
-pid_t			fork_and_exec(t_mini *msh, t_node *cmd, char **env);
+pid_t			fork_and_exec(t_mini *msh, t_node *cmd, t_list *env_list);
 size_t			count_word_groups(t_list token_list);
 size_t			count_word_tokens(t_node *cmd_node);
-ssize_t			get_env_index(char **env_list, char *env);
+ssize_t			get_env_index(t_list *env_list, char *var);
 ssize_t			is_redir(char *redir);
 ssize_t			locate_quotes(char *args, t_ptr_tab *quote_tab, char q);
 ssize_t			locate_redirs(char *args, t_mini *msh);
@@ -134,7 +140,10 @@ t_bool			check_non_word_char(char c);
 t_bool			is_redir_type(t_token_type type);
 t_bool			is_word_type(t_token_type type);
 t_bool			validate_token_list(t_list token_list);
+t_env			*get_env(t_list *env_list, char *var);
+t_env			*get_env_pos(t_list *env_list, ssize_t pos);
 t_list			*lexer(t_mini *msh);
+t_list			*modify_env(t_list *env_list, char *var, char *new_value);
 t_list			*parser(t_list *token_list);
 t_mini			*allocate_minishell(char **envp);
 t_node			*find_token_node(t_node *offset,
@@ -156,10 +165,10 @@ void			quit(int signal);
 void			save_word(char *word[2], t_ptr_tab *word_tab, ssize_t i);
 
 // Built-ins
-int				builtin_cd(char **args, char ***env);
+int				builtin_cd(char **args, t_list *env_list);
 int				builtin_pwd(void);
 int				builtin_exit(char **args);
-int				exec_builtin(t_cmd *cmd, char ***env);
+int				exec_builtin(t_cmd *cmd, t_list *env_list);
 int				is_builtin(t_cmd *cmd);
 
 #endif

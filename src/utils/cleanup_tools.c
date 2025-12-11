@@ -12,12 +12,14 @@
 
 #include "minishell.h"
 
-t_bool	check_exit(t_cmd *cmd)
+void	free_env_list(void *env_ptr)
 {
-	if (ft_strlen(cmd->args[0]) == 4
-		&& !ft_strncmp(cmd->args[0], "exit", 4))
-		return (t);
-	return (f);
+	t_env	*env;
+
+	env = env_ptr;
+	free(env->key);
+	free(env->value);
+	free(env);
 }
 
 void	free_cmd_list(void *cmd_ptr)
@@ -47,7 +49,7 @@ void	free_tables(t_mini *msh, t_bool free_full_table)
 
 void	free_all(t_mini *msh)
 {
-	msh->env = (char **)ft_freematrix((void **)msh->env);
+	msh->env = ft_lstdel_list(msh->env, free_env_list);
 	if (msh->cwd)
 		free(msh->cwd);
 	if (msh->input)

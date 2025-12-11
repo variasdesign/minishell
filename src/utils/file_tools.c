@@ -89,9 +89,9 @@ static void	open_redirections(t_cmd *cmd)
 	}
 }
 
-int	open_files(t_cmd *cmd, char **env)
+int	open_files(t_cmd *cmd, t_list *env_list)
 {
-	if (!is_builtin(cmd) && get_exec_path(cmd, env) < 0)
+	if (!is_builtin(cmd) && get_exec_path(cmd, env_list) < 0)
 		return (-1);
 	if (cmd->redir_list)
 		open_redirections(cmd);

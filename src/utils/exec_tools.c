@@ -12,9 +12,9 @@
 
 #include "minishell.h"
 
-static int	child_process(t_cmd *cmd, char **env, int fd[2])
+static int	child_process(t_cmd *cmd, t_list *env_list, int fd[2])
 {
-	if (open_files(cmd, env) < 0)
+	if (open_files(cmd, env_list) < 0)
 		return (-1);
 	if (cmd->pipe_to)
 		cmd->fd_out = fd[1];
@@ -28,12 +28,13 @@ static int	child_process(t_cmd *cmd, char **env, int fd[2])
 		close(cmd->fd_in);
 	if (cmd->fd_out != STDOUT_FILENO)
 		close(cmd->fd_out);
-	if (!is_builtin(cmd) && execve(cmd->args[0], cmd->args, env))
+	if (!is_builtin(cmd) && execve(cmd->args[0], cmd->args,
+				reassemble_env(env_list)))
 		return (-1);
-	return (exec_builtin(cmd, &env));
+	return (exec_builtin(cmd, env_list));
 }
 
-pid_t	fork_and_exec(t_mini *msh, t_node *cmd_node, char **env)
+pid_t	fork_and_exec(t_mini *msh, t_node *cmd_node, t_list *env_list)
 {
 	int		child_exit_code;
 	int		fd[2];
@@ -48,7 +49,7 @@ pid_t	fork_and_exec(t_mini *msh, t_node *cmd_node, char **env)
 		return (ft_perror(E_FORK_FAILURE, strerror(errno), f, 0), -1);
 	if (pid == 0)
 	{
-		child_exit_code = child_process(cmd_node->content, env, fd);
+		child_exit_code = child_process(cmd_node->content, env_list, fd);
 		if (child_exit_code < 0)
 			child_cleanup_and_exit(msh, EXIT_FAILURE);
 		child_cleanup_and_exit(msh, child_exit_code);

@@ -13,7 +13,7 @@
 #include "minishell.h"
 
 static void	init_pids_and_exec(t_mini *msh, t_list *cmd_list,
-								char **env, int *status)
+								t_list *env_list, int *status)
 {
 	int		i;
 	t_node	*cmd;
@@ -23,7 +23,7 @@ static void	init_pids_and_exec(t_mini *msh, t_list *cmd_list,
 	cmd = cmd_list->head;
 	while (i < cmd_list->count && cmd)
 	{
-		msh->pids[i] = fork_and_exec(msh, cmd, env);
+		msh->pids[i] = fork_and_exec(msh, cmd, env_list);
 		i++;
 		cmd = cmd->next;
 	}
@@ -37,7 +37,7 @@ static void	init_pids_and_exec(t_mini *msh, t_list *cmd_list,
 	free(msh->pids);
 }
 
-int	exec_cmd_list(t_mini *msh, t_list *cmd_list, char **env)
+int	exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env_list)
 {
 	int	status;
 
@@ -51,9 +51,9 @@ int	exec_cmd_list(t_mini *msh, t_list *cmd_list, char **env)
 				return (0);
 			}
 			else if (is_builtin(cmd_list->head->content))
-				return (exec_builtin(cmd_list->head->content, &env));
+				return (exec_builtin(cmd_list->head->content, env_list));
 		}
-		init_pids_and_exec(msh, cmd_list, env, &status);
+		init_pids_and_exec(msh, cmd_list, env_list, &status);
 	}
 	return (0);
 }

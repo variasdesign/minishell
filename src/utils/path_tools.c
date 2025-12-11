@@ -39,13 +39,13 @@ static char	*valid_exec(char *exec, char **path_env)
 	return (NULL);
 }
 
-int	get_exec_path(t_cmd *cmd, char **env)
+int	get_exec_path(t_cmd *cmd, t_list *env_list)
 {
 	char	*exec_path;
 	char	*path_env;
 	char	**path_list;
 
-	path_env = get_env(env, "PATH");
+	path_env = get_env(env_list, "PATH")->value;
 	if (!path_env)
 		return (-1);
 	path_list = ft_split(path_env, ':');

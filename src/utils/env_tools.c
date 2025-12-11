@@ -12,30 +12,85 @@
 
 #include "minishell.h"
 
-char	*get_env(char **env_list, char *env)
+char	**reassemble_env(t_list *env_list)
 {
-	const size_t	len = ft_strlen(env);
+	char	**env_matrix;
+	char	*tmp;
+	ssize_t	i;
 
-	while (*env_list)
+	env_matrix = ft_calloc(env_list->count + 1, sizeof(char *));
+	i = 0;
+	while (i < env_list->count)
 	{
-		if (!ft_strncmp(*env_list, env, len))
-			return (*env_list + len + 1);
-		env_list++;
+		env_matrix[i] = ft_strdup(get_env_pos(env_list, i)->key);
+		tmp = ft_strjoin(env_matrix[i], "=");
+		free(env_matrix[i]);
+		env_matrix[i] = tmp;
+		tmp = ft_strjoin(env_matrix[i], get_env_pos(env_list, i)->value);
+		free(env_matrix[i]);
+		env_matrix[i] = tmp;
+		i++;
+	}
+	return (env_matrix);
+}
+
+t_env	*get_env(t_list *env_list, char *var)
+{
+	const size_t	len = ft_strlen(var);
+	t_node			*env;
+	t_env			*content;
+
+	env = env_list->head;
+	while (env)
+	{
+		content = env->content;
+		if (!ft_strncmp(content->key, var, len))
+			return (content);
+		env = env->next;
 	}
 	return (NULL);
 }
 
-ssize_t	get_env_index(char **env_list, char *env)
+t_env	*get_env_pos(t_list *env_list, ssize_t pos)
 {
-	const size_t	len = ft_strlen(env);
+	t_node	*env_node;
+
+	env_node = ft_lstfind_node(env_list, pos);
+	if (env_node)
+		return (env_node->content);
+	return (NULL);
+}
+
+ssize_t	get_env_index(t_list *env_list, char *var)
+{
+	const size_t	len = ft_strlen(var);
+	t_node			*env;
+	t_env			*content;
 	ssize_t			i;
 
 	i = 0;
-	while (env_list[i])
+	env = env_list->head;
+	while (env)
 	{
-		if (!ft_strncmp(env_list[i], env, len))
+		content = env->content;
+		if (!ft_strncmp(content->key, var, len))
 			return (i);
+		env = env->next;
 		i++;
 	}
 	return (-1);
+}
+
+t_list	*modify_env(t_list *env_list, char *var, char *new_value)
+{
+	t_env	*content;
+
+	content = get_env(env_list, var);
+	if (content)
+	{
+		free(content->value);
+		content->value = ft_strdup(new_value);
+		return (env_list);
+	}
+	return (NULL);
 }

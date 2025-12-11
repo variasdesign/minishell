@@ -37,22 +37,24 @@ static t_mini	*allocate_tables(t_mini *msh, t_ptr_tab **tables)
 	return (msh);
 }
 
-static char	**init_env(char **envp)
+static t_list *init_env(char **envp)
 {
-	char	**env_copy;
-	size_t	env_count;
+	t_list	*env_list;
+	t_node	*env_node;
+	t_env	content;
+	size_t	i;
 
-	env_count = 0;
-	while (envp[env_count])
-		env_count++;
-	env_copy = ft_calloc(env_count + 1, sizeof(char *));
-	env_count = 0;
-	while (envp[env_count])
+	env_list = ft_lstnew_list(sizeof(t_env));
+	i = 0;
+	while (envp[i])
 	{
-		env_copy[env_count] = ft_strdup(envp[env_count]);
-		env_count++;
+		content.key = ft_strndup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
+		content.value = ft_strdup(ft_strchr(envp[i], '=') + 1);
+		env_node = ft_lstnew_node(sizeof(t_env), &content);
+		ft_lstadd_back(env_list, env_node);
+		i++;
 	}
-	return (env_copy);
+	return (env_list);
 }
 
 t_mini	*allocate_minishell(char **envp)

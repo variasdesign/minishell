@@ -12,7 +12,7 @@
 
 #include "minishell.h"
 
-static char	*read_input(char **args, char **env_list, char **prompt)
+static char	*read_input(char **args, t_list *env, char **prompt)
 {
 	if (*args)
 	{
@@ -24,7 +24,7 @@ static char	*read_input(char **args, char **env_list, char **prompt)
 		free(*prompt);
 		*prompt = NULL;
 	}
-	*prompt = assemble_prompt(env_list, *prompt);
+	*prompt = assemble_prompt(env, *prompt);
 	input_signal();
 	*args = readline(*prompt);
 	if (args && *args && !ft_isspace(**args))
