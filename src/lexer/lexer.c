@@ -98,11 +98,11 @@ t_list	*lexer(t_mini *msh)
 	size_t	redir_i;
 	size_t	word_i;
 
-	if (locate_redirs(msh->input, msh) < 0 || locate_words(msh->input, msh) < 0)
-		return (NULL);
 	tok_list = ft_lstnew_list(sizeof(t_token));
 	if (!tok_list)
 		return (NULL);
+	if (locate_redirs(msh->input, msh) < 0 || locate_words(msh->input, msh) < 0)
+		return (ft_lstdel_list(tok_list, free));
 	redir_i = 0;
 	word_i = 0;
 	while ((msh->redir_tab->count > 0 && msh->redir_tab->start[redir_i])

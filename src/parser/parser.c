@@ -96,10 +96,11 @@ t_list	*parser(t_list *token_list)
 	if (!validate_token_list(*token_list))
 	{
 		printf(E_INVALID_PROMPT);
-		ft_lstdel_list(token_list, free);
-		return (NULL);
+		return (ft_lstdel_list(token_list, free));
 	}
 	cmd_list = ft_lstnew_list(sizeof(t_cmd));
+	if (!cmd_list)
+		return (ft_lstdel_list(token_list, free));
 	word_groups = count_word_groups(*token_list);
 	token_node = find_token_node(token_list->head, TOKEN_WORD_CMD, f);
 	while (word_groups > 0 && token_node)

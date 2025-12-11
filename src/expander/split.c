@@ -61,7 +61,7 @@ static char	*expand_var(t_mini *msh, char *str, t_ptr_tab var_tab, size_t i)
 			free(tmp_env);
 		}
 		else
-			str = ft_itoa(msh->exit_code);
+			str = ft_itoa(g_sig);
 	}
 	return (str);
 }

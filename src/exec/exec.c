@@ -29,7 +29,11 @@ static void	init_pids_and_exec(t_mini *msh, t_list *cmd_list,
 	}
 	i = 0;
 	while (i < cmd_list->count)
+	{
 		waitpid(msh->pids[i++], status, 0);
+		if (WIFEXITED(*status))
+			g_sig = WEXITSTATUS(*status);
+	}
 	free(msh->pids);
 }
 
@@ -44,14 +48,12 @@ int	exec_cmd_list(t_mini *msh, t_list *cmd_list, char **env)
 			if (check_exit(cmd_list->head->content))
 			{
 				msh->loop = f;
-				return (msh->exit_code);
+				return (0);
 			}
 			else if (is_builtin(cmd_list->head->content))
 				return (exec_builtin(cmd_list->head->content, &env));
 		}
 		init_pids_and_exec(msh, cmd_list, env, &status);
-		if (WIFEXITED(status))
-			return (WEXITSTATUS(status));
 	}
-	return (-1);
+	return (0);
 }

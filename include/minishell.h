@@ -90,7 +90,6 @@ typedef struct s_mini
 	char		*path;
 	char		*input;
 	char		*prompt;
-	int			exit_code;
 	pid_t		*pids;
 	t_bool		loop;
 	t_list		*cmd_list;

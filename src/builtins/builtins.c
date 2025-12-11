@@ -50,10 +50,10 @@ int	exec_builtin(t_cmd *cmd, char ***env)
 	if (!cmd_name)
 		return (1);
 	if (ft_strncmp(cmd_name, "cd", 2) == 0 && ft_strlen(cmd_name) == 2)
-		return (builtin_cd(cmd->args, env));
+		g_sig = builtin_cd(cmd->args, env);
 	if (ft_strncmp(cmd_name, "pwd", 3) == 0 && ft_strlen(cmd_name) == 3)
-		return (builtin_pwd());
+		g_sig = builtin_pwd();
 	if (ft_strncmp(cmd_name, "exit", 4) == 0 && ft_strlen(cmd_name) == 4)
-		return (builtin_exit(cmd->args));
-	return (1);
+		g_sig = builtin_exit(cmd->args);
+	return (0);
 }

@@ -32,8 +32,6 @@ static char	*read_input(char **args, char **env_list, char **prompt)
 	return (*args);
 }
 
-// TODO: Error check against -1 in exec_cmd_list return
-// TODO: Is msh->exit_code the same as g_sig?
 static int	mini_loop(t_mini *msh)
 {
 	while (msh->loop)
@@ -52,20 +50,18 @@ static int	mini_loop(t_mini *msh)
 			free_tables(msh, f);
 			if (!msh->cmd_list)
 				continue ;
-			msh->exit_code = exec_cmd_list(msh, msh->cmd_list, msh->env);
-			msh->cmd_list = ft_lstdel_list(msh->cmd_list, free_cmd_list);
-			if (msh->exit_code < 0)
+			if (exec_cmd_list(msh, msh->cmd_list, msh->env) < 0)
 				ft_perror(E_EXEC_FAILURE, NULL, f, 0);
+			msh->cmd_list = ft_lstdel_list(msh->cmd_list, free_cmd_list);
 		}
 	}
-	return (msh->exit_code);
+	return (g_sig);
 }
 
 // TODO: Norminette E V E R Y T H I N G
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_mini	*msh;
-	int		exit_code;
 
 	if (argc > 1 || argv[1])
 	{
@@ -76,8 +72,8 @@ int	main(int argc, char *argv[], char *envp[])
 	msh = allocate_minishell(envp);
 	if (!msh)
 		return (EXIT_FAILURE);
-	exit_code = mini_loop(msh);
+	mini_loop(msh);
 	free_all(msh);
 	write(STDOUT_FILENO, "exit\n", 5);
-	return (exit_code);
+	return (g_sig);
 }
