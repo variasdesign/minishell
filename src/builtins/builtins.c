@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 00:00:00 by jmellado          #+#    #+#             */
-/*   Updated: 2025/12/10 20:01:56 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/13 16:16:54 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,8 @@ int	is_builtin(t_cmd *cmd)
 		return (1);
 	if (ft_strncmp(cmd_name, "pwd", 3) == 0 && ft_strlen(cmd_name) == 3)
 		return (1);
+	if (ft_strncmp(cmd_name, "echo", 4) == 0 && ft_strlen(cmd_name) == 4)
+		return (1);
 	if (ft_strncmp(cmd_name, "exit", 4) == 0 && ft_strlen(cmd_name) == 4)
 		return (1);
 	return (0);
@@ -53,6 +55,8 @@ int	exec_builtin(t_cmd *cmd, t_list *env_list)
 		g_sig = builtin_cd(cmd->args, env_list);
 	if (ft_strncmp(cmd_name, "pwd", 3) == 0 && ft_strlen(cmd_name) == 3)
 		g_sig = builtin_pwd();
+	if (ft_strncmp(cmd_name, "echo", 4) == 0 && ft_strlen(cmd_name) == 4)
+		g_sig = builtin_echo(cmd->args, NULL);
 	if (ft_strncmp(cmd_name, "exit", 4) == 0 && ft_strlen(cmd_name) == 4)
 		g_sig = builtin_exit(cmd->args);
 	return (0);

@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/10 20:02:10 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/13 16:16:54 by jmellado         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,6 +167,7 @@ void			save_word(char *word[2], t_ptr_tab *word_tab, ssize_t i);
 // Built-ins
 int				builtin_cd(char **args, t_list *env_list);
 int				builtin_pwd(void);
+int				builtin_echo(char **args, char ***env);
 int				builtin_exit(char **args);
 int				exec_builtin(t_cmd *cmd, t_list *env_list);
 int				is_builtin(t_cmd *cmd);

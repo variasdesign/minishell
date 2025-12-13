@@ -55,6 +55,7 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_BU)/,	\
 					builtins.c					\
 					cd.c						\
 					pwd.c						\
+					echo.c						\
 					exit.c						\
 					)
 
