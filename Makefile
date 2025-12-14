@@ -56,6 +56,10 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_BU)/,	\
 					cd.c						\
 					pwd.c						\
 					echo.c						\
+					env.c						\
+					export.c					\
+					export_utils.c				\
+					unset.c						\
 					exit.c						\
 					)
 
