@@ -48,7 +48,7 @@ static ssize_t	count_variables(char *args, t_ptr_tab squote_tab)
 	var_can = ft_strchr(args, '$');
 	while (var_can)
 	{
-		squote_i = ft_tabfind(var_can, squote_tab);
+		squote_i = ft_tabfind(var_can, squote_tab, f);
 		if (squote_i < 0)
 		{
 			var_len = is_variable(var_can);
@@ -72,16 +72,16 @@ void	search_var_candidate(t_ptr_tab *var_tab, t_ptr_tab squote_tab)
 	var_len = 0;
 	squote_i = -1;
 	i = -1;
-	while (++i < var_tab->count && var_can)
+	while (i < var_tab->count && var_can)
 	{
-		squote_i = ft_tabfind(var_can, squote_tab);
+		squote_i = ft_tabfind(var_can, squote_tab, f);
 		if (squote_i < 0)
 		{
 			var_len = is_variable(var_can);
 			if (var_len)
 			{
 				var_tab->start[i] = var_can;
-				var_tab->end[i] = ++var_can + var_len;
+				var_tab->end[i++] = ++var_can + var_len;
 			}
 			var_can = ft_strchr(var_can, '$');
 		}

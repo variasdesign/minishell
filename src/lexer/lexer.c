@@ -17,7 +17,7 @@ static char	*copy_quote_content(t_ptr_tab quote_tab, char **str, char *word_str,
 {
 	ssize_t	quote_i;
 
-	quote_i = ft_tabfind(word_str, quote_tab);
+	quote_i = ft_tabfind(word_str, quote_tab, t);
 	if (quote_i >= 0)
 	{
 		while (++word_str != quote_tab.end[quote_i] - 1)
@@ -64,6 +64,7 @@ static void	unquote_word(t_mini *msh, t_token *tok,
 	{
 		tok->start = unquote_rewrite(msh, word_tab.start[i], len);
 		tok->end = tok->start + ft_strlen(tok->start);
+		tok->rewritten = t;
 	}
 	else
 	{
@@ -80,6 +81,7 @@ static t_node	*create_token(t_mini *msh, t_ptr_tab *tab,
 	const t_token_type	type = find_token_type(tab->start[i], prev);
 
 	tok.type = type;
+	tok.rewritten = f;
 	if (is_word_type(type))
 		unquote_word(msh, &tok, *tab, i);
 	else

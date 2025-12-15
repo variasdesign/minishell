@@ -12,6 +12,24 @@
 
 #include "minishell.h"
 
+static	ssize_t	relocate_quotes(char *input,
+							t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab)
+{
+	squote_tab = ft_tabfree(&squote_tab, f);
+	dquote_tab = ft_tabfree(&dquote_tab, f);
+	if (locate_quotes(input, squote_tab, '\'') < 0
+		|| locate_quotes(input, dquote_tab, '\"') < 0)
+		return (-1);
+	if ((squote_tab->count > 0 || dquote_tab->count > 0)
+		&& validate_quotes(squote_tab, dquote_tab) < 0)
+	{
+		squote_tab = ft_tabfree(&squote_tab, f);
+		dquote_tab = ft_tabfree(&dquote_tab, f);
+		return (-1);
+	}
+	return (squote_tab->count + dquote_tab->count);
+}
+
 // Count the length of the split arguments with expanded vars, then allocate and
 // concatenate the split arguments into a single string.
 static char	*reassemble_args(char **split_args)
@@ -56,8 +74,8 @@ char	*expander(t_mini *msh)
 		free((void *)orig);
 		msh->squote_tab->orig = msh->input;
 		msh->dquote_tab->orig = msh->input;
+		if (relocate_quotes(msh->input, msh->squote_tab, msh->dquote_tab) < 0)
+			return (NULL);
 	}
-	msh->squote_tab = search_quote_candidates(msh->squote_tab, '\'');
-	msh->dquote_tab = search_quote_candidates(msh->dquote_tab, '\"');
 	return (msh->input);
 }

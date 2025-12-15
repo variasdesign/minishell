@@ -33,7 +33,7 @@ ssize_t	skip_quoted_word(char *str, t_ptr_tab quote_tab, ssize_t *word_len_ptr)
 	word_len = 0;
 	if (str && *str)
 	{
-		quote_i = ft_tabfind(str, quote_tab);
+		quote_i = ft_tabfind(str, quote_tab, t);
 		if (quote_i >= 0)
 			word_len = (quote_tab.end[quote_i] - quote_tab.start[quote_i]);
 		if (word_len > 2)

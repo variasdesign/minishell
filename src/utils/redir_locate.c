@@ -45,8 +45,8 @@ static ssize_t	count_redirs(char *args, t_ptr_tab squote_tab,
 	redir_can = redir_strchr(args);
 	while (redir_can)
 	{
-		squote_i = ft_tabfind(redir_can, squote_tab);
-		dquote_i = ft_tabfind(redir_can, dquote_tab);
+		squote_i = ft_tabfind(redir_can, squote_tab, f);
+		dquote_i = ft_tabfind(redir_can, dquote_tab, f);
 		if (squote_i < 0 && dquote_i < 0)
 		{
 			redir_len = is_redir(redir_can);
@@ -87,8 +87,8 @@ static void	search_redir_candidates(t_ptr_tab *redir_tab, t_ptr_tab squote_tab,
 	i = -1;
 	while (++i < redir_tab->count && redir_can)
 	{
-		squote_i = ft_tabfind(redir_can, squote_tab);
-		dquote_i = ft_tabfind(redir_can, dquote_tab);
+		squote_i = ft_tabfind(redir_can, squote_tab, f);
+		dquote_i = ft_tabfind(redir_can, dquote_tab, f);
 		if (squote_i < 0 && dquote_i < 0)
 			redir_can = insert_redir_into_tab(redir_can, redir_tab, i);
 		else if (squote_i)

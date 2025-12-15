@@ -21,7 +21,7 @@
 # include <readline/history.h>
 # include <readline/readline.h>
 # include <signal.h>
-#include <sys/types.h>
+# include <sys/types.h>
 # include <sys/wait.h>
 # include <unistd.h>
 
@@ -65,6 +65,7 @@ typedef struct s_token
 	t_token_type	type;
 	char			*start;
 	char			*end;
+	t_bool			rewritten;
 }	t_token;
 
 typedef struct s_env
@@ -148,7 +149,6 @@ t_list			*parser(t_list *token_list);
 t_mini			*allocate_minishell(char **envp);
 t_node			*find_token_node(t_node *offset,
 					t_token_type type, t_bool last);
-t_ptr_tab		*search_quote_candidates(t_ptr_tab *quote_tab, char q);
 t_token_type	get_token_type(t_node *token);
 t_token_type	find_token_type(char *start, t_token_type prev);
 void			child_cleanup_and_exit(t_mini *msh, int exit_code);

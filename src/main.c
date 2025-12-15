@@ -26,7 +26,10 @@ static char	*read_input(char **args, t_list *env, char **prompt)
 	}
 	*prompt = assemble_prompt(env, *prompt);
 	input_signal();
-	*args = readline(*prompt);
+	if (isatty(STDIN_FILENO))
+		*args = readline(*prompt);
+	else
+		*args = get_next_line(STDIN_FILENO);
 	if (args && *args && !ft_isspace(**args))
 		add_history(*args);
 	return (*args);
@@ -74,6 +77,6 @@ int	main(int argc, char *argv[], char *envp[])
 		return (EXIT_FAILURE);
 	mini_loop(msh);
 	free_all(msh);
-	write(STDOUT_FILENO, "exit\n", 5);
+	// write(STDOUT_FILENO, "exit\n", 5);
 	return (g_sig);
 }

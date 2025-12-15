@@ -59,8 +59,12 @@ char	*dup_token_content(t_node *node)
 	const char		*start = token->start;
 	const char		*end = token->end;
 	const size_t	len = end - start;
+	char			*str;
 
-	return (ft_strndup(start, len));
+	str = ft_strndup(start, len);
+	if (token->rewritten)
+		free((void *)start);
+	return (str);
 }
 
 t_node	*find_token_node(t_node *offset, t_token_type type, t_bool last)

@@ -26,12 +26,12 @@ ssize_t	find_and_del_quotes(t_ptr_tab *lead_tab, t_ptr_tab *second_tab)
 	i = 0;
 	while (second_tab->start[i])
 	{
-		start_i = ft_tabfind(second_tab->start[i], *lead_tab);
-		end_i = ft_tabfind(second_tab->end[i], *lead_tab);
+		start_i = ft_tabfind(second_tab->start[i], *lead_tab, f);
+		end_i = ft_tabfind(second_tab->end[i], *lead_tab, f);
 		if (start_i >= 0)
 			second_tab->start[i] = ft_tabdelone(f, i, second_tab);
 		else if (end_i >= 0
-			&& ft_tabfind(lead_tab->start[end_i], *second_tab) < 0)
+			&& ft_tabfind(lead_tab->start[end_i], *second_tab, f) < 0)
 			second_tab->end[i] = ft_tabdelone(t, i, second_tab);
 		else
 			i++;
