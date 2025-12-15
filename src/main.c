@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/10 19:00:41 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/15 19:51:23 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,25 @@
 
 static char	*read_input(char **args, t_list *env, char **prompt)
 {
+	char	*tmp;
+
 	if (*args)
-	{
 		free(*args);
-		*args = NULL;
-	}
 	if (*prompt)
-	{
 		free(*prompt);
-		*prompt = NULL;
-	}
+	*args = NULL;
+	*prompt = NULL;
 	*prompt = assemble_prompt(env, *prompt);
 	input_signal();
 	if (isatty(STDIN_FILENO))
 		*args = readline(*prompt);
 	else
+	{
 		*args = get_next_line(STDIN_FILENO);
+		tmp = ft_strtrim(*args, "\n");
+		free(*args);
+		*args = tmp;
+	}
 	if (args && *args && !ft_isspace(**args))
 		add_history(*args);
 	return (*args);

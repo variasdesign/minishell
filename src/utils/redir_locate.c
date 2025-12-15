@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 18:24:09 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/13 13:34:56 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/15 19:57:45 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,9 +53,9 @@ static ssize_t	count_redirs(char *args, t_ptr_tab squote_tab,
 			count += redir_len > 0;
 			redir_can = redir_strchr(redir_can + redir_len);
 		}
-		else if (squote_i)
+		else if (squote_i >= 0)
 			redir_can = redir_strchr(squote_tab.end[squote_i]);
-		else if (dquote_i)
+		else if (dquote_i >= 0)
 			redir_can = redir_strchr(dquote_tab.end[dquote_i]);
 	}
 	return (count);
@@ -91,9 +91,9 @@ static void	search_redir_candidates(t_ptr_tab *redir_tab, t_ptr_tab squote_tab,
 		dquote_i = ft_tabfind(redir_can, dquote_tab, f);
 		if (squote_i < 0 && dquote_i < 0)
 			redir_can = insert_redir_into_tab(redir_can, redir_tab, i);
-		else if (squote_i)
+		else if (squote_i >= 0)
 			redir_can = redir_strchr(squote_tab.end[squote_i]);
-		else if (dquote_i)
+		else if (dquote_i >= 0)
 			redir_can = redir_strchr(dquote_tab.end[dquote_i]);
 	}
 }

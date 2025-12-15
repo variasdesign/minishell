@@ -6,39 +6,39 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 16:48:09 by varias-c          #+#    #+#             */
-/*   Updated: 2025/11/21 13:58:59 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/15 21:01:35 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
 static void	add_redir_node(t_list *redir_list, t_list *token_list,
-						t_token_type type, t_redir *redir)
+						t_node *token_node)
 {
 	t_node	*redir_node;
+	t_redir	redir;
 
-	redir_node = find_token_node(token_list->head, type, f);
-	while (redir_node)
-	{
-		redir->type = get_token_type(redir_node);
-		redir->file = dup_token_content(redir_node->next);
-		ft_lstdel_wrapper(token_list, redir_node->next, free);
-		redir_node = ft_lstnew_node(redir_list->data_size, redir);
-		ft_lstadd_back(redir_list, redir_node);
-		redir_node = find_token_node(redir_node->next, type, f);
-	}
+	redir.type = get_token_type(token_node);
+	redir.file = dup_token_content(token_node->next);
+	ft_lstdel_wrapper(token_list, token_node->next, free);
+	redir_node = ft_lstnew_node(redir_list->data_size, &redir);
+	ft_lstadd_back(redir_list, redir_node);
 }
 
 static t_list	*init_redir_list(t_list *token_list, t_node *token_node)
 {
-	t_list			*redir_list;
-	t_redir			redir;
+	t_list	*redir_list;
 
 	redir_list = ft_lstnew_list(sizeof(t_redir));
-	if (token_node == find_token_node(token_list->head, TOKEN_WORD_CMD, f))
-		add_redir_node(redir_list, token_list, TOKEN_REDIR_IN_ALL, &redir);
-	if (token_node == find_token_node(token_list->tail, TOKEN_WORD_CMD, t))
-		add_redir_node(redir_list, token_list, TOKEN_REDIR_OUT_ALL, &redir);
+	while (token_node && get_token_type(token_node) != TOKEN_PIPE)
+	{
+		if (get_token_type(token_node) == TOKEN_REDIR_IN
+			|| get_token_type(token_node) == TOKEN_REDIR_OUT
+			|| get_token_type(token_node) == TOKEN_REDIR_APPEND
+			|| get_token_type(token_node) == TOKEN_REDIR_HEREDOC)
+			add_redir_node(redir_list, token_list, token_node);
+		token_node = token_node->next;
+	}
 	if (redir_list->count < 1)
 		return (ft_lstdel_list(redir_list, free));
 	return (redir_list);

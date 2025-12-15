@@ -1,4 +1,4 @@
 display var_can
 display var_len
-display quote_i
+display squote_i
 display count

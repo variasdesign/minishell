@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/14 15:54:40 by jmellado         ###   ########.fr       */
+/*   Updated: 2025/12/15 20:45:54 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,6 +127,7 @@ size_t			count_word_groups(t_list token_list);
 size_t			count_word_tokens(t_node *cmd_node);
 ssize_t			get_env_index(t_list *env_list, char *var);
 ssize_t			is_redir(char *redir);
+ssize_t			is_variable(char *var);
 ssize_t			locate_quotes(char *args, t_ptr_tab *quote_tab, char q);
 ssize_t			locate_redirs(char *args, t_mini *msh);
 ssize_t			locate_vars(char *args, t_ptr_tab *var_tab,
@@ -136,6 +137,7 @@ ssize_t			skip_word(char *str, ssize_t *word_len_ptr);
 ssize_t			skip_quoted_word(char *str, t_ptr_tab quote_tab,
 					ssize_t *word_len_ptr);
 ssize_t			validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab);
+ssize_t			validate_vars(t_ptr_tab *var_tab, t_ptr_tab *dquote_tab);
 t_bool			check_exit(t_cmd *cmd);
 t_bool			check_non_word_char(char c);
 t_bool			is_redir_type(t_token_type type);

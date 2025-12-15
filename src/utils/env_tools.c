@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 14:11:40 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/10 20:04:14 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/15 18:50:38 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ t_env	*get_env(t_list *env_list, char *var)
 	t_env			*content;
 
 	env = env_list->head;
-	while (env)
+	while (env && var && *var)
 	{
 		content = env->content;
 		if (!ft_strncmp(content->key, var, len))

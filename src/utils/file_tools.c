@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 18:31:31 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/10 19:30:08 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/15 21:02:01 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,6 +60,7 @@ static int	open_output(char *path, t_bool append)
 	return (out);
 }
 
+// FIX: If one redirection fails, skip the rest
 static void	open_redirections(t_cmd *cmd)
 {
 	t_node			*node;

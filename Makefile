@@ -79,6 +79,7 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_UT)/,	\
 					token_tools.c				\
 					token_tools_2.c				\
 					var_tools.c					\
+					var_validation.c			\
 					word_locate.c				\
 					word_tools.c				\
 					)

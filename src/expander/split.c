@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 18:08:58 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/10 20:01:36 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/15 19:11:45 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,23 +46,20 @@ static char	*expand_var(t_mini *msh, char *str, t_ptr_tab var_tab, size_t i)
 	const char		*first_char = var_tab.start[i] + 1;
 	const ssize_t	var_len = var_tab.end[i] - (void *)first_char;
 	char			*tmp_env;
-	char			*env;
+	t_env			*env;
 
-	if (var_len > 0)
+	if (*first_char != '?')
 	{
-		if (*first_char != '?')
-		{
-			tmp_env = ft_strndup(first_char, var_len);
-			env = get_env(msh->env, tmp_env)->value;
-			if (!env)
-				str = ft_strdup("");
-			else
-				str = ft_strdup(env);
-			free(tmp_env);
-		}
+		tmp_env = ft_strndup(first_char, var_len);
+		env = get_env(msh->env, tmp_env);
+		if (!env)
+			str = ft_strdup("");
 		else
-			str = ft_itoa(g_sig);
+			str = ft_strdup(env->value);
+		free(tmp_env);
 	}
+	else
+		str = ft_itoa(g_sig);
 	return (str);
 }
 

@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:04:38 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/08 19:34:31 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/15 20:18:26 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 // Set and do not begin with a digit. Other characters may be permitted by an
 // implementation; applications shall tolerate the presence of such names.
 // TODO: Should we avoid reserved keywords also? (e.g. for, while, do, etc)
-static ssize_t	is_variable(char *var)
+ssize_t	is_variable(char *var)
 {
 	int		len;
 
@@ -31,8 +31,9 @@ static ssize_t	is_variable(char *var)
 			return (++len);
 		while (var[len] && (ft_isalnum(var[len]) || var[len] == '_'))
 			len++;
+		return (len);
 	}
-	return (len);
+	return (-1);
 }
 
 // Count variables by checking if they have valid names. Invalid names will
@@ -52,7 +53,7 @@ static ssize_t	count_variables(char *args, t_ptr_tab squote_tab)
 		if (squote_i < 0)
 		{
 			var_len = is_variable(var_can);
-			count += var_len > 0;
+			count += var_len >= 0;
 			var_can = ft_strchr(++var_can + var_len, '$');
 		}
 		else
@@ -71,19 +72,19 @@ void	search_var_candidate(t_ptr_tab *var_tab, t_ptr_tab squote_tab)
 	var_can = ft_strchr(var_tab->orig, '$');
 	var_len = 0;
 	squote_i = -1;
-	i = -1;
+	i = 0;
 	while (i < var_tab->count && var_can)
 	{
 		squote_i = ft_tabfind(var_can, squote_tab, f);
 		if (squote_i < 0)
 		{
 			var_len = is_variable(var_can);
-			if (var_len)
+			if (var_len >= 0)
 			{
 				var_tab->start[i] = var_can;
-				var_tab->end[i++] = ++var_can + var_len;
+				var_tab->end[i++] = var_can + var_len + 1;
 			}
-			var_can = ft_strchr(var_can, '$');
+			var_can = ft_strchr(++var_can, '$');
 		}
 		else
 			var_can = ft_strchr(squote_tab.end[squote_i], '$');
