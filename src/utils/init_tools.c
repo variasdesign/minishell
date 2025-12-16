@@ -37,7 +37,7 @@ static t_mini	*allocate_tables(t_mini *msh, t_ptr_tab **tables)
 	return (msh);
 }
 
-static t_list *init_env(char **envp)
+static t_list	*init_env(char **envp)
 {
 	t_list	*env_list;
 	t_node	*env_node;
@@ -81,5 +81,6 @@ t_mini	*allocate_minishell(char **envp)
 	msh->prompt = NULL;
 	msh->input = NULL;
 	msh->loop = t;
+	msh->cmd_since_last_pipe = f;
 	return (msh);
 }

@@ -96,20 +96,19 @@ static int	export_var(char *arg, t_list *env_list)
 int	builtin_export(char **args, t_list *env_list)
 {
 	int	i;
-	int	exit_status;
 
 	if (!args[1])
 	{
 		print_exported_vars(env_list);
 		return (0);
 	}
-	exit_status = 0;
+	g_sig = 0;
 	i = 1;
 	while (args[i])
 	{
-		if (export_var(args[i], env_list) != 0)
-			exit_status = 1;
+		if (export_var(args[i], env_list))
+			g_sig = 1;
 		i++;
 	}
-	return (exit_status);
+	return (g_sig);
 }

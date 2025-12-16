@@ -39,7 +39,7 @@ static char	*unquote_rewrite(t_mini *msh, char *word_str, size_t len)
 	orig = str;
 	while (str < &orig[len])
 	{
-		while (*word_str && !quote_char(*word_str))
+		while (*word_str && !quote_char(*word_str) && !ft_isspace(*word_str))
 			*str++ = *word_str++;
 		while (*word_str && quote_char(*word_str))
 		{
@@ -78,7 +78,8 @@ static t_node	*create_token(t_mini *msh, t_ptr_tab *tab,
 {
 	t_token				tok;
 	t_node				*node;
-	const t_token_type	type = find_token_type(tab->start[i], prev);
+	const t_token_type	type = find_token_type(tab->start[i], prev,
+			&msh->cmd_since_last_pipe);
 
 	tok.type = type;
 	tok.rewritten = f;

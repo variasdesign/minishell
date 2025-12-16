@@ -59,6 +59,7 @@ static int	mini_loop(t_mini *msh)
 			if (exec_cmd_list(msh, msh->cmd_list, msh->env) < 0)
 				ft_perror(E_EXEC_FAILURE, NULL, f, 0);
 			msh->cmd_list = ft_lstdel_list(msh->cmd_list, free_cmd_list);
+			msh->cmd_since_last_pipe = f;
 		}
 	}
 	return (g_sig);

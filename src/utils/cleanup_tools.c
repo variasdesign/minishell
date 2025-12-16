@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 14:03:24 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/10 19:00:56 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/16 14:24:07 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,7 @@ void	free_cmd_list(void *cmd_ptr)
 
 	cmd = cmd_ptr;
 	ft_freematrix((void **)cmd->args);
-	ft_lstdel_list(cmd->redir_list, free);
+	ft_lstdel_list(cmd->redir_list, free_redir_list);
 	free(cmd);
 }
 
@@ -60,10 +60,11 @@ void	free_all(t_mini *msh)
 	free(msh);
 }
 
-void	child_cleanup_and_exit(t_mini *msh, int exit_code)
+void	free_redir_list(void *redir_ptr)
 {
-	ft_lstdel_list(msh->cmd_list, free_cmd_list);
-	free(msh->pids);
-	free_all(msh);
-	exit(exit_code);
+	t_redir	*redir;
+
+	redir = redir_ptr;
+	free(redir->file);
+	free(redir);
 }

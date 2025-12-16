@@ -36,7 +36,6 @@ char	**reassemble_env(t_list *env_list)
 
 t_env	*get_env(t_list *env_list, char *var)
 {
-	const size_t	len = ft_strlen(var);
 	t_node			*env;
 	t_env			*content;
 
@@ -44,7 +43,7 @@ t_env	*get_env(t_list *env_list, char *var)
 	while (env && var && *var)
 	{
 		content = env->content;
-		if (!ft_strncmp(content->key, var, len))
+		if (!ft_strncmp(content->key, var, ft_strlen(content->key)))
 			return (content);
 		env = env->next;
 	}

@@ -12,6 +12,23 @@
 
 #include "minishell.h"
 
+static t_bool	check_heredoc_limiter(t_ptr_tab var_tab, ssize_t i)
+{
+	const size_t	len_until_var = var_tab.start[i] - var_tab.orig;
+	size_t			j;
+
+	j = 1;
+	while (j <= len_until_var
+		&& (ft_isspace(((char *)var_tab.orig)[len_until_var - j])
+		|| quote_char(((char *)var_tab.orig)[len_until_var - j])))
+		j++;
+	if (j <= len_until_var && ((char *)var_tab.orig)[len_until_var - j] == '<')
+		j++;
+	if (j <= len_until_var && ((char *)var_tab.orig)[len_until_var - j] == '<')
+		return (t);
+	return (f);
+}
+
 // Count segments of strings, segregated by variables and non-variables
 // Example:	echo My name is $USER and I work as $JOB in $COMPANY
 // 			|               |    |              |   |   |
@@ -48,7 +65,9 @@ static char	*expand_var(t_mini *msh, char *str, t_ptr_tab var_tab, size_t i)
 	char			*tmp_env;
 	t_env			*env;
 
-	if (*first_char != '?')
+	if (check_heredoc_limiter(var_tab, i))
+		return (ft_strndup(var_tab.start[i], var_len + 1));
+	if (*first_char && *first_char != '?')
 	{
 		tmp_env = ft_strndup(first_char, var_len);
 		env = get_env(msh->env, tmp_env);
@@ -58,6 +77,8 @@ static char	*expand_var(t_mini *msh, char *str, t_ptr_tab var_tab, size_t i)
 			str = ft_strdup(env->value);
 		free(tmp_env);
 	}
+	else if (!*first_char)
+		str = ft_strdup("$");
 	else
 		str = ft_itoa(g_sig);
 	return (str);
@@ -90,8 +111,7 @@ static char	**fill_split(t_mini *msh, char **split,
 		i++;
 	}
 	if (i < count && !var_tab.start[j] && !var_tab.end[j])
-		split[i] = ft_strndup(var_tab.read,
-				ft_strlen(var_tab.read));
+		split[i] = ft_strndup(var_tab.read, ft_strlen(var_tab.read));
 	return (split);
 }
 

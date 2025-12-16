@@ -53,7 +53,7 @@ int	get_exec_path(t_cmd *cmd, t_list *env_list)
 	ft_freematrix((void **)path_list);
 	if (!exec_path)
 	{
-		printf(E_SHELL_PERROR, cmd->args[0], "command not found");
+		ft_printf(2, E_SHELL_PERROR, cmd->args[0], "command not found");
 		return (-1);
 	}
 	free(cmd->args[0]);

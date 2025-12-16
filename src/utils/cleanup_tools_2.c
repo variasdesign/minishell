@@ -1,42 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   redir_tools.c                                      :+:      :+:    :+:   */
+/*   cleanup_tools_2.c                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/14 23:15:58 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/14 23:15:59 by varias-c         ###   ########.fr       */
+/*   Created: 2025/12/16 14:23:18 by varias-c          #+#    #+#             */
+/*   Updated: 2025/12/16 14:24:02 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-int	redir_char(char c)
+void	child_cleanup(t_mini *msh, int exit_code)
 {
-	return (c == '<' || c == '>' || c == '|');
-}
-
-ssize_t	is_redir(char *redir)
-{
-	const char	c = *redir;
-	size_t		len;
-	size_t		max_len;
-
-	len = 0;
-	if (redir_char(c))
-	{
-		max_len = 2 - (c == '|');
-		while (len < max_len && redir[len] == c)
-			len++;
-	}
-	return (len);
-}
-
-char	*get_redir_path(t_node *redir_node)
-{
-	t_redir	*redir;
-
-	redir = redir_node->content;
-	return (redir->file);
+	ft_lstdel_list(msh->cmd_list, free_cmd_list);
+	free(msh->pids);
+	free_all(msh);
+	if (exit_code != -1)
+		exit(exit_code);
+	exit(EXIT_FAILURE);
 }

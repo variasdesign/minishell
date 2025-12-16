@@ -15,7 +15,7 @@
 static void	init_pids_and_exec(t_mini *msh, t_list *cmd_list,
 								t_list *env_list, int *status)
 {
-	int		i;
+	ssize_t	i;
 	t_node	*cmd;
 
 	i = 0;
@@ -27,16 +27,23 @@ static void	init_pids_and_exec(t_mini *msh, t_list *cmd_list,
 		i++;
 		cmd = cmd->next;
 	}
-	i = 0;
-	while (i < cmd_list->count)
+	i = -1;
+	while (++i < cmd_list->count)
 	{
-		waitpid(msh->pids[i++], status, 0);
-		if (WIFEXITED(*status))
-			g_sig = WEXITSTATUS(*status);
+		if (msh->pids[i] != -1)
+		{
+			waitpid(msh->pids[i], status, 0);
+			if (WIFEXITED(*status))
+				g_sig = WEXITSTATUS(*status);
+		}
+		else
+			g_sig = 127;
 	}
 	free(msh->pids);
 }
 
+// FIX: If export or unset is called and there's only one command
+// to execute, don't fork.
 int	exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env_list)
 {
 	int	status;
@@ -50,10 +57,8 @@ int	exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env_list)
 				msh->loop = f;
 				return (0);
 			}
-			else if (is_builtin(cmd_list->head->content))
-				return (exec_builtin(cmd_list->head->content, env_list));
 		}
 		init_pids_and_exec(msh, cmd_list, env_list, &status);
 	}
-	return (0);
+	return (g_sig);
 }

@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/15 20:45:54 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/16 14:24:31 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,6 @@
 # define E_ARGS_NOT_TAKEN "This program doesn't take any arguments.\n"
 # define E_CHILD_ERR "Children exited with error.\n"
 # define E_DUP_FAILURE "Duplication of file descriptors failed: %s\n"
-# define E_EXEC_NOT_FOUND "Executable not found in PATH: %s\n"
 # define E_EXEC_FAILURE "Children didn't exit correctly.\n"
 # define E_FORK_FAILURE "Couldn't fork: %s\n"
 # define E_HEREDOC_FAILURE "heredoc couldn't be created or written to.\n"
@@ -59,6 +58,18 @@ typedef enum e_token_type
 	TOKEN_REDIR_IN_ALL,
 	TOKEN_REDIR_OUT_ALL,
 }	t_token_type;
+
+typedef enum e_builtin
+{
+	CMD_NULL,
+	CMD_CD,
+	CMD_ECHO,
+	CMD_ENV,
+	CMD_EXIT,
+	CMD_EXPORT,
+	CMD_PWD,
+	CMD_UNSET,
+}	t_builtin;
 
 typedef struct s_token
 {
@@ -98,6 +109,7 @@ typedef struct s_mini
 	char		*prompt;
 	pid_t		*pids;
 	t_bool		loop;
+	t_bool		cmd_since_last_pipe;
 	t_list		*cmd_list;
 	t_list		*env;
 	t_list		*token_list;
@@ -113,7 +125,8 @@ extern volatile sig_atomic_t	g_sig;
 char			**split_vars(t_mini *msh);
 char			**reassemble_env(t_list *env_list);
 char			*assemble_prompt(t_list *env, char *prompt);
-char			*dup_token_content(t_node *node);
+char			*dup_token_content(t_node *token_node);
+char			*get_redir_path(t_node *redir_node);
 char			*expander(t_mini *msh);
 int				exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env);
 int				get_exec_path(t_cmd *cmd, t_list *env_list);
@@ -152,12 +165,14 @@ t_mini			*allocate_minishell(char **envp);
 t_node			*find_token_node(t_node *offset,
 					t_token_type type, t_bool last);
 t_token_type	get_token_type(t_node *token);
-t_token_type	find_token_type(char *start, t_token_type prev);
-void			child_cleanup_and_exit(t_mini *msh, int exit_code);
+t_token_type	find_token_type(char *start, t_token_type prev,
+					t_bool *cmd_since_last_pipe);
+void			child_cleanup(t_mini *msh, int exit_code);
 void			exec_signal(void);
 void			exit_error(char *msg, char *err, int exit_code);
 void			free_all(t_mini *msh);
 void			free_cmd_list(void *cmd_ptr);
+void			free_redir_list(void *redir_ptr);
 void			free_tables(t_mini *msh, t_bool free_full_table);
 void			input_signal(void);
 void			interrupt(int signal);
@@ -169,13 +184,13 @@ void			save_word(char *word[2], t_ptr_tab *word_tab, ssize_t i);
 // Built-ins
 int				builtin_cd(char **args, t_list *env_list);
 int				builtin_pwd(void);
-int				builtin_echo(char **args, char ***env);
+int				builtin_echo(char **args);
 int				builtin_env(char **args, t_list *env_list);
 int				builtin_export(char **args, t_list *env_list);
 int				builtin_unset(char **args, t_list *env_list);
 int				builtin_exit(char **args);
 t_env			*create_env_var(char *key, char *value);
 int				exec_builtin(t_cmd *cmd, t_list *env_list);
-int				is_builtin(t_cmd *cmd);
+t_builtin		is_builtin(t_cmd *cmd);
 
 #endif

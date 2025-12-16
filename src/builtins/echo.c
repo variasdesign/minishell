@@ -22,13 +22,13 @@ static int	has_newline_flag(char **args)
 	{
 		j = 1;
 		if (args[i][j] == '\0')
-			break;
+			break ;
 		while (args[i][j] && args[i][j] == 'n')
 			j++;
 		if (args[i][j] == '\0' && j > 1)
 			i++;
 		else
-			break;
+			break ;
 	}
 	return (i > 1 ? i : 0);
 }
@@ -47,12 +47,11 @@ static void	print_args(char **args, int start)
 	}
 }
 
-int	builtin_echo(char **args, char ***env)
+int	builtin_echo(char **args)
 {
 	int	newline;
 	int	flag_count;
 
-	(void)env;
 	newline = 1;
 	flag_count = has_newline_flag(args);
 	if (flag_count > 0)

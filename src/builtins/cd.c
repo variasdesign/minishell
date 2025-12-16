@@ -19,7 +19,7 @@ static char	*get_home_path(t_list *env_list)
 	home = get_env(env_list, "HOME")->value;
 	if (!home)
 	{
-		printf("minishell: cd: HOME not set\n");
+		ft_printf(2, E_SHELL_PERROR, "cd" "HOME not set");
 		return (NULL);
 	}
 	return (home);

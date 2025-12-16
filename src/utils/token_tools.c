@@ -17,25 +17,29 @@ size_t	count_word_groups(t_list token_list)
 	t_node	*curr_node;
 	size_t	count;
 
-	count = 0;
-	curr_node = find_token_node(token_list.head, TOKEN_WORD_CMD, f);
+	count = 1;
+	curr_node = find_token_node(token_list.head, TOKEN_PIPE, f);
 	while (curr_node)
 	{
 		count++;
-		curr_node = find_token_node(curr_node->next, TOKEN_WORD_CMD, f);
+		curr_node = find_token_node(curr_node->next, TOKEN_PIPE, f);
 	}
 	return (count);
 }
 
-size_t	count_word_tokens(t_node *cmd_node)
+size_t	count_word_tokens(t_node *token_node)
 {
-	size_t	words;
+	size_t			words;
+	t_token_type	type;
 
 	words = 0;
-	while (cmd_node && is_word_type(get_token_type(cmd_node)))
+	type = get_token_type(token_node);
+	while (token_node && type != TOKEN_PIPE)
 	{
-		words++;
-		cmd_node = cmd_node->next;
+		if (is_word_type(type))
+			words++;
+		token_node = token_node->next;
+		type = get_token_type(token_node);
 	}
 	return (words);
 }
@@ -49,8 +53,7 @@ t_token_type	get_token_type(t_node *node)
 		token = node->content;
 		return (token->type);
 	}
-	else
-		return (TOKEN_NULL);
+	return (TOKEN_NULL);
 }
 
 char	*dup_token_content(t_node *node)

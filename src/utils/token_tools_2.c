@@ -12,39 +12,41 @@
 
 #include "minishell.h"
 
-static t_token_type	cmd_or_arg_word(t_token_type prev)
+static t_token_type	cmd_or_arg_word(t_token_type prev,
+									t_bool *cmd_since_last_pipe)
 {
-	if (is_redir_type(prev)
-		|| is_word_type(prev))
+	if (is_redir_type(prev) || *cmd_since_last_pipe)
 		return (TOKEN_WORD_ARG);
-	else
-		return (TOKEN_WORD_CMD);
+	*cmd_since_last_pipe = t;
+	return (TOKEN_WORD_CMD);
 }
 
-t_token_type	find_token_type(char *start, t_token_type prev)
+t_token_type	find_token_type(char *start, t_token_type prev,
+							t_bool *cmd_since_last_pipe)
 {
 	const size_t	redir_len = is_redir(start);
 
 	if (redir_len > 0)
 	{
 		if (*start == '|')
+		{
+			*cmd_since_last_pipe = f;
 			return (TOKEN_PIPE);
+		}
 		else if (*start == '>')
 		{
 			if (redir_len == 2)
 				return (TOKEN_REDIR_APPEND);
-			else
-				return (TOKEN_REDIR_OUT);
+			return (TOKEN_REDIR_OUT);
 		}
 		else if (*start == '<')
 		{
 			if (redir_len == 2)
 				return (TOKEN_REDIR_HEREDOC);
-			else
-				return (TOKEN_REDIR_IN);
+			return (TOKEN_REDIR_IN);
 		}
 		else
 			return (TOKEN_NULL);
 	}
-	return (cmd_or_arg_word(prev));
+	return (cmd_or_arg_word(prev, cmd_since_last_pipe));
 }

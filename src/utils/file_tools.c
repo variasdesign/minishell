@@ -16,9 +16,9 @@ static int	check_fd_errors(t_cmd *cmd)
 {
 	if (cmd->fd_in < 0 || cmd->fd_out < 0)
 	{
-		if (cmd->fd_in >= 0)
+		if (cmd->fd_in > STDIN_FILENO)
 			close(cmd->fd_in);
-		if (cmd->fd_out >= 0)
+		if (cmd->fd_out > STDOUT_FILENO)
 			close(cmd->fd_out);
 		return (-1);
 	}
@@ -60,41 +60,45 @@ static int	open_output(char *path, t_bool append)
 	return (out);
 }
 
-// FIX: If one redirection fails, skip the rest
-static void	open_redirections(t_cmd *cmd)
+static t_node	*open_redirection(t_cmd *cmd, t_node *redir_node)
 {
-	t_node			*node;
 	t_token_type	type;
-	char			*path;
+	t_redir			*redir;
 
-	node = cmd->redir_list->head;
-	while (node)
+	redir = redir_node->content;
+	type = redir->type;
+	if (type == TOKEN_REDIR_IN || type == TOKEN_REDIR_HEREDOC)
 	{
-		type = get_token_type(node);
-		path = ((t_redir *)(node->content))->file;
-		if (!cmd->pipe_from && (type == TOKEN_REDIR_IN
-				|| (type == TOKEN_REDIR_HEREDOC && heredoc(path))))
-		{
-			if (cmd->fd_in != STDIN_FILENO)
-				close(cmd->fd_in);
-			cmd->fd_in = open_input(path);
-		}
-		else if (!cmd->pipe_to
-			&& (type == TOKEN_REDIR_OUT || type == TOKEN_REDIR_APPEND))
-		{
-			if (cmd->fd_out != STDOUT_FILENO)
-				close(cmd->fd_out);
-			cmd->fd_out = open_output(path, type == TOKEN_REDIR_APPEND);
-		}
-		node = node->next;
+		if (cmd->fd_in != STDIN_FILENO)
+			close(cmd->fd_in);
+		if (type == TOKEN_REDIR_HEREDOC && !heredoc(redir->file))
+			cmd->fd_in = open_input("/tmp/heredoc");
+		else
+			cmd->fd_in = open_input(redir->file);
 	}
+	else if ((type == TOKEN_REDIR_OUT || type == TOKEN_REDIR_APPEND))
+	{
+		if (cmd->fd_out != STDOUT_FILENO)
+			close(cmd->fd_out);
+		cmd->fd_out = open_output(redir->file,
+				type == TOKEN_REDIR_APPEND);
+	}
+	if (cmd->fd_in < 0 || cmd->fd_in < 0)
+		return (NULL);
+	return (redir_node->next);
 }
 
 int	open_files(t_cmd *cmd, t_list *env_list)
 {
-	if (!is_builtin(cmd) && get_exec_path(cmd, env_list) < 0)
+	t_node			*node;
+
+	if (!is_builtin(cmd) && cmd->args[0] && get_exec_path(cmd, env_list) < 0)
 		return (-1);
 	if (cmd->redir_list)
-		open_redirections(cmd);
+	{
+		node = cmd->redir_list->head;
+		while (node)
+			node = open_redirection(cmd, node);
+	}
 	return (check_fd_errors(cmd));
 }

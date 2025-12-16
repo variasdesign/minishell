@@ -38,8 +38,7 @@ static t_bool	validate_pipes(t_list token_list)
 		{
 			if (curr_node->prev && curr_node->next)
 			{
-				if (!(is_word_type(get_token_type(curr_node->prev)))
-					|| !(is_word_type(get_token_type(curr_node->next))))
+				if (!(is_word_type(get_token_type(curr_node->prev))))
 					return (f);
 			}
 			else
