@@ -33,12 +33,13 @@ static char	*redir_strchr(char *args)
 // Count redirections by checking if they are valid. Invalid redirections will
 // return redir_len = 0. Redirs inside single or double quotes are ignored.
 static ssize_t	count_redirs(char *args, t_ptr_tab squote_tab,
-								t_ptr_tab dquote_tab)
+								t_ptr_tab dquote_tab, t_ptr_tab var_tab)
 {
 	ssize_t	count;
 	ssize_t	redir_len;
 	ssize_t	squote_i;
 	ssize_t	dquote_i;
+	ssize_t	var_i;
 	char	*redir_can;
 
 	count = 0;
@@ -47,7 +48,8 @@ static ssize_t	count_redirs(char *args, t_ptr_tab squote_tab,
 	{
 		squote_i = ft_tabfind(redir_can, squote_tab, f);
 		dquote_i = ft_tabfind(redir_can, dquote_tab, f);
-		if (squote_i < 0 && dquote_i < 0)
+		var_i = ft_tabfind(redir_can, var_tab, t);
+		if (squote_i < 0 && dquote_i < 0 && var_i < 0)
 		{
 			redir_len = is_redir(redir_can);
 			count += redir_len > 0;
@@ -57,6 +59,8 @@ static ssize_t	count_redirs(char *args, t_ptr_tab squote_tab,
 			redir_can = redir_strchr(squote_tab.end[squote_i]);
 		else if (dquote_i >= 0)
 			redir_can = redir_strchr(dquote_tab.end[dquote_i]);
+		else if (var_i >= 0)
+			redir_can = redir_strchr(var_tab.end[var_i]);
 	}
 	return (count);
 }
@@ -76,10 +80,11 @@ static char	*insert_redir_into_tab(char *redir_can, t_ptr_tab *redir_tab,
 }
 
 static void	search_redir_candidates(t_ptr_tab *redir_tab, t_ptr_tab squote_tab,
-									t_ptr_tab dquote_tab)
+									t_ptr_tab dquote_tab, t_ptr_tab var_tab)
 {
 	ssize_t	squote_i;
 	ssize_t	dquote_i;
+	ssize_t	var_i;
 	char	*redir_can;
 	ssize_t	i;
 
@@ -89,12 +94,15 @@ static void	search_redir_candidates(t_ptr_tab *redir_tab, t_ptr_tab squote_tab,
 	{
 		squote_i = ft_tabfind(redir_can, squote_tab, f);
 		dquote_i = ft_tabfind(redir_can, dquote_tab, f);
+		var_i = ft_tabfind(redir_can, var_tab, t);
 		if (squote_i < 0 && dquote_i < 0)
 			redir_can = insert_redir_into_tab(redir_can, redir_tab, i);
 		else if (squote_i >= 0)
 			redir_can = redir_strchr(squote_tab.end[squote_i]);
 		else if (dquote_i >= 0)
 			redir_can = redir_strchr(dquote_tab.end[dquote_i]);
+		else if (var_i >= 0)
+			redir_can = redir_strchr(var_tab.end[var_i]);
 	}
 }
 
@@ -111,7 +119,7 @@ static void	search_redir_candidates(t_ptr_tab *redir_tab, t_ptr_tab squote_tab,
 ssize_t	locate_redirs(char *args, t_mini *msh)
 {
 	msh->redir_tab->count = count_redirs(args, *msh->squote_tab,
-			*msh->dquote_tab);
+			*msh->dquote_tab, *msh->var_tab);
 	if (msh->redir_tab->count > 0)
 	{
 		msh->redir_tab = ft_taballoc(msh->redir_tab, args, sizeof(char *));
@@ -122,7 +130,7 @@ ssize_t	locate_redirs(char *args, t_mini *msh)
 		}
 		else
 			search_redir_candidates(msh->redir_tab, *msh->squote_tab,
-				*msh->dquote_tab);
+				*msh->dquote_tab, *msh->var_tab);
 	}
 	if (msh->redir_tab->count < 0)
 		printf("Error locating redirections.\n");

@@ -103,11 +103,10 @@ typedef struct s_cmd
 
 typedef struct s_mini
 {
-	char		*cwd;
-	char		*path;
 	char		*input;
 	char		*prompt;
 	pid_t		*pids;
+	t_bool		*expanded_vars;
 	t_bool		loop;
 	t_bool		cmd_since_last_pipe;
 	t_list		*cmd_list;
@@ -130,6 +129,7 @@ char			*get_redir_path(t_node *redir_node);
 char			*expander(t_mini *msh);
 int				exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env);
 int				get_exec_path(t_cmd *cmd, t_list *env_list);
+int				exec_single_builtin(t_mini *msh, t_cmd *cmd, t_list *env_list);
 int				heredoc(char *lim);
 int				open_files(t_cmd *cmd, t_list *env_list);
 int				quote_char(char c);
@@ -146,14 +146,15 @@ ssize_t			locate_redirs(char *args, t_mini *msh);
 ssize_t			locate_vars(char *args, t_ptr_tab *var_tab,
 					t_ptr_tab squote_tab);
 ssize_t			locate_words(char *args, t_mini *msh);
-ssize_t			skip_word(char *str, ssize_t *word_len_ptr);
+ssize_t			skip_word(char *str, ssize_t *word_len_ptr,
+					t_ptr_tab redir_tab);
 ssize_t			skip_quoted_word(char *str, t_ptr_tab quote_tab,
 					ssize_t *word_len_ptr);
 ssize_t			validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab);
 ssize_t			validate_vars(t_ptr_tab *var_tab, t_ptr_tab *dquote_tab);
 t_bool			check_exit(t_cmd *cmd);
-t_bool			check_non_word_char(char c);
 t_bool			is_redir_type(t_token_type type);
+t_bool			is_standalone_builtin(t_builtin builtin);
 t_bool			is_word_type(t_token_type type);
 t_bool			validate_token_list(t_list token_list);
 t_env			*get_env(t_list *env_list, char *var);
@@ -166,7 +167,7 @@ t_node			*find_token_node(t_node *offset,
 					t_token_type type, t_bool last);
 t_token_type	get_token_type(t_node *token);
 t_token_type	find_token_type(char *start, t_token_type prev,
-					t_bool *cmd_since_last_pipe);
+					t_bool *cmd_since_last_pipe, t_ptr_tab redir_tab);
 void			child_cleanup(t_mini *msh, int exit_code);
 void			exec_signal(void);
 void			exit_error(char *msg, char *err, int exit_code);

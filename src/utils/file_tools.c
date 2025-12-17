@@ -56,7 +56,10 @@ static int	open_output(char *path, t_bool append)
 			out = open(path, O_WRONLY | O_TRUNC);
 	}
 	if (out < 0)
+	{
+		g_sig = EXIT_FAILURE;
 		return (ft_printf(2, E_SHELL_PERROR, path, strerror(errno)), -1);
+	}
 	return (out);
 }
 

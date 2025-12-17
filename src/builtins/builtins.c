@@ -12,6 +12,16 @@
 
 #include "minishell.h"
 
+t_bool	is_standalone_builtin(t_builtin builtin)
+{
+	if (builtin == CMD_CD
+		|| builtin == CMD_EXIT
+		|| builtin == CMD_EXPORT
+		|| builtin == CMD_UNSET)
+		return (t);
+	return (f);
+}
+
 t_builtin	is_builtin(t_cmd *cmd)
 {
 	char	*arg;
@@ -37,23 +47,42 @@ t_builtin	is_builtin(t_cmd *cmd)
 	return (CMD_NULL);
 }
 
+int	exec_single_builtin(t_mini *msh, t_cmd *cmd, t_list *env_list)
+{
+	const t_builtin	builtin = is_builtin(cmd);
+
+	if (!cmd->args || !cmd->args[0])
+		return (1);
+	if (builtin == CMD_CD)
+		g_sig = builtin_cd(cmd->args, env_list);
+	if (builtin == CMD_EXIT)
+		msh->loop = f;
+	if (builtin == CMD_EXPORT)
+		g_sig = builtin_export(cmd->args, env_list);
+	if (builtin == CMD_UNSET)
+		g_sig = builtin_unset(cmd->args, env_list);
+	return (g_sig);
+}
+
 int	exec_builtin(t_cmd *cmd, t_list *env_list)
 {
+	const t_builtin	builtin = is_builtin(cmd);
+
 	if (!cmd->args || !cmd->args[0])
 		return (-1);
-	if (is_builtin(cmd) == CMD_CD)
+	if (builtin == CMD_CD)
 		g_sig = builtin_cd(cmd->args, env_list);
-	if (is_builtin(cmd) == CMD_ECHO)
+	if (builtin == CMD_ECHO)
 		g_sig = builtin_echo(cmd->args);
-	if (is_builtin(cmd) == CMD_ENV)
+	if (builtin == CMD_ENV)
 		g_sig = builtin_env(cmd->args, env_list);
-	if (is_builtin(cmd) == CMD_EXIT)
+	if (builtin == CMD_EXIT)
 		g_sig = builtin_exit(cmd->args);
-	if (is_builtin(cmd) == CMD_EXPORT)
+	if (builtin == CMD_EXPORT)
 		g_sig = builtin_export(cmd->args, env_list);
-	if (is_builtin(cmd) == CMD_PWD)
+	if (builtin == CMD_PWD)
 		g_sig = builtin_pwd();
-	if (is_builtin(cmd) == CMD_UNSET)
+	if (builtin == CMD_UNSET)
 		g_sig = builtin_unset(cmd->args, env_list);
 	return (0);
 }

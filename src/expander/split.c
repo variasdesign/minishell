@@ -89,12 +89,12 @@ static char	*expand_var(t_mini *msh, char *str, t_ptr_tab var_tab, size_t i)
 static char	**fill_split(t_mini *msh, char **split,
 						ssize_t count, t_ptr_tab var_tab)
 {
-	int		i;
-	int		j;
+	ssize_t	i;
+	ssize_t	j;
 
-	i = 0;
+	i = -1;
 	j = 0;
-	while (i < count && var_tab.start[j] && var_tab.end[j])
+	while (++i < count && var_tab.start[j] && var_tab.end[j])
 	{
 		if (var_tab.read < var_tab.start[j])
 		{
@@ -105,10 +105,9 @@ static char	**fill_split(t_mini *msh, char **split,
 		else
 		{
 			split[i] = expand_var(msh, split[i], var_tab, j);
-			var_tab.read = var_tab.end[j];
-			j++;
+			msh->expanded_vars[i] = t;
+			var_tab.read = var_tab.end[j++];
 		}
-		i++;
 	}
 	if (i < count && !var_tab.start[j] && !var_tab.end[j])
 		split[i] = ft_strndup(var_tab.read, ft_strlen(var_tab.read));
@@ -122,6 +121,9 @@ char	**split_vars(t_mini *msh)
 
 	split = ft_calloc(count + 1, sizeof(char *));
 	if (!split)
+		return (NULL);
+	msh->expanded_vars = ft_calloc(count + 1, sizeof(t_bool));
+	if (!msh->expanded_vars)
 		return (NULL);
 	split = fill_split(msh, split, count, *msh->var_tab);
 	return (split);

@@ -50,8 +50,6 @@ void	free_tables(t_mini *msh, t_bool free_full_table)
 void	free_all(t_mini *msh)
 {
 	msh->env = ft_lstdel_list(msh->env, free_env_list);
-	if (msh->cwd)
-		free(msh->cwd);
 	if (msh->input)
 		free(msh->input);
 	if (msh->prompt)

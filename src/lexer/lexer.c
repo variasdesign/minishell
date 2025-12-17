@@ -79,7 +79,7 @@ static t_node	*create_token(t_mini *msh, t_ptr_tab *tab,
 	t_token				tok;
 	t_node				*node;
 	const t_token_type	type = find_token_type(tab->start[i], prev,
-			&msh->cmd_since_last_pipe);
+			&msh->cmd_since_last_pipe, *msh->redir_tab);
 
 	tok.type = type;
 	tok.rewritten = f;

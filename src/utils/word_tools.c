@@ -12,15 +12,26 @@
 
 #include "minishell.h"
 
-ssize_t	skip_word(char *str, ssize_t *word_len_ptr)
+ssize_t	skip_word(char *str, ssize_t *word_len_ptr, t_ptr_tab redir_tab)
 {
 	ssize_t	word_len;
 
 	word_len = 0;
 	while (str && str[word_len]
-		&& !check_non_word_char(str[word_len])
+		&& !ft_isspace(str[word_len])
 		&& !quote_char(str[word_len]))
+	{
+		if (redir_char(str[word_len])
+			&& ft_tabfind(&str[word_len], redir_tab, t) >= 0)
+		{
+			word_len -= word_len > 0;
+			if (word_len > 0)
+				break ;
+			*word_len_ptr = word_len;
+			return (is_redir(&str[word_len]));
+		}
 		word_len++;
+	}
 	*word_len_ptr += word_len;
 	return (word_len);
 }
@@ -45,9 +56,4 @@ void	save_word(char *word[2], t_ptr_tab *word_tab, ssize_t i)
 {
 	word_tab->start[i] = word[0];
 	word_tab->end[i] = word[1];
-}
-
-t_bool	check_non_word_char(char c)
-{
-	return (ft_isspace(c) || redir_char(c));
 }

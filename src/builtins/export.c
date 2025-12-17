@@ -49,16 +49,14 @@ static void	print_exported_vars(t_list *env_list)
 
 static void	add_new_env_var(t_list *env_list, char *key, char *value)
 {
-	t_env	*new_var;
+	t_env	new_var;
 	t_node	*new_node;
 
-	new_var = create_env_var(key, value);
-	if (new_var)
-	{
-		new_node = ft_lstnew_node(sizeof(t_env), new_var);
-		if (new_node)
-			ft_lstadd_back(env_list, new_node);
-	}
+	new_var.key = ft_strdup(key);
+	new_var.value = ft_strdup(value);
+	new_node = ft_lstnew_node(sizeof(t_env), &new_var);
+	if (new_node)
+		ft_lstadd_back(env_list, new_node);
 }
 
 static int	export_var(char *arg, t_list *env_list)

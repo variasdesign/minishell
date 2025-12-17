@@ -77,7 +77,6 @@ t_mini	*allocate_minishell(char **envp)
 	msh->var_tab = tables[2];
 	msh->redir_tab = tables[3];
 	msh->word_tab = tables[4];
-	msh->cwd = getcwd(NULL, 0);
 	msh->prompt = NULL;
 	msh->input = NULL;
 	msh->loop = t;

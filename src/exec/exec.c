@@ -36,29 +36,24 @@ static void	init_pids_and_exec(t_mini *msh, t_list *cmd_list,
 			if (WIFEXITED(*status))
 				g_sig = WEXITSTATUS(*status);
 		}
-		else
-			g_sig = 127;
 	}
 	free(msh->pids);
 }
 
-// FIX: If export or unset is called and there's only one command
+// FIX: If cd, export or unset is called and there's only one command
 // to execute, don't fork.
 int	exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env_list)
 {
-	int	status;
+	int		status;
+	t_cmd	*cmd;
 
+	cmd = cmd_list->head->content;
 	if (cmd_list->count > 0)
 	{
-		if (cmd_list->count == 1)
-		{
-			if (check_exit(cmd_list->head->content))
-			{
-				msh->loop = f;
-				return (0);
-			}
-		}
-		init_pids_and_exec(msh, cmd_list, env_list, &status);
+		if (cmd_list->count == 1 && is_standalone_builtin(is_builtin(cmd)))
+			g_sig = exec_single_builtin(msh, cmd, env_list);
+		else
+			init_pids_and_exec(msh, cmd_list, env_list, &status);
 	}
 	return (g_sig);
 }

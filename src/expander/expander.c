@@ -12,6 +12,25 @@
 
 #include "minishell.h"
 
+static ssize_t	relocate_variables(t_ptr_tab *var_tab,
+								ssize_t j, char *args, char *split_arg)
+{
+	size_t	split_len;
+	size_t	args_len;
+
+	split_len = ft_strlen(split_arg);
+	args_len = ft_strlen(args);
+	if (split_len > 0)
+	{
+		var_tab->start[j] = args + args_len - split_len;
+		var_tab->end[j] = args + args_len;
+		return (j++);
+	}
+	ft_tabdelone(t, j, var_tab);
+	ft_tabdelone(t, j, var_tab);
+	return (j);
+}
+
 static	ssize_t	relocate_quotes(char *input,
 							t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab)
 {
@@ -32,9 +51,13 @@ static	ssize_t	relocate_quotes(char *input,
 
 // Count the length of the split arguments with expanded vars, then allocate and
 // concatenate the split arguments into a single string.
-static char	*reassemble_args(char **split_args)
+// Also, check if variables were expanded and relocate them
+// to avoid unquoted expanded vars becoming redirs
+static char	*reassemble_args(char **split_args, t_ptr_tab *var_tab,
+							t_bool *expanded_vars)
 {
-	int		i;
+	ssize_t	i;
+	ssize_t	j;
 	int		new_len;
 	char	*args;
 
@@ -45,9 +68,14 @@ static char	*reassemble_args(char **split_args)
 	args = ft_calloc(new_len + 1, sizeof(char));
 	if (!args)
 		return (NULL);
-	i = 0;
-	while (split_args[i])
-		ft_strlcat(args, split_args[i++], new_len + 1);
+	i = -1;
+	j = 0;
+	while (split_args[++i])
+	{
+		ft_strlcat(args, split_args[i], new_len + 1);
+		if (expanded_vars[i] && j < var_tab->count)
+			j = relocate_variables(var_tab, j, args, split_args[i]);
+	}
 	ft_freematrix((void **)split_args);
 	return (args);
 }
@@ -64,18 +92,18 @@ char	*expander(t_mini *msh)
 		if (locate_vars(msh->input, msh->var_tab, *msh->squote_tab) > 0
 			&& validate_vars(msh->var_tab, msh->dquote_tab) >= 0)
 		{
-			msh->input = reassemble_args(split_vars(msh));
+			msh->input = reassemble_args(split_vars(msh), msh->var_tab,
+					msh->expanded_vars);
 			free((void *)orig);
 			msh->squote_tab->orig = msh->input;
 			msh->dquote_tab->orig = msh->input;
+			msh->var_tab->orig = msh->input;
 			if (relocate_quotes(msh->input,
 					msh->squote_tab, msh->dquote_tab) < 0)
 				return (NULL);
+			free(msh->expanded_vars);
 		}
 		return (msh->input);
 	}
-	msh->squote_tab = ft_tabfree(&msh->squote_tab, f);
-	msh->dquote_tab = ft_tabfree(&msh->dquote_tab, f);
-	msh->var_tab = ft_tabfree(&msh->dquote_tab, f);
 	return (NULL);
 }

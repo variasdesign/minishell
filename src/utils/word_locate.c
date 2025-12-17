@@ -15,7 +15,7 @@
 // Count words by checking if they are valid. Invalid words will
 // return word_len = 0. Words inside single or double quotes are counted as one.
 static ssize_t	count_words(char *word_can, t_ptr_tab squote_tab,
-								t_ptr_tab dquote_tab)
+								t_ptr_tab dquote_tab, t_ptr_tab redir_tab)
 {
 	ssize_t	count;
 	ssize_t	word_len;
@@ -24,16 +24,16 @@ static ssize_t	count_words(char *word_can, t_ptr_tab squote_tab,
 	while (*word_can)
 	{
 		word_len = 0;
-		word_can += skip_word(word_can, &word_len);
+		word_can += skip_word(word_can, &word_len, redir_tab);
 		while (quote_char(*word_can))
 		{
 			word_can += skip_quoted_word(word_can, squote_tab, &word_len);
 			word_can += skip_quoted_word(word_can, dquote_tab, &word_len);
-			word_can += skip_word(word_can, &word_len);
+			word_can += skip_word(word_can, &word_len, redir_tab);
 		}
 		if (word_len > 0)
 			count++;
-		while (check_non_word_char(*word_can))
+		while (ft_isspace(*word_can))
 			word_can++;
 	}
 	return (count);
@@ -51,17 +51,17 @@ static ssize_t	search_word_candidates(char *args, t_mini *msh)
 	{
 		word_len = 0;
 		word[1] = word[0];
-		word[1] += skip_word(word[1], &word_len);
+		word[1] += skip_word(word[1], &word_len, *msh->redir_tab);
 		while (quote_char(*word[1]))
 		{
 			word[1] += skip_quoted_word(word[1], *msh->squote_tab, &word_len);
 			word[1] += skip_quoted_word(word[1], *msh->dquote_tab, &word_len);
-			word[1] += skip_word(word[1], &word_len);
+			word[1] += skip_word(word[1], &word_len, *msh->redir_tab);
 		}
 		if (word_len > 0)
 			save_word(word, msh->word_tab, i++);
 		word[0] = word[1];
-		while (check_non_word_char(*word[0]))
+		while (ft_isspace(*word[0]))
 			word[0]++;
 	}
 	return (i);
@@ -82,10 +82,10 @@ static ssize_t	search_word_candidates(char *args, t_mini *msh)
 // https://www.baeldung.com/linux/ifs-shell-variable
 ssize_t	locate_words(char *args, t_mini *msh)
 {
-	while (*args && (check_non_word_char(*args)))
+	while (*args && ft_isspace(*args))
 		args++;
 	msh->word_tab->count = count_words(args, *msh->squote_tab,
-			*msh->dquote_tab);
+			*msh->dquote_tab, *msh->redir_tab);
 	if (msh->word_tab->count > 0)
 	{
 		msh->word_tab = ft_taballoc(msh->word_tab, args, sizeof(char *));
