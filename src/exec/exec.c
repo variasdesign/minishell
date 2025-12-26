@@ -40,8 +40,6 @@ static void	init_pids_and_exec(t_mini *msh, t_list *cmd_list,
 	free(msh->pids);
 }
 
-// FIX: If cd, export or unset is called and there's only one command
-// to execute, don't fork.
 int	exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env_list)
 {
 	int		status;
