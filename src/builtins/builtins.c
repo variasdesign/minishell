@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 00:00:00 by jmellado          #+#    #+#             */
-/*   Updated: 2025/12/15 19:23:52 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/18 15:10:55 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ t_builtin	is_builtin(t_cmd *cmd)
 {
 	char	*arg;
 
-	if (cmd->args && cmd->args[0])
+	if (cmd->args[0] && cmd->args[0][0])
 	{
 		arg = cmd->args[0];
 		if (ft_strncmp(arg, "cd", 2) == 0 && ft_strlen(arg) == 2)
@@ -47,16 +47,16 @@ t_builtin	is_builtin(t_cmd *cmd)
 	return (CMD_NULL);
 }
 
-int	exec_single_builtin(t_mini *msh, t_cmd *cmd, t_list *env_list)
+int	exec_single_builtin(t_cmd *cmd, t_list *env_list)
 {
 	const t_builtin	builtin = is_builtin(cmd);
 
-	if (!cmd->args || !cmd->args[0])
+	if (!cmd->args[0] || !cmd->args[0][0])
 		return (1);
 	if (builtin == CMD_CD)
 		g_sig = builtin_cd(cmd->args, env_list);
 	if (builtin == CMD_EXIT)
-		msh->loop = f;
+		g_sig = builtin_exit(cmd->args);
 	if (builtin == CMD_EXPORT)
 		g_sig = builtin_export(cmd->args, env_list);
 	if (builtin == CMD_UNSET)
@@ -68,7 +68,7 @@ int	exec_builtin(t_cmd *cmd, t_list *env_list)
 {
 	const t_builtin	builtin = is_builtin(cmd);
 
-	if (!cmd->args || !cmd->args[0])
+	if (!cmd->args[0] || !cmd->args[0][0])
 		return (-1);
 	if (builtin == CMD_CD)
 		g_sig = builtin_cd(cmd->args, env_list);

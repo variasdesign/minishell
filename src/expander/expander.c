@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 13:21:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/15 20:45:45 by varias-c         ###   ########.fr       */
+/*   Updated: 2025/12/18 14:29:03 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,10 +24,9 @@ static ssize_t	relocate_variables(t_ptr_tab *var_tab,
 	{
 		var_tab->start[j] = args + args_len - split_len;
 		var_tab->end[j] = args + args_len;
-		return (j++);
+		return (++j);
 	}
-	ft_tabdelone(t, j, var_tab);
-	ft_tabdelone(t, j, var_tab);
+	ft_tabdelboth(j, var_tab);
 	return (j);
 }
 

@@ -12,6 +12,15 @@
 
 #include "minishell.h"
 
+char	*skip_redir(char *str, t_ptr_tab redir_tab)
+{
+	const ssize_t redir_i = ft_tabfind(str, redir_tab, t);
+
+	if (redir_i >= 0)
+		return (redir_tab.end[redir_i]);
+	return (str);
+}
+
 ssize_t	skip_word(char *str, ssize_t *word_len_ptr, t_ptr_tab redir_tab)
 {
 	ssize_t	word_len;

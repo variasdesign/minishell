@@ -45,19 +45,22 @@ int	get_exec_path(t_cmd *cmd, t_list *env_list)
 	char	*path_env;
 	char	**path_list;
 
-	path_env = get_env(env_list, "PATH")->value;
-	if (!path_env)
-		return (-1);
-	path_list = ft_split(path_env, ':');
-	exec_path = valid_exec(cmd->args[0], path_list);
-	ft_freematrix((void **)path_list);
-	if (!exec_path)
+	if (cmd->args[0][0])
 	{
-		g_sig = 127;
-		ft_printf(2, E_SHELL_PERROR, cmd->args[0], "command not found");
-		return (-1);
+		path_env = get_env(env_list, "PATH")->value;
+		if (!path_env)
+			return (-1);
+		path_list = ft_split(path_env, ':');
+		exec_path = valid_exec(cmd->args[0], path_list);
+		ft_freematrix((void **)path_list);
+		if (exec_path)
+		{
+			free(cmd->args[0]);
+			cmd->args[0] = exec_path;
+			return (0);
+		}
 	}
-	free(cmd->args[0]);
-	cmd->args[0] = exec_path;
-	return (0);
+	g_sig = 127;
+	ft_printf(2, E_SHELL_PERROR, cmd->args[0], "command not found");
+	return (-1);
 }

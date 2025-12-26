@@ -62,7 +62,7 @@ static ssize_t	count_variables(char *args, t_ptr_tab squote_tab)
 	return (count);
 }
 
-void	search_var_candidate(t_ptr_tab *var_tab, t_ptr_tab squote_tab)
+void	search_var_candidates(t_ptr_tab *var_tab, t_ptr_tab squote_tab)
 {
 	ssize_t	var_len;
 	ssize_t	squote_i;
@@ -98,6 +98,7 @@ void	search_var_candidate(t_ptr_tab *var_tab, t_ptr_tab squote_tab)
 // 			orig            start[0]
 // 			                     |
 // 			                     end[0]
+// FIX: Add error checking to search_var_candidate (see word_locate.c)
 ssize_t	locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab)
 {
 	var_tab->count = count_variables(args, squote_tab);
@@ -109,7 +110,7 @@ ssize_t	locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab)
 			perror("Error allocating variable pointer table");
 			return (-1);
 		}
-		search_var_candidate(var_tab, squote_tab);
+		search_var_candidates(var_tab, squote_tab);
 	}
 	if (var_tab->count < 0)
 		perror("Error locating variables");

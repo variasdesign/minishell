@@ -34,22 +34,6 @@ char	**reassemble_env(t_list *env_list)
 	return (env_matrix);
 }
 
-t_env	*get_env(t_list *env_list, char *var)
-{
-	t_node			*env;
-	t_env			*content;
-
-	env = env_list->head;
-	while (env && var && *var)
-	{
-		content = env->content;
-		if (!ft_strncmp(content->key, var, ft_strlen(content->key)))
-			return (content);
-		env = env->next;
-	}
-	return (NULL);
-}
-
 t_env	*get_env_pos(t_list *env_list, ssize_t pos)
 {
 	t_node	*env_node;
@@ -57,6 +41,25 @@ t_env	*get_env_pos(t_list *env_list, ssize_t pos)
 	env_node = ft_lstfind_node(env_list, pos);
 	if (env_node)
 		return (env_node->content);
+	return (NULL);
+}
+
+t_env	*get_env(t_list *env_list, char *var)
+{
+	const size_t	var_len = ft_strlen(var);
+	t_node			*env_node;
+	t_env			*env;
+	size_t			key_len;
+
+	env_node = env_list->head;
+	while (env_node && var && *var)
+	{
+		env = env_node->content;
+		key_len = ft_strlen(env->key);
+		if (key_len == var_len && !ft_strncmp(env->key, var, var_len))
+			return (env);
+		env_node = env_node->next;
+	}
 	return (NULL);
 }
 

@@ -54,6 +54,8 @@ static t_ptr_tab	*search_quote_candidates(t_ptr_tab *quote_tab, char q)
 // 			             start[0]          |
 // 			                               |
 // 			                               end[0]
+// FIX: Add error checking to search_quote_candidates (see word_locate.c),
+// don't return the pointer table.
 ssize_t	locate_quotes(char *args, t_ptr_tab *quote_tab, char q)
 {
 	quote_tab->count = count_quotes(args, q);

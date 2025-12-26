@@ -31,8 +31,7 @@ static ssize_t	count_words(char *word_can, t_ptr_tab squote_tab,
 			word_can += skip_quoted_word(word_can, dquote_tab, &word_len);
 			word_can += skip_word(word_can, &word_len, redir_tab);
 		}
-		if (word_len > 0)
-			count++;
+		count += word_len > 0;
 		while (ft_isspace(*word_can))
 			word_can++;
 	}
@@ -50,6 +49,7 @@ static ssize_t	search_word_candidates(char *args, t_mini *msh)
 	while (*word[0] && i < msh->word_tab->count)
 	{
 		word_len = 0;
+		word[0] = skip_redir(word[0], *msh->redir_tab);
 		word[1] = word[0];
 		word[1] += skip_word(word[1], &word_len, *msh->redir_tab);
 		while (quote_char(*word[1]))

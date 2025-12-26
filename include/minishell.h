@@ -71,6 +71,13 @@ typedef enum e_builtin
 	CMD_UNSET,
 }	t_builtin;
 
+enum e_ptr_index
+{
+	SQUOTE,
+	DQUOTE,
+	VAR,
+};
+
 typedef struct s_token
 {
 	t_token_type	type;
@@ -127,9 +134,9 @@ char			*assemble_prompt(t_list *env, char *prompt);
 char			*dup_token_content(t_node *token_node);
 char			*get_redir_path(t_node *redir_node);
 char			*expander(t_mini *msh);
+char			*skip_redir(char *str, t_ptr_tab redir_tab);
 int				exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env);
 int				get_exec_path(t_cmd *cmd, t_list *env_list);
-int				exec_single_builtin(t_mini *msh, t_cmd *cmd, t_list *env_list);
 int				heredoc(char *lim);
 int				open_files(t_cmd *cmd, t_list *env_list);
 int				quote_char(char c);
@@ -192,6 +199,7 @@ int				builtin_unset(char **args, t_list *env_list);
 int				builtin_exit(char **args);
 t_env			*create_env_var(char *key, char *value);
 int				exec_builtin(t_cmd *cmd, t_list *env_list);
+int				exec_single_builtin(t_cmd *cmd, t_list *env_list);
 t_builtin		is_builtin(t_cmd *cmd);
 
 #endif

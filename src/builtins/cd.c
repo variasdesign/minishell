@@ -19,7 +19,7 @@ static char	*get_home_path(t_list *env_list)
 	home = get_env(env_list, "HOME")->value;
 	if (!home)
 	{
-		ft_printf(2, E_SHELL_PERROR, "cd" "HOME not set");
+		ft_printf(2, E_SHELL_PERROR, "cd", "HOME not set");
 		return (NULL);
 	}
 	return (home);
@@ -34,7 +34,7 @@ static char	*change_pwd(t_list *env_list)
 	free(new_cwd);
 	if (!env_list)
 	{
-		printf("minishell: cd: PWD not found\n");
+		ft_printf(2, E_SHELL_PERROR, "cd", "PWD not found");
 		return (NULL);
 	}
 	return (get_env(env_list, "PWD")->value);
@@ -46,7 +46,7 @@ int	builtin_cd(char **args, t_list *env_list)
 
 	if (ft_arrlen((void **)args) > 2)
 	{
-		printf("minishell: cd: too many arguments\n");
+		ft_printf(2, E_SHELL_PERROR, "cd", "too many arguments");
 		return (1);
 	}
 	if (!args[1])
@@ -59,7 +59,7 @@ int	builtin_cd(char **args, t_list *env_list)
 		path = args[1];
 	if (chdir(path) != 0)
 	{
-		printf("minishell: cd: %s: %s\n", path, strerror(errno));
+		ft_printf(2,"minishell: cd: %s: %s\n", path, strerror(errno));
 		return (1);
 	}
 	if (!change_pwd(env_list))

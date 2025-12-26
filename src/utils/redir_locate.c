@@ -37,30 +37,28 @@ static ssize_t	count_redirs(char *args, t_ptr_tab squote_tab,
 {
 	ssize_t	count;
 	ssize_t	redir_len;
-	ssize_t	squote_i;
-	ssize_t	dquote_i;
-	ssize_t	var_i;
+	ssize_t	ptr_index[3];
 	char	*redir_can;
 
 	count = 0;
 	redir_can = redir_strchr(args);
 	while (redir_can)
 	{
-		squote_i = ft_tabfind(redir_can, squote_tab, f);
-		dquote_i = ft_tabfind(redir_can, dquote_tab, f);
-		var_i = ft_tabfind(redir_can, var_tab, t);
-		if (squote_i < 0 && dquote_i < 0 && var_i < 0)
+		ptr_index[SQUOTE] = ft_tabfind(redir_can, squote_tab, f);
+		ptr_index[DQUOTE] = ft_tabfind(redir_can, dquote_tab, f);
+		ptr_index[VAR] = ft_tabfind(redir_can, var_tab, t);
+		if (ptr_index[SQUOTE] < 0 && ptr_index[DQUOTE] < 0 && ptr_index[VAR] < 0)
 		{
 			redir_len = is_redir(redir_can);
 			count += redir_len > 0;
 			redir_can = redir_strchr(redir_can + redir_len);
 		}
-		else if (squote_i >= 0)
-			redir_can = redir_strchr(squote_tab.end[squote_i]);
-		else if (dquote_i >= 0)
-			redir_can = redir_strchr(dquote_tab.end[dquote_i]);
-		else if (var_i >= 0)
-			redir_can = redir_strchr(var_tab.end[var_i]);
+		else if (ptr_index[SQUOTE] >= 0)
+			redir_can = redir_strchr(squote_tab.end[ptr_index[SQUOTE]]);
+		else if (ptr_index[DQUOTE] >= 0)
+			redir_can = redir_strchr(dquote_tab.end[ptr_index[DQUOTE]]);
+		else if (ptr_index[VAR] >= 0)
+			redir_can = redir_strchr(var_tab.end[ptr_index[VAR]]);
 	}
 	return (count);
 }
@@ -82,27 +80,27 @@ static char	*insert_redir_into_tab(char *redir_can, t_ptr_tab *redir_tab,
 static void	search_redir_candidates(t_ptr_tab *redir_tab, t_ptr_tab squote_tab,
 									t_ptr_tab dquote_tab, t_ptr_tab var_tab)
 {
-	ssize_t	squote_i;
-	ssize_t	dquote_i;
-	ssize_t	var_i;
+	ssize_t	ptr_index[3];
 	char	*redir_can;
 	ssize_t	i;
 
 	redir_can = redir_strchr(redir_tab->orig);
-	i = -1;
-	while (++i < redir_tab->count && redir_can)
+	i = 0;
+	while (i < redir_tab->count && redir_can)
 	{
-		squote_i = ft_tabfind(redir_can, squote_tab, f);
-		dquote_i = ft_tabfind(redir_can, dquote_tab, f);
-		var_i = ft_tabfind(redir_can, var_tab, t);
-		if (squote_i < 0 && dquote_i < 0)
-			redir_can = insert_redir_into_tab(redir_can, redir_tab, i);
-		else if (squote_i >= 0)
-			redir_can = redir_strchr(squote_tab.end[squote_i]);
-		else if (dquote_i >= 0)
-			redir_can = redir_strchr(dquote_tab.end[dquote_i]);
-		else if (var_i >= 0)
-			redir_can = redir_strchr(var_tab.end[var_i]);
+		ptr_index[SQUOTE] = ft_tabfind(redir_can, squote_tab, f);
+		ptr_index[DQUOTE] = ft_tabfind(redir_can, dquote_tab, f);
+		ptr_index[VAR] = ft_tabfind(redir_can, var_tab, t);
+		if (ptr_index[SQUOTE] < 0 && ptr_index[DQUOTE] < 0 && ptr_index[VAR] < 0)
+		{
+			redir_can = insert_redir_into_tab(redir_can, redir_tab, i++);
+		}
+		else if (ptr_index[SQUOTE] >= 0)
+			redir_can = redir_strchr(squote_tab.end[ptr_index[SQUOTE]]);
+		else if (ptr_index[DQUOTE] >= 0)
+			redir_can = redir_strchr(dquote_tab.end[ptr_index[DQUOTE]]);
+		else if (ptr_index[VAR] >= 0)
+			redir_can = redir_strchr(var_tab.end[ptr_index[VAR]]);
 	}
 }
 
@@ -116,6 +114,7 @@ static void	search_redir_candidates(t_ptr_tab *redir_tab, t_ptr_tab squote_tab,
 // 			                                    ||
 // 			                                    start[1]
 // 			                                     end[1]
+// FIX: Add error checking to search_redir_candidates (see word_locate.c)
 ssize_t	locate_redirs(char *args, t_mini *msh)
 {
 	msh->redir_tab->count = count_redirs(args, *msh->squote_tab,
