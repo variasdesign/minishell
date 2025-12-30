@@ -42,15 +42,18 @@ static char	*valid_exec(char *exec, char **path_env)
 int	get_exec_path(t_cmd *cmd, t_list *env_list)
 {
 	char	*exec_path;
-	char	*path_env;
 	char	**path_list;
+	t_env	*path_env;
 
 	if (cmd->args[0][0])
 	{
-		path_env = get_env(env_list, "PATH")->value;
+		path_env = get_env(env_list, "PATH");
 		if (!path_env)
+		{
+			ft_printf(2, E_SHELL_PERROR, cmd->args[0], "No such file or directory");
 			return (-1);
-		path_list = ft_split(path_env, ':');
+		}
+		path_list = ft_split(path_env->value, ':');
 		exec_path = valid_exec(cmd->args[0], path_list);
 		ft_freematrix((void **)path_list);
 		if (exec_path)

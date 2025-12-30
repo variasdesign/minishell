@@ -31,7 +31,7 @@ static char	*read_input(char **args, t_list *env, char **prompt)
 	tmp = ft_strtrim(*args, "\t\n\v\f\r ");
 	free(*args);
 	*args = tmp;
-	if (args && *args && !ft_isspace(**args))
+	if (*args && **args && !ft_isspace(**args))
 		add_history(*args);
 	return (*args);
 }
