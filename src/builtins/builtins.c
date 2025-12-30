@@ -47,7 +47,7 @@ t_builtin	is_builtin(t_cmd *cmd)
 	return (CMD_NULL);
 }
 
-int	exec_single_builtin(t_cmd *cmd, t_list *env_list)
+int	exec_single_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop)
 {
 	const t_builtin	builtin = is_builtin(cmd);
 
@@ -56,7 +56,7 @@ int	exec_single_builtin(t_cmd *cmd, t_list *env_list)
 	if (builtin == CMD_CD)
 		g_sig = builtin_cd(cmd->args, env_list);
 	if (builtin == CMD_EXIT)
-		g_sig = builtin_exit(cmd->args);
+		g_sig = builtin_exit(cmd->args, loop);
 	if (builtin == CMD_EXPORT)
 		g_sig = builtin_export(cmd->args, env_list);
 	if (builtin == CMD_UNSET)
@@ -77,7 +77,7 @@ int	exec_builtin(t_cmd *cmd, t_list *env_list)
 	if (builtin == CMD_ENV)
 		g_sig = builtin_env(cmd->args, env_list);
 	if (builtin == CMD_EXIT)
-		g_sig = builtin_exit(cmd->args);
+		g_sig = builtin_exit(cmd->args, NULL);
 	if (builtin == CMD_EXPORT)
 		g_sig = builtin_export(cmd->args, env_list);
 	if (builtin == CMD_PWD)

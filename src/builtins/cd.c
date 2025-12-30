@@ -40,6 +40,7 @@ static char	*change_pwd(t_list *env_list)
 	return (get_env(env_list, "PWD")->value);
 }
 
+/// FIX: no such file or directory is not outputting correctly.
 int	builtin_cd(char **args, t_list *env_list)
 {
 	char	*path;
@@ -59,7 +60,7 @@ int	builtin_cd(char **args, t_list *env_list)
 		path = args[1];
 	if (chdir(path) != 0)
 	{
-		ft_printf(2,"minishell: cd: %s: %s\n", path, strerror(errno));
+		ft_printf(2, "minishell: cd: %s: %s\n", path, "No such file or directory");
 		return (1);
 	}
 	if (!change_pwd(env_list))

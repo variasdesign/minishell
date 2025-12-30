@@ -196,10 +196,10 @@ int				builtin_echo(char **args);
 int				builtin_env(char **args, t_list *env_list);
 int				builtin_export(char **args, t_list *env_list);
 int				builtin_unset(char **args, t_list *env_list);
-int				builtin_exit(char **args);
+int				builtin_exit(char **args, t_bool *loop);
 t_env			*create_env_var(char *key, char *value);
 int				exec_builtin(t_cmd *cmd, t_list *env_list);
-int				exec_single_builtin(t_cmd *cmd, t_list *env_list);
+int				exec_single_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop);
 t_builtin		is_builtin(t_cmd *cmd);
 
 #endif

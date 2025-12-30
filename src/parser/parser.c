@@ -102,7 +102,8 @@ t_list	*parser(t_list *token_list)
 
 	if (!validate_token_list(*token_list))
 	{
-		printf(E_INVALID_PROMPT);
+		ft_printf(2, E_INVALID_PROMPT);
+		g_sig = 2;
 		return (ft_lstdel_list(token_list, free));
 	}
 	cmd_list = ft_lstnew_list(sizeof(t_cmd));

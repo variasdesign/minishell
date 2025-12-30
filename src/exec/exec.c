@@ -49,7 +49,7 @@ int	exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env_list)
 	{
 		cmd = cmd_list->head->content;
 		if (cmd_list->count == 1 && is_standalone_builtin(is_builtin(cmd)))
-			g_sig = exec_single_builtin(cmd, env_list);
+			g_sig = exec_single_builtin(cmd, env_list, &msh->loop);
 		else
 			init_pids_and_exec(msh, cmd_list, env_list, &status);
 	}
