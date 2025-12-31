@@ -16,7 +16,7 @@ static int	child_process(t_cmd *cmd, t_list *env_list, int fd[2])
 {
 	if (cmd->args[0])
 	{
-		if (cmd->pipe_to)
+		if (cmd->pipe_to && cmd->fd_out == STDOUT_FILENO)
 			cmd->fd_out = fd[1];
 		if (dup2(cmd->fd_in, STDIN_FILENO) < 0
 			|| dup2(cmd->fd_out, STDOUT_FILENO) < 0)

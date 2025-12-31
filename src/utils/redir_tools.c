@@ -20,6 +20,7 @@ int	redir_char(char c)
 ssize_t	is_redir(char *redir)
 {
 	const char	c = *redir;
+	const char	next_char = *(redir + 1);
 	size_t		len;
 	size_t		max_len;
 
@@ -27,6 +28,8 @@ ssize_t	is_redir(char *redir)
 	if (redir_char(c))
 	{
 		max_len = 2 - (c == '|');
+		if (c == '>' && next_char == '|')
+			return (2);
 		while (len < max_len && redir[len] == c)
 			len++;
 	}

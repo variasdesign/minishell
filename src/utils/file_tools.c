@@ -31,6 +31,7 @@ static int	open_input(char *path)
 		return (open(path, O_RDONLY));
 	else
 	{
+		g_sig = EXIT_FAILURE;
 		ft_printf(2, E_SHELL_PERROR, path, strerror(errno));
 		return (-1);
 	}
@@ -63,7 +64,8 @@ static int	open_output(char *path, t_bool append)
 	return (out);
 }
 
-static t_node	*open_redirection(t_cmd *cmd, t_node *redir_node)
+static t_node	*open_redirection(t_cmd *cmd, t_node *redir_node,
+							t_list *env_list)
 {
 	t_token_type	type;
 	t_redir			*redir;
@@ -74,7 +76,7 @@ static t_node	*open_redirection(t_cmd *cmd, t_node *redir_node)
 	{
 		if (cmd->fd_in != STDIN_FILENO)
 			close(cmd->fd_in);
-		if (type == TOKEN_REDIR_HEREDOC && !heredoc(redir->file))
+		if (type == TOKEN_REDIR_HEREDOC && !heredoc(redir->file, env_list))
 			cmd->fd_in = open_input("/tmp/heredoc");
 		else
 			cmd->fd_in = open_input(redir->file);
@@ -86,7 +88,7 @@ static t_node	*open_redirection(t_cmd *cmd, t_node *redir_node)
 		cmd->fd_out = open_output(redir->file,
 				type == TOKEN_REDIR_APPEND);
 	}
-	if (cmd->fd_in < 0 || cmd->fd_in < 0)
+	if (cmd->fd_in < 0 || cmd->fd_out < 0)
 		return (NULL);
 	return (redir_node->next);
 }
@@ -95,13 +97,13 @@ int	open_files(t_cmd *cmd, t_list *env_list)
 {
 	t_node			*node;
 
-	if (!is_builtin(cmd) && cmd->args[0] && get_exec_path(cmd, env_list) < 0)
-		return (-1);
 	if (cmd->redir_list)
 	{
 		node = cmd->redir_list->head;
 		while (node)
-			node = open_redirection(cmd, node);
+			node = open_redirection(cmd, node, env_list);
 	}
+	if (!is_builtin(cmd) && cmd->args[0] && get_exec_path(cmd, env_list) < 0)
+		return (-1);
 	return (check_fd_errors(cmd));
 }

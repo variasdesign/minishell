@@ -92,9 +92,7 @@ static void	search_redir_candidates(t_ptr_tab *redir_tab, t_ptr_tab squote_tab,
 		ptr_index[DQUOTE] = ft_tabfind(redir_can, dquote_tab, f);
 		ptr_index[VAR] = ft_tabfind(redir_can, var_tab, t);
 		if (ptr_index[SQUOTE] < 0 && ptr_index[DQUOTE] < 0 && ptr_index[VAR] < 0)
-		{
 			redir_can = insert_redir_into_tab(redir_can, redir_tab, i++);
-		}
 		else if (ptr_index[SQUOTE] >= 0)
 			redir_can = redir_strchr(squote_tab.end[ptr_index[SQUOTE]]);
 		else if (ptr_index[DQUOTE] >= 0)

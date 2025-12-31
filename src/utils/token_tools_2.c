@@ -21,6 +21,17 @@ static t_token_type	cmd_or_arg_word(t_token_type prev,
 	return (TOKEN_WORD_CMD);
 }
 
+static t_token_type	redir_out_type(size_t redir_len, char *start)
+{
+	if (redir_len == 2)
+	{
+		if (*(start + 1) == '|')
+			return (TOKEN_REDIR_OUT);
+		return (TOKEN_REDIR_APPEND);
+	}
+	return (TOKEN_REDIR_OUT);
+}
+
 t_token_type	find_token_type(char *start, t_token_type prev,
 							t_bool *cmd_since_last_pipe, t_ptr_tab redir_tab)
 {
@@ -34,11 +45,7 @@ t_token_type	find_token_type(char *start, t_token_type prev,
 			return (TOKEN_PIPE);
 		}
 		else if (*start == '>')
-		{
-			if (redir_len == 2)
-				return (TOKEN_REDIR_APPEND);
-			return (TOKEN_REDIR_OUT);
-		}
+			return (redir_out_type(redir_len, start));
 		else if (*start == '<')
 		{
 			if (redir_len == 2)

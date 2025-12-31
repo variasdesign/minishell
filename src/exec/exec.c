@@ -17,9 +17,12 @@ static void	init_pids_and_exec(t_mini *msh, t_list *cmd_list,
 {
 	ssize_t	i;
 	t_node	*cmd;
+	int		tmp_exit_code;
 
 	i = 0;
 	msh->pids = ft_calloc(cmd_list->count + 1, sizeof(pid_t));
+	if (!msh->pids)
+		return ;
 	cmd = cmd_list->head;
 	while (i < cmd_list->count && cmd)
 	{
@@ -28,6 +31,7 @@ static void	init_pids_and_exec(t_mini *msh, t_list *cmd_list,
 		cmd = cmd->next;
 	}
 	i = -1;
+	tmp_exit_code = g_sig;
 	while (++i < cmd_list->count)
 	{
 		if (msh->pids[i] != -1)
@@ -36,6 +40,8 @@ static void	init_pids_and_exec(t_mini *msh, t_list *cmd_list,
 			if (WIFEXITED(*status))
 				g_sig = WEXITSTATUS(*status);
 		}
+		else
+			g_sig = tmp_exit_code;
 	}
 	free(msh->pids);
 }

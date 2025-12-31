@@ -14,7 +14,7 @@
 
 char	*skip_redir(char *str, t_ptr_tab redir_tab)
 {
-	const ssize_t redir_i = ft_tabfind(str, redir_tab, t);
+	const ssize_t	redir_i = ft_tabfind(str, redir_tab, t);
 
 	if (redir_i >= 0)
 		return (redir_tab.end[redir_i]);
@@ -24,8 +24,10 @@ char	*skip_redir(char *str, t_ptr_tab redir_tab)
 ssize_t	skip_word(char *str, ssize_t *word_len_ptr, t_ptr_tab redir_tab)
 {
 	ssize_t	word_len;
+	ssize_t	redir_len;
 
 	word_len = 0;
+	redir_len = 0;
 	while (str && str[word_len]
 		&& !ft_isspace(str[word_len])
 		&& !quote_char(str[word_len]))
@@ -33,16 +35,17 @@ ssize_t	skip_word(char *str, ssize_t *word_len_ptr, t_ptr_tab redir_tab)
 		if (redir_char(str[word_len])
 			&& ft_tabfind(&str[word_len], redir_tab, t) >= 0)
 		{
+			redir_len += is_redir(&str[word_len]);
 			word_len -= word_len > 0;
 			if (word_len > 0)
 				break ;
 			*word_len_ptr = word_len;
-			return (is_redir(&str[word_len]));
+			return (redir_len);
 		}
 		word_len++;
 	}
 	*word_len_ptr += word_len;
-	return (word_len);
+	return (word_len + redir_len);
 }
 
 ssize_t	skip_quoted_word(char *str, t_ptr_tab quote_tab, ssize_t *word_len_ptr)

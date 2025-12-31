@@ -137,7 +137,7 @@ char			*expander(t_mini *msh);
 char			*skip_redir(char *str, t_ptr_tab redir_tab);
 int				exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env);
 int				get_exec_path(t_cmd *cmd, t_list *env_list);
-int				heredoc(char *lim);
+int				heredoc(char *lim, t_list *env_list);
 int				open_files(t_cmd *cmd, t_list *env_list);
 int				quote_char(char c);
 int				redir_char(char c);
@@ -158,7 +158,8 @@ ssize_t			skip_word(char *str, ssize_t *word_len_ptr,
 ssize_t			skip_quoted_word(char *str, t_ptr_tab quote_tab,
 					ssize_t *word_len_ptr);
 ssize_t			validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab);
-ssize_t			validate_vars(t_ptr_tab *var_tab, t_ptr_tab *dquote_tab);
+ssize_t			validate_vars(t_ptr_tab *var_tab, t_ptr_tab *dquote_tab,
+					t_ptr_tab *squote_tab);
 t_bool			check_exit(t_cmd *cmd);
 t_bool			is_redir_type(t_token_type type);
 t_bool			is_standalone_builtin(t_builtin builtin);
