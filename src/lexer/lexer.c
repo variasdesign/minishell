@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   lexer.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 18:19:24 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/15 20:51:30 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/02 12:36:54 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,21 +55,23 @@ static char	*unquote_rewrite(t_mini *msh, char *word_str, size_t len)
 }
 
 static void	unquote_word(t_mini *msh, t_token *tok,
-						t_ptr_tab word_tab, size_t i)
+						t_token_type prev, size_t i)
 {
-	const size_t	len = word_tab.end[i] - word_tab.start[i];
+	const size_t	len = msh->word_tab->end[i] - msh->word_tab->start[i];
 
-	if (ft_strnchr(word_tab.start[i], '\'', len)
-		|| ft_strnchr(word_tab.start[i], '\"', len))
+	if (ft_strnchr(msh->word_tab->start[i], '\'', len)
+		|| ft_strnchr(msh->word_tab->start[i], '\"', len))
 	{
-		tok->start = unquote_rewrite(msh, word_tab.start[i], len);
+		if (prev == TOKEN_REDIR_HEREDOC)
+			msh->heredoc_expand = f;
+		tok->start = unquote_rewrite(msh, msh->word_tab->start[i], len);
 		tok->end = tok->start + ft_strlen(tok->start);
 		tok->rewritten = t;
 	}
 	else
 	{
-		tok->start = word_tab.start[i];
-		tok->end = word_tab.end[i];
+		tok->start = msh->word_tab->start[i];
+		tok->end = msh->word_tab->end[i];
 	}
 }
 
@@ -84,7 +86,7 @@ static t_node	*create_token(t_mini *msh, t_ptr_tab *tab,
 	tok.type = type;
 	tok.rewritten = f;
 	if (is_word_type(type))
-		unquote_word(msh, &tok, *tab, i);
+		unquote_word(msh, &tok, prev, i);
 	else
 	{
 		tok.start = tab->start[i];

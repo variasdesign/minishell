@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   main.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/15 19:51:23 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/02 12:37:26 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ static int	mini_loop(t_mini *msh)
 				ft_perror(E_EXEC_FAILURE, NULL, f, 0);
 			msh->cmd_list = ft_lstdel_list(msh->cmd_list, free_cmd_list);
 			msh->cmd_since_last_pipe = f;
+			msh->heredoc_expand = t;
 		}
 	}
 	return (g_sig);

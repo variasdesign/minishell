@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   file_tools.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 18:31:31 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/15 21:02:01 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/02 12:41:34 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ static int	open_output(char *path, t_bool append)
 }
 
 static t_node	*open_redirection(t_cmd *cmd, t_node *redir_node,
-							t_list *env_list)
+							t_list *env_list, t_bool expand_vars)
 {
 	t_token_type	type;
 	t_redir			*redir;
@@ -76,7 +76,7 @@ static t_node	*open_redirection(t_cmd *cmd, t_node *redir_node,
 	{
 		if (cmd->fd_in != STDIN_FILENO)
 			close(cmd->fd_in);
-		if (type == TOKEN_REDIR_HEREDOC && !heredoc(redir->file, env_list))
+		if (type == TOKEN_REDIR_HEREDOC && !heredoc(redir->file, env_list, expand_vars))
 			cmd->fd_in = open_input("/tmp/heredoc");
 		else
 			cmd->fd_in = open_input(redir->file);
@@ -93,7 +93,7 @@ static t_node	*open_redirection(t_cmd *cmd, t_node *redir_node,
 	return (redir_node->next);
 }
 
-int	open_files(t_cmd *cmd, t_list *env_list)
+int	open_files(t_cmd *cmd, t_list *env_list, t_bool expand_vars)
 {
 	t_node			*node;
 
@@ -101,7 +101,7 @@ int	open_files(t_cmd *cmd, t_list *env_list)
 	{
 		node = cmd->redir_list->head;
 		while (node)
-			node = open_redirection(cmd, node, env_list);
+			node = open_redirection(cmd, node, env_list, expand_vars);
 	}
 	if (!is_builtin(cmd) && cmd->args[0] && get_exec_path(cmd, env_list) < 0)
 		return (-1);

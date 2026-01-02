@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   init_tools.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 19:27:26 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/01 13:24:32 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/02 12:50:28 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,5 +81,6 @@ t_mini	*allocate_minishell(char **envp)
 	msh->input = NULL;
 	msh->loop = t;
 	msh->cmd_since_last_pipe = f;
+	msh->heredoc_expand = t;
 	return (msh);
 }

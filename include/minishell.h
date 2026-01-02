@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/16 14:24:31 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/02 12:41:49 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,6 +116,7 @@ typedef struct s_mini
 	t_bool		*expanded_vars;
 	t_bool		loop;
 	t_bool		cmd_since_last_pipe;
+	t_bool		heredoc_expand;
 	t_list		*cmd_list;
 	t_list		*env;
 	t_list		*token_list;
@@ -137,8 +138,8 @@ char			*expander(t_mini *msh);
 char			*skip_redir(char *str, t_ptr_tab redir_tab);
 int				exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env);
 int				get_exec_path(t_cmd *cmd, t_list *env_list);
-int				heredoc(char *lim, t_list *env_list);
-int				open_files(t_cmd *cmd, t_list *env_list);
+int				heredoc(char *lim, t_list *env_list, t_bool expand_vars);
+int				open_files(t_cmd *cmd, t_list *env_list, t_bool expand_vars);
 int				quote_char(char c);
 int				redir_char(char c);
 int				redir_start(char *str);

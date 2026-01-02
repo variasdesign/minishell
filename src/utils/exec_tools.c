@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   exec_tools.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:28:50 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/10 19:29:52 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/02 12:42:26 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ pid_t	fork_and_exec(t_mini *msh, t_node *cmd_node, t_list *env_list)
 	t_cmd	*cmd;
 
 	cmd = cmd_node->content;
-	if (open_files(cmd, env_list) < 0)
+	if (open_files(cmd, env_list, msh->heredoc_expand) < 0)
 		return (-1);
 	if (cmd->pipe_to && pipe(fd) < 0)
 		return (ft_perror(E_PIPE_FAILURE, strerror(errno), f, 0), -1);
