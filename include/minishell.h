@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/02 12:41:49 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/05 15:08:20 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,7 +163,6 @@ ssize_t			validate_vars(t_ptr_tab *var_tab, t_ptr_tab *dquote_tab,
 					t_ptr_tab *squote_tab);
 t_bool			check_exit(t_cmd *cmd);
 t_bool			is_redir_type(t_token_type type);
-t_bool			is_standalone_builtin(t_builtin builtin);
 t_bool			is_word_type(t_token_type type);
 t_bool			validate_token_list(t_list token_list);
 t_env			*get_env(t_list *env_list, char *var);
@@ -174,6 +173,7 @@ t_list			*parser(t_list *token_list);
 t_mini			*allocate_minishell(char **envp);
 t_node			*find_token_node(t_node *offset,
 					t_token_type type, t_bool last);
+t_node			*add_env(t_list *env_list, char *var, char *value);
 t_token_type	get_token_type(t_node *token);
 t_token_type	find_token_type(char *start, t_token_type prev,
 					t_bool *cmd_since_last_pipe, t_ptr_tab redir_tab);
@@ -200,8 +200,8 @@ int				builtin_export(char **args, t_list *env_list);
 int				builtin_unset(char **args, t_list *env_list);
 int				builtin_exit(char **args, t_bool *loop);
 t_env			*create_env_var(char *key, char *value);
-int				exec_builtin(t_cmd *cmd, t_list *env_list);
-int				exec_single_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop);
+int				exec_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop);
+int				exec_single_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop, t_bool heredoc_expand);
 t_builtin		is_builtin(t_cmd *cmd);
 
 #endif

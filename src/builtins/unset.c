@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 14:55:01 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/14 15:54:40 by jmellado         ###   ########.fr       */
+/*   Updated: 2026/01/05 15:40:36 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ static void	del_env_var(void *content)
 	free(env_var);
 }
 
+/// FIX: Invalid unset name should not print anything and return 0
 static int	unset_var(char *name, t_list *env_list)
 {
 	t_node	*current;

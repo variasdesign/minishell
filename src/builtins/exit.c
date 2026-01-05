@@ -45,7 +45,7 @@ int	builtin_exit(char **args, t_bool *loop)
 {
 	long	exit_code;
 
-	if (!exit_atoi(args[1], &exit_code))
+	if (args[1] && !exit_atoi(args[1], &exit_code))
 	{
 		ft_printf(2, E_SHELL_PERROR, "exit", "error converting number");
 		return (255);

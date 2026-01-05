@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 00:00:00 by jmellado          #+#    #+#             */
-/*   Updated: 2025/12/14 15:52:23 by jmellado         ###   ########.fr       */
+/*   Updated: 2026/01/05 15:36:37 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ static int	is_valid_identifier(char *str)
 	return (1);
 }
 
+/// FIX: Exported variables are not sorted like bash does
 static void	print_exported_vars(t_list *env_list)
 {
 	t_node	*current;
@@ -42,23 +43,12 @@ static void	print_exported_vars(t_list *env_list)
 	{
 		env_var = (t_env *)current->content;
 		if (env_var && env_var->key && env_var->value)
-			printf("declare -x %s=\"%s\"\n", env_var->key, env_var->value);
+			ft_printf(1, "declare -x %s=\"%s\"\n", env_var->key, env_var->value);
 		current = current->next;
 	}
 }
 
-static void	add_new_env_var(t_list *env_list, char *key, char *value)
-{
-	t_env	new_var;
-	t_node	*new_node;
-
-	new_var.key = ft_strdup(key);
-	new_var.value = ft_strdup(value);
-	new_node = ft_lstnew_node(sizeof(t_env), &new_var);
-	if (new_node)
-		ft_lstadd_back(env_list, new_node);
-}
-
+/// FIX: export TEST+=100 isn't managed
 static int	export_var(char *arg, t_list *env_list)
 {
 	char	*eq_pos;
@@ -68,7 +58,7 @@ static int	export_var(char *arg, t_list *env_list)
 
 	if (!is_valid_identifier(arg))
 	{
-		printf("minishell: export: `%s': not a valid identifier\n", arg);
+		ft_printf(2, "minishell: export: `%s': not a valid identifier\n", arg);
 		return (1);
 	}
 	eq_pos = ft_strchr(arg, '=');
@@ -80,12 +70,9 @@ static int	export_var(char *arg, t_list *env_list)
 		return (1);
 	existing = get_env(env_list, key);
 	if (existing)
-	{
-		free(existing->value);
-		existing->value = ft_strdup(value);
-	}
+		modify_env(env_list, existing->key, value);
 	else
-		add_new_env_var(env_list, key, value);
+		add_env(env_list, key, value);
 	free(key);
 	free(value);
 	return (0);

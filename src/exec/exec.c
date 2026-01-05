@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 19:09:19 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/10 19:31:00 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/05 15:08:31 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,8 +54,8 @@ int	exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env_list)
 	if (cmd_list->count > 0)
 	{
 		cmd = cmd_list->head->content;
-		if (cmd_list->count == 1 && is_standalone_builtin(is_builtin(cmd)))
-			g_sig = exec_single_builtin(cmd, env_list, &msh->loop);
+		if (cmd_list->count == 1 && is_builtin(cmd))
+			exec_single_builtin(cmd, env_list, &msh->loop, msh->heredoc_expand);
 		else
 			init_pids_and_exec(msh, cmd_list, env_list, &status);
 	}

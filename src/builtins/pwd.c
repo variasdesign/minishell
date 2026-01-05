@@ -6,7 +6,7 @@
 /*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 00:00:00 by jmellado          #+#    #+#             */
-/*   Updated: 2025/12/10 19:55:13 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/05 14:48:47 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ int	builtin_pwd(void)
 		perror("minishell: pwd");
 		return (1);
 	}
-	printf("%s\n", pwd);
+	ft_printf(1, "%s\n", pwd);
 	free(pwd);
 	return (0);
 }

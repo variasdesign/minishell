@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 14:11:40 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/15 18:50:38 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/05 14:26:52 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,18 +81,4 @@ ssize_t	get_env_index(t_list *env_list, char *var)
 		i++;
 	}
 	return (-1);
-}
-
-t_list	*modify_env(t_list *env_list, char *var, char *new_value)
-{
-	t_env	*content;
-
-	content = get_env(env_list, var);
-	if (content)
-	{
-		free(content->value);
-		content->value = ft_strdup(new_value);
-		return (env_list);
-	}
-	return (NULL);
 }

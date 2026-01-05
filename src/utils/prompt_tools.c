@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 18:07:49 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/10 18:07:59 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/05 14:36:22 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,11 +15,15 @@
 static char	*get_last_dir(t_list *env)
 {
 	char	*last_dir;
-	char	*pwd;
+	t_env	*pwd;
 
-	pwd = get_env(env, "PWD")->value;
-	last_dir = ft_strrchr(pwd, '/');
-	return (last_dir + (last_dir != ft_strlast(pwd)));
+	pwd = get_env(env, "PWD");
+	if (pwd)
+	{
+		last_dir = ft_strrchr(pwd->value, '/');
+		return (last_dir + (last_dir != ft_strlast(pwd->value)));
+	}
+	return ("");
 }
 
 // TODO: Read hostname by executing hostname or uname -n

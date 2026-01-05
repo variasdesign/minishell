@@ -31,7 +31,7 @@ static int	child_process(t_cmd *cmd, t_list *env_list, int fd[2])
 		if (!is_builtin(cmd) && execve(cmd->args[0], cmd->args,
 				reassemble_env(env_list)))
 			return (-1);
-		return (exec_builtin(cmd, env_list));
+		return (exec_builtin(cmd, env_list, NULL));
 	}
 	return (EXIT_SUCCESS);
 }

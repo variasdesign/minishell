@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/02 12:37:26 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/05 14:49:21 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,8 @@ static int	mini_loop(t_mini *msh)
 	return (g_sig);
 }
 
-// TODO: Norminette E V E R Y T H I N G
+/// TODO: Norminette E V E R Y T H I N G
+/// TODO: Check for forbidden functions
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_mini	*msh;

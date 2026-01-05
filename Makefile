@@ -66,6 +66,7 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_UT)/,	\
 					cleanup_tools.c				\
 					cleanup_tools_2.c			\
 					env_tools.c					\
+					env_tools_2.c				\
 					exec_tools.c				\
 					file_tools.c				\
 					heredoc_tools.c				\
