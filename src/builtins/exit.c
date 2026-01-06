@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 00:00:00 by jmellado          #+#    #+#             */
-/*   Updated: 2025/12/30 12:41:02 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/06 12:28:12 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,13 +47,21 @@ int	builtin_exit(char **args, t_bool *loop)
 
 	if (args[1] && !exit_atoi(args[1], &exit_code))
 	{
-		ft_printf(2, E_SHELL_PERROR, "exit", "error converting number");
-		return (255);
+		if (loop)
+		*loop = f;
+		ft_printf(2, E_SHELL_PERROR, "exit", "numeric argument required");
+		return (2);
+	}
+	if (ft_arrlen((void **)args) > 2)
+	{
+		ft_printf(2, E_SHELL_PERROR, "exit", "too many arguments");
+		return (1);
 	}
 	if (loop)
 		*loop = f;
 	if (!args[1])
 		return(0);
-	exit_code %= 256 + 256 * (exit_code < 0);
+	exit_code %= 256;
+	exit_code += 256 * (exit_code < 0);
 	return(exit_code);
 }

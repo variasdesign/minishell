@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 18:31:31 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/02 12:41:34 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/06 13:50:13 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,6 +103,8 @@ int	open_files(t_cmd *cmd, t_list *env_list, t_bool expand_vars)
 		while (node)
 			node = open_redirection(cmd, node, env_list, expand_vars);
 	}
+	if (check_fd_errors(cmd) < 0)
+		return (-1);
 	if (!is_builtin(cmd) && cmd->args[0] && get_exec_path(cmd, env_list) < 0)
 		return (-1);
 	return (check_fd_errors(cmd));

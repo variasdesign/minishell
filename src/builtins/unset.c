@@ -3,68 +3,23 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 14:55:01 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/05 15:40:36 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/06 11:54:05 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-static int	is_valid_unset_name(char *name)
-{
-	int	i;
-
-	if (!name || !name[0])
-		return (0);
-	if (!ft_isalpha(name[0]) && name[0] != '_')
-		return (0);
-	i = 1;
-	while (name[i])
-	{
-		if (!ft_isalnum(name[i]) && name[i] != '_')
-			return (0);
-		i++;
-	}
-	return (1);
-}
-
-static void	del_env_var(void *content)
-{
-	t_env	*env_var;
-
-	if (!content)
-		return ;
-	env_var = (t_env *)content;
-	free(env_var->key);
-	free(env_var->value);
-	free(env_var);
-}
-
 /// FIX: Invalid unset name should not print anything and return 0
 static int	unset_var(char *name, t_list *env_list)
 {
-	t_node	*current;
-	t_env	*env_var;
+	t_node	*env_node;
 
-	if (!is_valid_unset_name(name))
-	{
-		printf("minishell: unset: `%s': not a valid identifier\n", name);
-		return (1);
-	}
-	current = env_list->head;
-	while (current)
-	{
-		env_var = (t_env *)current->content;
-		if (env_var && ft_strncmp(env_var->key, name, ft_strlen(name)) == 0
-			&& ft_strlen(env_var->key) == ft_strlen(name))
-		{
-			ft_lstdel_wrapper(env_list, current, del_env_var);
-			return (0);
-		}
-		current = current->next;
-	}
+	env_node = get_env_node(env_list, name);
+	if (env_node)
+		ft_lstdel_wrapper(env_list, env_node, free);
 	return (0);
 }
 

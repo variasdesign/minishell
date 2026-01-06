@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_tools.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 14:11:40 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/05 14:26:52 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/06 11:50:47 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,4 +81,23 @@ ssize_t	get_env_index(t_list *env_list, char *var)
 		i++;
 	}
 	return (-1);
+}
+
+t_node	*get_env_node(t_list *env_list, char *var)
+{
+	const size_t	var_len = ft_strlen(var);
+	t_node			*env_node;
+	t_env			*env;
+	size_t			key_len;
+
+	env_node = env_list->head;
+	while (env_node && var && *var)
+	{
+		env = env_node->content;
+		key_len = ft_strlen(env->key);
+		if (key_len == var_len && !ft_strncmp(env->key, var, var_len))
+			return (env_node);
+		env_node = env_node->next;
+	}
+	return (NULL);
 }

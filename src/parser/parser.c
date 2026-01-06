@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parser.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/22 16:48:09 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/15 21:01:35 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/06 13:31:14 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,6 +92,7 @@ static t_node	*create_cmd(t_list *token_list, t_node **token_node,
 	return (NULL);
 }
 
+/// FIX: Invalid prompt message should be more specific. 
 t_list	*parser(t_list *token_list)
 {
 	t_list	*cmd_list;

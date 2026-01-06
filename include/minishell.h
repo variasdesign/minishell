@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/05 15:08:20 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/06 11:51:19 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -174,6 +174,7 @@ t_mini			*allocate_minishell(char **envp);
 t_node			*find_token_node(t_node *offset,
 					t_token_type type, t_bool last);
 t_node			*add_env(t_list *env_list, char *var, char *value);
+t_node			*get_env_node(t_list *env_list, char *var);
 t_token_type	get_token_type(t_node *token);
 t_token_type	find_token_type(char *start, t_token_type prev,
 					t_bool *cmd_since_last_pipe, t_ptr_tab redir_tab);

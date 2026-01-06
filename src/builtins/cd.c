@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cd.c                                               :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 00:00:00 by jmellado          #+#    #+#             */
-/*   Updated: 2026/01/05 14:38:19 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/06 11:34:45 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ int	builtin_cd(char **args, t_list *env_list)
 	if (ft_arrlen((void **)args) > 2)
 	{
 		ft_printf(2, E_SHELL_PERROR, "cd", "too many arguments");
-		return (2);
+		return (1);
 	}
 	if (!args[1])
 	{
