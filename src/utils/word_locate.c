@@ -24,45 +24,44 @@ static ssize_t	count_words(char *word_can, t_ptr_tab squote_tab,
 	while (*word_can)
 	{
 		word_len = 0;
-		word_can += skip_word(word_can, &word_len, redir_tab);
-		while (quote_char(*word_can))
+		word_can = skip_redir(word_can, redir_tab);
+		word_len += skip_word(word_can, redir_tab);
+		while (quote_char(*(word_can + word_len)))
 		{
-			word_can += skip_quoted_word(word_can, squote_tab, &word_len);
-			word_can += skip_quoted_word(word_can, dquote_tab, &word_len);
-			word_can += skip_word(word_can, &word_len, redir_tab);
+			word_len += skip_quoted_word(word_can + word_len, squote_tab);
+			word_len += skip_quoted_word(word_can + word_len, dquote_tab);
+			word_len += skip_word(word_can + word_len, redir_tab);
 		}
 		count += word_len > 0;
+		word_can += word_len;
 		while (ft_isspace(*word_can))
 			word_can++;
 	}
 	return (count);
 }
 
-static ssize_t	search_word_candidates(char *args, t_mini *msh)
+static ssize_t	search_word_candidates(char *word, t_mini *msh)
 {
-	char	*word[2];
 	ssize_t	word_len;
 	ssize_t	i;
 
-	word[0] = args;
 	i = 0;
-	while (*word[0] && i < msh->word_tab->count)
+	while (*word && i < msh->word_tab->count)
 	{
 		word_len = 0;
-		word[0] = skip_redir(word[0], *msh->redir_tab);
-		word[1] = word[0];
-		word[1] += skip_word(word[1], &word_len, *msh->redir_tab);
-		while (quote_char(*word[1]))
+		word = skip_redir(word, *msh->redir_tab);
+		word_len += skip_word(word + word_len, *msh->redir_tab);
+		while (quote_char(*(word + word_len)))
 		{
-			word[1] += skip_quoted_word(word[1], *msh->squote_tab, &word_len);
-			word[1] += skip_quoted_word(word[1], *msh->dquote_tab, &word_len);
-			word[1] += skip_word(word[1], &word_len, *msh->redir_tab);
+			word_len += skip_quoted_word(word + word_len, *msh->squote_tab);
+			word_len += skip_quoted_word(word + word_len, *msh->dquote_tab);
+			word_len += skip_word(word + word_len, *msh->redir_tab);
 		}
 		if (word_len > 0)
-			save_word(word, msh->word_tab, i++);
-		word[0] = word[1];
-		while (ft_isspace(*word[0]))
-			word[0]++;
+			save_word(word, word + word_len, msh->word_tab, i++);
+		word += word_len;
+		while (ft_isspace(*word))
+			word++;
 	}
 	return (i);
 }

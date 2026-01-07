@@ -1,0 +1,3 @@
+display str
+display str + word_len
+display word_len

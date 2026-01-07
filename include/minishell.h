@@ -154,10 +154,8 @@ ssize_t			locate_redirs(char *args, t_mini *msh);
 ssize_t			locate_vars(char *args, t_ptr_tab *var_tab,
 					t_ptr_tab squote_tab);
 ssize_t			locate_words(char *args, t_mini *msh);
-ssize_t			skip_word(char *str, ssize_t *word_len_ptr,
-					t_ptr_tab redir_tab);
-ssize_t			skip_quoted_word(char *str, t_ptr_tab quote_tab,
-					ssize_t *word_len_ptr);
+ssize_t			skip_word(char *str, t_ptr_tab redir_tab);
+ssize_t			skip_quoted_word(char *str, t_ptr_tab quote_tab);
 ssize_t			validate_quotes(t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab);
 ssize_t			validate_vars(t_ptr_tab *var_tab, t_ptr_tab *dquote_tab,
 					t_ptr_tab *squote_tab);
@@ -190,7 +188,8 @@ void			interrupt(int signal);
 void			print_error(char *msg, char *err);
 void			prompt_handler(int signal);
 void			quit(int signal);
-void			save_word(char *word[2], t_ptr_tab *word_tab, ssize_t i);
+void			save_word(char *start_word, char *end_word,
+					t_ptr_tab *word_tab, ssize_t i);
 
 // Built-ins
 int				builtin_cd(char **args, t_list *env_list);
@@ -202,7 +201,8 @@ int				builtin_unset(char **args, t_list *env_list);
 int				builtin_exit(char **args, t_bool *loop);
 t_env			*create_env_var(char *key, char *value);
 int				exec_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop);
-int				exec_single_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop, t_bool heredoc_expand);
+int				exec_single_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop,
+					t_bool heredoc_expand);
 t_builtin		is_builtin(t_cmd *cmd);
 
 #endif
