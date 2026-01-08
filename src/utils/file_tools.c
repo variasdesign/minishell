@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 18:31:31 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/06 13:50:13 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/08 19:18:32 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,6 +93,7 @@ static t_node	*open_redirection(t_cmd *cmd, t_node *redir_node,
 	return (redir_node->next);
 }
 
+/// FIX: Skip executable check if a relative path is passed.
 int	open_files(t_cmd *cmd, t_list *env_list, t_bool expand_vars)
 {
 	t_node			*node;

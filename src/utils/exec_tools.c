@@ -6,12 +6,14 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:28:50 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/02 12:42:26 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/08 19:13:34 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
+/// FIX: Store reassemble_env in to a variable and return
+/// that to be freed.
 static int	child_process(t_cmd *cmd, t_list *env_list, int fd[2])
 {
 	if (cmd->args[0])
