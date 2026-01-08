@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   prompt_tools.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 18:07:49 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/05 14:36:22 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/08 18:31:03 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,16 @@ static char	*get_last_dir(t_list *env)
 	return ("");
 }
 
+static	char	*get_user(t_list *env)
+{
+	t_env	*user;
+
+	user = get_env(env, "USER");
+	if (user)
+		return (user->value);
+	return ("");
+}
+
 // TODO: Read hostname by executing hostname or uname -n
 // and redirecting its output to a string
 char	*assemble_prompt(t_list *env, char *prompt)
@@ -35,7 +45,7 @@ char	*assemble_prompt(t_list *env, char *prompt)
 	size_t	i;
 
 	prompt_parts[0] = "[";
-	prompt_parts[1] = get_env(env, "USER")->value;
+	prompt_parts[1] = get_user(env);
 	prompt_parts[2] = "@";
 	prompt_parts[3] = "hostname";
 	prompt_parts[4] = " ";

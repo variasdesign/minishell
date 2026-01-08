@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 19:09:19 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/06 13:41:43 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/08 18:13:29 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,9 @@ static void	init_pids_and_exec(t_mini *msh, t_list *cmd_list,
 	free(msh->pids);
 }
 
+/// TODO: If multiple commands are passed as stdin
+/// and one of those commands fail
+/// the ones after shouldn't be executed.
 int	exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env_list)
 {
 	int		status;
