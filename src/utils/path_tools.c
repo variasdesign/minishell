@@ -21,10 +21,12 @@ static char	*direct_path(char *exec)
 	{
 		if (!access(exec, R_OK | X_OK))
 			return (ft_strdup(exec));
+		g_sig = 127;
 		ft_printf(2, E_SHELL_PERROR, exec, strerror(errno));
 	}
 	else
 	{
+		g_sig = 126;
 		ft_printf(2, E_SHELL_PERROR, exec, "Is a directory");
 		closedir(dir);
 	}
@@ -41,7 +43,7 @@ static char	*valid_exec(char *exec, char **path_env)
 	if (!ft_strncmp(exec, "./", 2)
 		|| (!ft_strncmp(exec, "/", 1)))
 		return (direct_path(exec));
-	while (path_env[i])
+	while (exec[0] && path_env[i])
 	{
 		tmp = ft_strjoin(path_env[i], "/");
 		if (!tmp)
@@ -64,7 +66,11 @@ static t_bool	period_check(char *args)
 {
 	if ((ft_strlen(args) == 1 && !ft_strncmp(args, ".", 1))
 		|| (ft_strlen(args) == 2 && !ft_strncmp(args, "..", 2)))
+	{
+		g_sig = 127;
+		ft_printf(2, E_SHELL_PERROR, args, "command not found");
 		return (t);
+	}
 	return (f);
 }
 
@@ -74,7 +80,7 @@ int	get_exec_path(t_cmd *cmd, t_list *env_list)
 	char	**path_list;
 	t_env	*path_env;
 
-	if (cmd->args[0][0])
+	if (cmd->args[0])
 	{
 		path_env = get_env(env_list, "PATH");
 		if (!path_env)
