@@ -23,6 +23,7 @@
 # include <signal.h>
 # include <sys/types.h>
 # include <sys/wait.h>
+# include <dirent.h>
 # include <unistd.h>
 
 // Numbers of pointer tables to initialize
@@ -101,6 +102,7 @@ typedef struct s_redir
 typedef struct s_cmd
 {
 	char	**args;
+	char	**env;
 	t_list	*redir_list;
 	int		fd_in;
 	int		fd_out;
@@ -176,7 +178,7 @@ t_node			*get_env_node(t_list *env_list, char *var);
 t_token_type	get_token_type(t_node *token);
 t_token_type	find_token_type(char *start, t_token_type prev,
 					t_bool *cmd_since_last_pipe, t_ptr_tab redir_tab);
-void			child_cleanup(t_mini *msh, int exit_code);
+void			child_cleanup(t_mini *msh, t_cmd *cmd);
 void			exec_signal(void);
 void			exit_error(char *msg, char *err, int exit_code);
 void			free_all(t_mini *msh);
@@ -200,7 +202,7 @@ int				builtin_export(char **args, t_list *env_list);
 int				builtin_unset(char **args, t_list *env_list);
 int				builtin_exit(char **args, t_bool *loop);
 t_env			*create_env_var(char *key, char *value);
-int				exec_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop);
+t_cmd			*exec_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop);
 int				exec_single_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop,
 					t_bool heredoc_expand);
 t_builtin		is_builtin(t_cmd *cmd);

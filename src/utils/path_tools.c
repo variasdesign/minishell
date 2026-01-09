@@ -12,6 +12,25 @@
 
 #include "minishell.h"
 
+static char	*direct_path(char *exec)
+{
+	DIR	*dir;
+
+	dir = opendir(exec);
+	if (!dir)
+	{
+		if (!access(exec, R_OK | X_OK))
+			return (ft_strdup(exec));
+		ft_printf(2, E_SHELL_PERROR, exec, strerror(errno));
+	}
+	else
+	{
+		ft_printf(2, E_SHELL_PERROR, exec, "Is a directory");
+		closedir(dir);
+	}
+	return (NULL);
+}
+
 static char	*valid_exec(char *exec, char **path_env)
 {
 	char	*full_path;
@@ -19,9 +38,9 @@ static char	*valid_exec(char *exec, char **path_env)
 	int		i;
 
 	i = 0;
-	if (ft_strchr(exec, '/'))
-		if (access(exec, R_OK | X_OK) == 0)
-			return (ft_strdup(exec));
+	if (!ft_strncmp(exec, "./", 2)
+		|| (!ft_strncmp(exec, "/", 1)))
+		return (direct_path(exec));
 	while (path_env[i])
 	{
 		tmp = ft_strjoin(path_env[i], "/");
@@ -36,7 +55,17 @@ static char	*valid_exec(char *exec, char **path_env)
 		free(full_path);
 		i++;
 	}
+	g_sig = 127;
+	ft_printf(2, E_SHELL_PERROR, exec, "command not found");
 	return (NULL);
+}
+
+static t_bool	period_check(char *args)
+{
+	if ((ft_strlen(args) == 1 && !ft_strncmp(args, ".", 1))
+		|| (ft_strlen(args) == 2 && !ft_strncmp(args, "..", 2)))
+		return (t);
+	return (f);
 }
 
 int	get_exec_path(t_cmd *cmd, t_list *env_list)
@@ -49,21 +78,17 @@ int	get_exec_path(t_cmd *cmd, t_list *env_list)
 	{
 		path_env = get_env(env_list, "PATH");
 		if (!path_env)
-		{
-			ft_printf(2, E_SHELL_PERROR, cmd->args[0], "No such file or directory");
-			return (-1);
-		}
+			return (ft_printf(2, E_SHELL_PERROR,
+					cmd->args[0], "No such file or directory"), -1);
 		path_list = ft_split(path_env->value, ':');
 		exec_path = valid_exec(cmd->args[0], path_list);
 		ft_freematrix((void **)path_list);
-		if (exec_path)
+		if (!period_check(cmd->args[0]) && exec_path)
 		{
 			free(cmd->args[0]);
 			cmd->args[0] = exec_path;
 			return (0);
 		}
 	}
-	g_sig = 127;
-	ft_printf(2, E_SHELL_PERROR, cmd->args[0], "command not found");
 	return (-1);
 }

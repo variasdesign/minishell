@@ -37,12 +37,12 @@ t_builtin	is_builtin(t_cmd *cmd)
 	return (CMD_NULL);
 }
 
-int	exec_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop)
+t_cmd	*exec_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop)
 {
 	const t_builtin	builtin = is_builtin(cmd);
 
 	if (!cmd->args[0] || !cmd->args[0][0])
-		return (-1);
+		g_sig = -1;
 	else if (builtin == CMD_CD)
 		g_sig = builtin_cd(cmd->args, env_list);
 	else if (builtin == CMD_ECHO)
@@ -57,10 +57,11 @@ int	exec_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop)
 		g_sig = builtin_pwd();
 	else if (builtin == CMD_UNSET)
 		g_sig = builtin_unset(cmd->args, env_list);
-	return (0);
+	return (cmd);
 }
 
-int	exec_single_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop, t_bool heredoc_expand)
+int	exec_single_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop,
+						t_bool heredoc_expand)
 {
 	int	orig_fd_in;
 	int	orig_fd_out;

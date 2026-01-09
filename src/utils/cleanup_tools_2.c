@@ -12,12 +12,14 @@
 
 #include "minishell.h"
 
-void	child_cleanup(t_mini *msh, int exit_code)
+void	child_cleanup(t_mini *msh, t_cmd *cmd)
 {
+	if (cmd)
+		ft_freematrix((void **)cmd->env);
 	ft_lstdel_list(msh->cmd_list, free_cmd_list);
 	free(msh->pids);
 	free_all(msh);
-	if (exit_code != -1)
-		exit(exit_code);
+	if (g_sig != -1)
+		exit(g_sig);
 	exit(EXIT_FAILURE);
 }

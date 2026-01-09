@@ -76,7 +76,8 @@ static t_node	*open_redirection(t_cmd *cmd, t_node *redir_node,
 	{
 		if (cmd->fd_in != STDIN_FILENO)
 			close(cmd->fd_in);
-		if (type == TOKEN_REDIR_HEREDOC && !heredoc(redir->file, env_list, expand_vars))
+		if (type == TOKEN_REDIR_HEREDOC
+			&& !heredoc(redir->file, env_list, expand_vars))
 			cmd->fd_in = open_input("/tmp/heredoc");
 		else
 			cmd->fd_in = open_input(redir->file);
