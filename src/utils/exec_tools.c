@@ -12,13 +12,24 @@
 
 #include "minishell.h"
 
+static void	close_fds(t_cmd *cmd)
+{
+	if (cmd->fd_in != STDIN_FILENO)
+		close(cmd->fd_in);
+	if (cmd->fd_out != STDOUT_FILENO)
+		close(cmd->fd_out);
+}
+
 static t_cmd	*child_process(t_cmd *cmd, t_list *env_list, int fd[2])
 {
 	if (cmd->args[0])
 	{
 		cmd->env = reassemble_env(env_list);
 		if (cmd->pipe_to && cmd->fd_out == STDOUT_FILENO)
+		{
 			cmd->fd_out = fd[1];
+			close(fd[0]);
+		}
 		if (dup2(cmd->fd_in, STDIN_FILENO) < 0
 			|| dup2(cmd->fd_out, STDOUT_FILENO) < 0)
 		{
@@ -26,10 +37,7 @@ static t_cmd	*child_process(t_cmd *cmd, t_list *env_list, int fd[2])
 			g_sig = -1;
 			return (cmd);
 		}
-		if (cmd->fd_in != STDIN_FILENO)
-			close(cmd->fd_in);
-		if (cmd->fd_out != STDOUT_FILENO)
-			close(cmd->fd_out);
+		close_fds(cmd);
 		if (!is_builtin(cmd) && execve(cmd->args[0], cmd->args,
 				cmd->env))
 		{
@@ -57,10 +65,7 @@ pid_t	fork_and_exec(t_mini *msh, t_node *cmd_node, t_list *env_list)
 		return (ft_perror(E_FORK_FAILURE, strerror(errno), f, 0), -1);
 	if (pid == 0)
 		child_cleanup(msh, child_process(cmd[0], env_list, fd));
-	if (cmd[0]->fd_in != STDIN_FILENO)
-		close(cmd[0]->fd_in);
-	if (cmd[0]->fd_out != STDOUT_FILENO)
-		close(cmd[0]->fd_out);
+	close_fds(cmd[0]);
 	if (cmd[0]->pipe_to)
 	{
 		close(fd[1]);

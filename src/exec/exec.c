@@ -12,37 +12,43 @@
 
 #include "minishell.h"
 
-static void	init_pids_and_exec(t_mini *msh, t_list *cmd_list,
-								t_list *env_list, int *status)
+static void	wait_for_children(t_list *cmd_list, pid_t *pids, int *status)
 {
 	ssize_t	i;
-	t_node	*cmd;
 	int		tmp_exit_code;
-
-	i = 0;
-	msh->pids = ft_calloc(cmd_list->count + 1, sizeof(pid_t));
-	if (!msh->pids)
-		return ;
-	cmd = cmd_list->head;
-	while (i < cmd_list->count && cmd)
-	{
-		msh->pids[i] = fork_and_exec(msh, cmd, env_list);
-		i++;
-		cmd = cmd->next;
-	}
+	
 	i = -1;
 	tmp_exit_code = g_sig;
 	while (++i < cmd_list->count)
 	{
-		if (msh->pids[i] != -1)
+		if (pids[i] != -1)
 		{
-			waitpid(msh->pids[i], status, 0);
+			waitpid(pids[i], status, 0);
 			if (WIFEXITED(*status))
 				g_sig = WEXITSTATUS(*status);
 		}
 		else
 			g_sig = tmp_exit_code;
 	}
+}
+
+static void	init_pids_and_exec(t_mini *msh, t_list *cmd_list,
+								t_list *env_list, int *status)
+{
+	ssize_t	i;
+	t_node	*cmd_node;
+
+	i = -1;
+	msh->pids = ft_calloc(cmd_list->count + 1, sizeof(pid_t));
+	if (!msh->pids)
+		return ;
+	cmd_node = cmd_list->head;
+	while (++i < cmd_list->count && cmd_node)
+	{
+		msh->pids[i] = fork_and_exec(msh, cmd_node, env_list);
+		cmd_node = cmd_node->next;
+	}
+	wait_for_children(cmd_list, msh->pids, status);
 	free(msh->pids);
 }
 
