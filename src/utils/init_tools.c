@@ -81,6 +81,5 @@ t_mini	*allocate_minishell(char **envp)
 	msh->input = NULL;
 	msh->loop = t;
 	msh->cmd_since_last_pipe = f;
-	msh->heredoc_expand = t;
 	return (msh);
 }

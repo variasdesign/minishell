@@ -58,7 +58,6 @@ static int	mini_loop(t_mini *msh)
 				ft_perror(E_EXEC_FAILURE, NULL, f, 0);
 			msh->cmd_list = ft_lstdel_list(msh->cmd_list, free_cmd_list);
 			msh->cmd_since_last_pipe = f;
-			msh->heredoc_expand = t;
 		}
 	}
 	return (g_sig);
@@ -67,6 +66,7 @@ static int	mini_loop(t_mini *msh)
 /// TODO: Norminette E V E R Y T H I N G
 /// TODO: Check for forbidden functions
 /// TODO: Should we update _ and SHLVL?
+/// FIX: If PATH is not present in inherited env, set a default PATH
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_mini	*msh;

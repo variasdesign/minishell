@@ -12,7 +12,18 @@
 
 #include "minishell.h"
 
-static void	close_fds(t_cmd *cmd)
+int	dup2_fds(t_cmd *cmd)
+{
+	if (dup2(cmd->fd_in, STDIN_FILENO) < 0
+		|| dup2(cmd->fd_out, STDOUT_FILENO) < 0)
+	{
+		ft_perror(E_DUP_FAILURE, strerror(errno), f, 0);
+		return (-1);
+	}
+	return (0);
+}
+
+void	close_fds(t_cmd *cmd)
 {
 	if (cmd->fd_in != STDIN_FILENO)
 		close(cmd->fd_in);
@@ -30,10 +41,8 @@ static t_cmd	*child_process(t_cmd *cmd, t_list *env_list, int fd[2])
 			cmd->fd_out = fd[1];
 			close(fd[0]);
 		}
-		if (dup2(cmd->fd_in, STDIN_FILENO) < 0
-			|| dup2(cmd->fd_out, STDOUT_FILENO) < 0)
+		if (dup2_fds(cmd))
 		{
-			ft_perror(E_DUP_FAILURE, strerror(errno), f, 0);
 			g_sig = -1;
 			return (cmd);
 		}
@@ -58,7 +67,7 @@ pid_t	fork_and_exec(t_mini *msh, t_node *cmd_node, t_list *env_list)
 	cmd[0] = cmd_node->content;
 	if (cmd[0]->pipe_to && pipe(fd) < 0)
 		return (ft_perror(E_PIPE_FAILURE, strerror(errno), f, 0), -1);
-	if (open_files(cmd[0], env_list, msh->heredoc_expand) < 0)
+	if (open_files(cmd[0], env_list) < 0)
 		return (-1);
 	pid = fork();
 	if (pid < 0)

@@ -54,16 +54,13 @@ static char	*unquote_rewrite(t_mini *msh, char *word_str, size_t len)
 	return (orig);
 }
 
-static void	unquote_word(t_mini *msh, t_token *tok,
-						t_token_type prev, size_t i)
+static void	unquote_word(t_mini *msh, t_token *tok, size_t i)
 {
 	const size_t	len = msh->word_tab->end[i] - msh->word_tab->start[i];
 
 	if (ft_strnchr(msh->word_tab->start[i], '\'', len)
 		|| ft_strnchr(msh->word_tab->start[i], '\"', len))
 	{
-		if (prev == TOKEN_REDIR_HEREDOC)
-			msh->heredoc_expand = f;
 		tok->start = unquote_rewrite(msh, msh->word_tab->start[i], len);
 		tok->end = tok->start + ft_strlen(tok->start);
 		tok->rewritten = t;
@@ -86,7 +83,7 @@ static t_node	*create_token(t_mini *msh, t_ptr_tab *tab,
 	tok.type = type;
 	tok.rewritten = f;
 	if (is_word_type(type))
-		unquote_word(msh, &tok, prev, i);
+		unquote_word(msh, &tok, i);
 	else
 	{
 		tok.start = tab->start[i];

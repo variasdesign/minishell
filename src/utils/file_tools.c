@@ -64,8 +64,7 @@ static int	open_output(char *path, t_bool append)
 	return (out);
 }
 
-static t_node	*open_redirection(t_cmd *cmd, t_node *redir_node,
-							t_list *env_list, t_bool expand_vars)
+static t_node	*open_redirection(t_cmd *cmd, t_node *redir_node, t_list *env_list)
 {
 	t_token_type	type;
 	t_redir			*redir;
@@ -77,7 +76,7 @@ static t_node	*open_redirection(t_cmd *cmd, t_node *redir_node,
 		if (cmd->fd_in != STDIN_FILENO)
 			close(cmd->fd_in);
 		if (type == TOKEN_REDIR_HEREDOC
-			&& !heredoc(redir->file, env_list, expand_vars))
+			&& !heredoc(redir->file, env_list, redir->expand_vars))
 			cmd->fd_in = open_input("/tmp/heredoc");
 		else
 			cmd->fd_in = open_input(redir->file);
@@ -94,8 +93,7 @@ static t_node	*open_redirection(t_cmd *cmd, t_node *redir_node,
 	return (redir_node->next);
 }
 
-/// FIX: Skip executable check if a relative path is passed.
-int	open_files(t_cmd *cmd, t_list *env_list, t_bool expand_vars)
+int	open_files(t_cmd *cmd, t_list *env_list)
 {
 	t_node			*node;
 
@@ -103,7 +101,7 @@ int	open_files(t_cmd *cmd, t_list *env_list, t_bool expand_vars)
 	{
 		node = cmd->redir_list->head;
 		while (node)
-			node = open_redirection(cmd, node, env_list, expand_vars);
+			node = open_redirection(cmd, node, env_list);
 	}
 	if (check_fd_errors(cmd) < 0)
 		return (-1);

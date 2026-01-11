@@ -97,6 +97,7 @@ typedef struct s_redir
 {
 	t_token_type	type;
 	char			*file;
+	t_bool			expand_vars;
 }	t_redir;
 
 typedef struct s_cmd
@@ -118,7 +119,6 @@ typedef struct s_mini
 	t_bool		*expanded_vars;
 	t_bool		loop;
 	t_bool		cmd_since_last_pipe;
-	t_bool		heredoc_expand;
 	t_list		*cmd_list;
 	t_list		*env;
 	t_list		*token_list;
@@ -138,10 +138,11 @@ char			*dup_token_content(t_node *token_node);
 char			*get_redir_path(t_node *redir_node);
 char			*expander(t_mini *msh);
 char			*skip_redir(char *str, t_ptr_tab redir_tab);
+int				dup2_fds(t_cmd *cmd);
 int				exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env);
 int				get_exec_path(t_cmd *cmd, t_list *env_list);
 int				heredoc(char *lim, t_list *env_list, t_bool expand_vars);
-int				open_files(t_cmd *cmd, t_list *env_list, t_bool expand_vars);
+int				open_files(t_cmd *cmd, t_list *env_list);
 int				quote_char(char c);
 int				redir_char(char c);
 int				redir_start(char *str);
@@ -179,6 +180,7 @@ t_token_type	get_token_type(t_node *token);
 t_token_type	find_token_type(char *start, t_token_type prev,
 					t_bool *cmd_since_last_pipe, t_ptr_tab redir_tab);
 void			child_cleanup(t_mini *msh, t_cmd *cmd);
+void			close_fds(t_cmd *cmd);
 void			exec_signal(void);
 void			exit_error(char *msg, char *err, int exit_code);
 void			free_all(t_mini *msh);
@@ -203,8 +205,7 @@ int				builtin_unset(char **args, t_list *env_list);
 int				builtin_exit(char **args, t_bool *loop);
 t_env			*create_env_var(char *key, char *value);
 t_cmd			*exec_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop);
-int				exec_single_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop,
-					t_bool heredoc_expand);
+int				exec_single_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop);
 t_builtin		is_builtin(t_cmd *cmd);
 
 #endif

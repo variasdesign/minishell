@@ -64,7 +64,7 @@ int	exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env_list)
 	{
 		cmd = cmd_list->head->content;
 		if (cmd_list->count == 1 && is_builtin(cmd))
-			exec_single_builtin(cmd, env_list, &msh->loop, msh->heredoc_expand);
+			exec_single_builtin(cmd, env_list, &msh->loop);
 		else
 			init_pids_and_exec(msh, cmd_list, env_list, &status);
 	}

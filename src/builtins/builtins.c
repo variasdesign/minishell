@@ -60,32 +60,23 @@ t_cmd	*exec_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop)
 	return (cmd);
 }
 
-int	exec_single_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop,
-						t_bool heredoc_expand)
+int	exec_single_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop)
 {
 	int	orig_fd_in;
 	int	orig_fd_out;
 
-	if (open_files(cmd, env_list, heredoc_expand) < 0)
+	if (open_files(cmd, env_list) < 0)
 		return (-1);
 	orig_fd_in = dup(STDIN_FILENO);
 	orig_fd_out = dup(STDOUT_FILENO);
-	if (dup2(cmd->fd_in, STDIN_FILENO) < 0
-		|| dup2(cmd->fd_out, STDOUT_FILENO) < 0)
-	{
-		ft_perror(E_DUP_FAILURE, strerror(errno), f, 0);
+	if (dup2_fds(cmd))
 		return (-1);
-	}
 	exec_builtin(cmd, env_list, loop);
-	if (cmd->fd_in != STDIN_FILENO)
-		close(cmd->fd_in);
-	if (cmd->fd_out != STDOUT_FILENO)
-		close(cmd->fd_out);
-	if (dup2(orig_fd_in, STDIN_FILENO) < 0
-		|| dup2(orig_fd_out, STDOUT_FILENO) < 0)
-	{
-		ft_perror(E_DUP_FAILURE, strerror(errno), f, 0);
+	close_fds(cmd);
+	cmd->fd_in = orig_fd_in;
+	cmd->fd_out = orig_fd_out;
+	if (dup2_fds(cmd))
 		return (-1);
-	}
+	close_fds(cmd);
 	return (0);
 }

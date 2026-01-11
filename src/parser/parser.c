@@ -17,8 +17,14 @@ static void	add_redir_node(t_list *redir_list, t_list *token_list,
 {
 	t_node	*redir_node;
 	t_redir	redir;
+	t_token	*next_token;
 
+	next_token = NULL;
+	if (token_node->next)
+		next_token = token_node->next->content;
 	redir.type = get_token_type(token_node);
+	if (next_token)
+		redir.expand_vars = redir.type == TOKEN_REDIR_HEREDOC && !next_token->rewritten;
 	redir.file = dup_token_content(token_node->next);
 	ft_lstdel_wrapper(token_list, token_node->next, free);
 	redir_node = ft_lstnew_node(redir_list->data_size, &redir);
@@ -92,7 +98,7 @@ static t_node	*create_cmd(t_list *token_list, t_node **token_node,
 	return (NULL);
 }
 
-/// FIX: Invalid prompt message should be more specific. 
+/// FIX: Invalid prompt message should be more specific.
 t_list	*parser(t_list *token_list)
 {
 	t_list	*cmd_list;
