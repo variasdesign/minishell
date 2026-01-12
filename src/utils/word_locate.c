@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   word_locate.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 19:08:30 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/03 18:14:00 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/12 18:37:57 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -90,16 +90,17 @@ ssize_t	locate_words(char *args, t_mini *msh)
 		msh->word_tab = ft_taballoc(msh->word_tab, args, sizeof(char *));
 		if (!msh->word_tab)
 		{
-			perror("Error allocating word pointer table");
+			ft_printf(2, "Error allocating word pointer table: %s\n",
+			strerror(errno));
 			return (-1);
 		}
 		if (search_word_candidates(args, msh) != msh->word_tab->count)
 		{
-			printf("Error locating words.\n");
+			ft_printf(STDERR_FILENO, "Error locating words.\n");
 			return (-1);
 		}
 	}
 	if (msh->word_tab->count < 0)
-		printf("Error locating words.\n");
+		ft_printf(STDERR_FILENO, "Error locating words.\n");
 	return (msh->word_tab->count);
 }

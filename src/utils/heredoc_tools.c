@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 12:18:52 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/02 12:39:43 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/12 19:01:19 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ static int	open_heredoc(void)
 {
 	int	hd_fd;
 
-	hd_fd = open("/tmp/heredoc", O_WRONLY | O_TRUNC | O_CREAT, 0640);
+	hd_fd = open("/tmp/heredoc", O_WRONLY | O_TRUNC | O_CREAT, 0664);
 	if (hd_fd < 0)
 	{
 		ft_perror(E_HEREDOC_FAILURE, NULL, f, 0);
@@ -132,6 +132,7 @@ static char	*expand_line_vars(char *line, t_list *env_list, t_bool expand_vars)
 	return (line);
 }
 
+/// FIX: Unlink /tmp/heredoc when heredoc finishes.
 int	heredoc(char *lim, t_list *env_list, t_bool expand_vars)
 {
 	const int	heredoc_fd = open_heredoc();

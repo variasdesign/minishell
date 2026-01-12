@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/08 00:00:00 by jmellado          #+#    #+#             */
-/*   Updated: 2026/01/05 14:48:47 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/12 18:39:23 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ int	builtin_pwd(void)
 	pwd = getcwd(NULL, 0);
 	if (!pwd)
 	{
-		perror("minishell: pwd");
+		ft_printf(STDERR_FILENO, "minishell: pwd: %s\n", strerror(errno));
 		return (1);
 	}
 	ft_printf(1, "%s\n", pwd);

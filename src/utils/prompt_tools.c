@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 18:07:49 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/08 18:31:03 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/12 18:28:38 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ static	char	*get_user(t_list *env)
 	user = get_env(env, "USER");
 	if (user)
 		return (user->value);
-	return ("");
+	return ("user");
 }
 
 // TODO: Read hostname by executing hostname or uname -n

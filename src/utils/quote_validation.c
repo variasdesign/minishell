@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quote_validation.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/08 18:22:03 by varias-c          #+#    #+#             */
-/*   Updated: 2025/10/11 16:45:50 by jmellado         ###   ########.fr       */
+/*   Updated: 2026/01/12 18:43:43 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,7 +45,7 @@ static t_bool	check_quotes_parity(t_ptr_tab quote_tab)
 	{
 		if (!quote_tab.end[quote_tab.count - 1])
 		{
-			printf(E_QUOTE_PARITY, *(char *)quote_tab.start[0]);
+			ft_printf(2, E_QUOTE_PARITY, *(char *)quote_tab.start[0]);
 			return (f);
 		}
 	}

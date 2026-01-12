@@ -6,13 +6,12 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/11 14:55:01 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/06 11:54:05 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/12 19:09:19 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-/// FIX: Invalid unset name should not print anything and return 0
 static int	unset_var(char *name, t_list *env_list)
 {
 	t_node	*env_node;

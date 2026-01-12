@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 00:00:00 by jmellado          #+#    #+#             */
-/*   Updated: 2026/01/05 15:36:37 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/12 19:08:04 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,6 @@ static void	print_exported_vars(t_list *env_list)
 	}
 }
 
-/// FIX: export TEST+=100 isn't managed
 static int	export_var(char *arg, t_list *env_list)
 {
 	char	*eq_pos;

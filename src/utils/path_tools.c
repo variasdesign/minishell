@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   path_tools.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/01 12:25:35 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/01 13:15:26 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/12 19:44:47 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,17 +33,45 @@ static char	*direct_path(char *exec)
 	return (NULL);
 }
 
+static	char	*check_current_dir(char *exec)
+{
+	char	*pwd;
+	char	*tmp;
+	char	*full_path;
+
+	if (exec[0])
+	{
+		pwd = getcwd(NULL, 0);
+		tmp = ft_strjoin(pwd, "/");
+		if (!tmp)
+			return (NULL);
+		full_path = ft_strjoin(tmp, exec);
+		free (tmp);
+		if (!full_path)
+			return (NULL);
+		if (!access(full_path, R_OK | X_OK))
+		{
+			free(pwd);
+			return (full_path);
+		}
+		free(pwd);
+		free(full_path);
+	}
+	g_sig = 127;
+	return (ft_printf(2, E_SHELL_PERROR, exec, "command not found"), NULL);
+}
+
 static char	*valid_exec(char *exec, char **path_env)
 {
 	char	*full_path;
 	char	*tmp;
 	int		i;
 
-	i = 0;
 	if (!ft_strncmp(exec, "./", 2)
 		|| (!ft_strncmp(exec, "/", 1)))
 		return (direct_path(exec));
-	while (exec[0] && path_env[i])
+	i = 0;
+	while (exec[0] && path_env && path_env[i])
 	{
 		tmp = ft_strjoin(path_env[i], "/");
 		if (!tmp)
@@ -57,9 +85,7 @@ static char	*valid_exec(char *exec, char **path_env)
 		free(full_path);
 		i++;
 	}
-	g_sig = 127;
-	ft_printf(2, E_SHELL_PERROR, exec, "command not found");
-	return (NULL);
+	return (check_current_dir(exec));
 }
 
 static t_bool	period_check(char *args)
@@ -83,12 +109,12 @@ int	get_exec_path(t_cmd *cmd, t_list *env_list)
 	if (cmd->args[0])
 	{
 		path_env = get_env(env_list, "PATH");
-		if (!path_env)
-			return (ft_printf(2, E_SHELL_PERROR,
-					cmd->args[0], "No such file or directory"), -1);
-		path_list = ft_split(path_env->value, ':');
+		path_list = NULL;
+		if (path_env)
+			path_list = ft_split(path_env->value, ':');
 		exec_path = valid_exec(cmd->args[0], path_list);
-		ft_freematrix((void **)path_list);
+		if (path_list)
+			ft_freematrix((void **)path_list);
 		if (!period_check(cmd->args[0]) && exec_path)
 		{
 			free(cmd->args[0]);

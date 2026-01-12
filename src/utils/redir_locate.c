@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   redir_locate.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/11 18:24:09 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/15 19:57:45 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/12 18:44:19 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,7 +122,8 @@ ssize_t	locate_redirs(char *args, t_mini *msh)
 		msh->redir_tab = ft_taballoc(msh->redir_tab, args, sizeof(char *));
 		if (!msh->redir_tab)
 		{
-			perror("Error allocating redirection pointer table");
+			ft_printf(2, "Error allocating redirection pointer table: %s",
+				strerror(errno));
 			msh->redir_tab->count = -1;
 		}
 		else
@@ -130,6 +131,6 @@ ssize_t	locate_redirs(char *args, t_mini *msh)
 				*msh->dquote_tab, *msh->var_tab);
 	}
 	if (msh->redir_tab->count < 0)
-		printf("Error locating redirections.\n");
+		ft_printf(2, "Error locating redirections.\n");
 	return (msh->redir_tab->count);
 }

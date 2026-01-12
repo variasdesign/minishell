@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/24 18:31:31 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/08 19:18:32 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/12 19:01:34 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,7 +47,7 @@ static int	open_output(char *path, t_bool append)
 		if (errno != ENOENT)
 			return (ft_printf(2, E_SHELL_PERROR, path, strerror(errno)), -1);
 		else
-			out = open(path, O_WRONLY | O_CREAT, 0640);
+			out = open(path, O_WRONLY | O_CREAT, 0664);
 	}
 	else
 	{

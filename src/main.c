@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/06 13:17:23 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/12 18:38:30 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,17 +65,13 @@ static int	mini_loop(t_mini *msh)
 
 /// TODO: Norminette E V E R Y T H I N G
 /// TODO: Check for forbidden functions
-/// FIX: If PATH is not present in inherited env, set a default PATH:
-/// /usr/local/sbin:/usr/local/bin:/usr/bin
-/// FIX: If PWD is not present in inherited env, use argv[0] to set
-/// a default PWD
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_mini	*msh;
 
 	if (argc > 1 || argv[1])
 	{
-		printf(E_ARGS_NOT_TAKEN);
+		ft_printf(STDERR_FILENO, E_ARGS_NOT_TAKEN);
 		return (1);
 	}
 	g_sig = 0;

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   var_tools.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42.fr>          +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 18:04:38 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/15 20:18:26 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/12 18:45:03 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,12 +110,13 @@ ssize_t	locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab)
 		var_tab = ft_taballoc(var_tab, args, sizeof(char *));
 		if (!var_tab)
 		{
-			perror("Error allocating variable pointer table");
+			ft_printf(2, "Error allocating variable pointer table: %s\n",
+			strerror(errno));
 			return (-1);
 		}
 		search_var_candidates(var_tab, squote_tab);
 	}
 	if (var_tab->count < 0)
-		perror("Error locating variables");
+		ft_printf(2, "Error locating variables\n");
 	return (var_tab->count);
 }

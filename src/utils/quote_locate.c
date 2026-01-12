@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   quote_locate.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 20:22:47 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/01 13:43:56 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/12 18:43:28 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,16 +65,16 @@ ssize_t	locate_quotes(char *args, t_ptr_tab *quote_tab, char q)
 		quote_tab = ft_taballoc(quote_tab, args, sizeof(char *));
 		if (!quote_tab)
 		{
-			perror(NULL);
-			printf("Error allocating %c quote pointer table\n", q);
+			ft_printf(2, "%s\n", strerror(errno));
+			ft_printf(2, "Error allocating %c quote pointer table\n", q);
 			return (-1);
 		}
 		quote_tab = search_quote_candidates(quote_tab, q);
 	}
 	if (quote_tab->count < 0)
 	{
-		perror(NULL);
-		printf("Error locating %c quotes\n", q);
+		ft_printf(2, "%s\n", strerror(errno));
+		ft_printf(2, "Error locating %c quotes\n", q);
 	}
 	return (quote_tab->count);
 }

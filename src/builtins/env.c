@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/14 00:00:00 by jmellado          #+#    #+#             */
-/*   Updated: 2025/12/14 15:52:23 by jmellado         ###   ########.fr       */
+/*   Updated: 2026/01/12 18:40:36 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	builtin_env(char **args, t_list *env_list)
 	{
 		env_var = (t_env *)current->content;
 		if (env_var && env_var->key && env_var->value)
-			printf("%s=%s\n", env_var->key, env_var->value);
+			ft_printf(1, "%s=%s\n", env_var->key, env_var->value);
 		current = current->next;
 	}
 	return (0);

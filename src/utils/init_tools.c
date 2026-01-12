@@ -6,11 +6,24 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 19:27:26 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/02 12:50:28 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/12 18:41:15 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+static	void	default_envs(t_list *env)
+{
+	char	*pwd;
+
+	if (!get_env(env, "PWD"))
+	{
+		pwd = getcwd(NULL, 0);
+		add_env(env, "PWD", pwd);
+	}
+	if (!get_env(env, "PATH"))
+		add_env(env, "PATH", "/usr/local/sbin:/usr/local/bin:/usr/bin");
+}
 
 static t_mini	*allocate_tables(t_mini *msh, t_ptr_tab **tables)
 {
@@ -22,7 +35,8 @@ static t_mini	*allocate_tables(t_mini *msh, t_ptr_tab **tables)
 		tables[i] = ft_calloc(1, sizeof(t_ptr_tab));
 		if (!tables[i])
 		{
-			perror("Error allocating minishell pointer tables");
+			ft_printf(2, "Error allocating minishell pointer tables: %s\n",
+			strerror(errno));
 			while (i-- > 0)
 			{
 				free(tables[i]);
@@ -46,7 +60,7 @@ static t_list	*init_env(char **envp)
 
 	env_list = ft_lstnew_list(sizeof(t_env));
 	i = 0;
-	while (envp[i])
+	while (envp && envp[i])
 	{
 		content.key = ft_strndup(envp[i], ft_strchr(envp[i], '=') - envp[i]);
 		content.value = ft_strdup(ft_strchr(envp[i], '=') + 1);
@@ -54,6 +68,7 @@ static t_list	*init_env(char **envp)
 		ft_lstadd_back(env_list, env_node);
 		i++;
 	}
+	default_envs(env_list);
 	return (env_list);
 }
 
@@ -65,7 +80,7 @@ t_mini	*allocate_minishell(char **envp)
 	msh = ft_calloc(1, sizeof(t_mini));
 	if (!msh)
 	{
-		perror("Error allocating minishell struct");
+		ft_printf(2, "Error allocating minishell struct: %s", strerror(errno));
 		return (NULL);
 	}
 	msh = allocate_tables(msh, tables);

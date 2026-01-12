@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   echo.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jmellado <jmellado@student.42malaga.com    +#+  +:+       +#+        */
+/*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/12/10 17:09:18 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/13 16:24:21 by jmellado         ###   ########.fr       */
+/*   Updated: 2026/01/12 18:39:51 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,9 +40,9 @@ static void	print_args(char **args, int start)
 	i = start;
 	while (args[i])
 	{
-		printf("%s", args[i]);
+		ft_printf(1, "%s", args[i]);
 		if (args[i + 1])
-			printf(" ");
+			ft_printf(1, " ");
 		i++;
 	}
 }
@@ -62,6 +62,6 @@ int	builtin_echo(char **args)
 	else
 		print_args(args, 1);
 	if (newline)
-		printf("\n");
+		ft_printf(1, "\n");
 	return (0);
 }
