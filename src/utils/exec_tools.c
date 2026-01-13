@@ -33,6 +33,7 @@ void	close_fds(t_cmd *cmd)
 
 static t_cmd	*child_process(t_cmd *cmd, t_list *env_list, int fd[2])
 {
+	exec_signal();
 	if (cmd->args[0])
 	{
 		cmd->env = reassemble_env(env_list);
@@ -44,7 +45,7 @@ static t_cmd	*child_process(t_cmd *cmd, t_list *env_list, int fd[2])
 		if (dup2_fds(cmd))
 		{
 			g_sig = -1;
-			return (cmd);
+			return (ft_perror(E_DUP_FAILURE, strerror(errno), f, 0), cmd);
 		}
 		close_fds(cmd);
 		if (!is_builtin(cmd) && execve(cmd->args[0], cmd->args,
