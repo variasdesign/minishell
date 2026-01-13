@@ -12,23 +12,6 @@
 
 #include "minishell.h"
 
-static t_bool	check_heredoc_limiter(t_ptr_tab var_tab, ssize_t i)
-{
-	const size_t	len_until_var = var_tab.start[i] - var_tab.orig;
-	size_t			j;
-
-	j = 1;
-	while (j <= len_until_var
-		&& (ft_isspace(((char *)var_tab.orig)[len_until_var - j])
-		|| quote_char(((char *)var_tab.orig)[len_until_var - j])))
-		j++;
-	if (j <= len_until_var && ((char *)var_tab.orig)[len_until_var - j] == '<')
-		j++;
-	if (j <= len_until_var && ((char *)var_tab.orig)[len_until_var - j] == '<')
-		return (t);
-	return (f);
-}
-
 // Count segments of strings, segregated by variables and non-variables
 // Example:	echo My name is $USER and I work as $JOB in $COMPANY
 // 			|               |    |              |   |   |
@@ -50,7 +33,7 @@ static ssize_t	count_segments(t_ptr_tab var_tab)
 	return (count);
 }
 
-// Obtain var value, checking also for special variable $? (exit status)
+// Obtain var value, checking also for special variable $? (exit status).
 // TODO: Research word splitting when empty var names:
 // echo My name is $USER and I work as $JOB in $COMPANY
 // My name is varias and I work as in <- one space
@@ -65,8 +48,6 @@ static char	*expand_var(t_mini *msh, char *str, t_ptr_tab var_tab, size_t i)
 	char			*tmp_env;
 	t_env			*env;
 
-	if (check_heredoc_limiter(var_tab, i))
-		return (ft_strndup(var_tab.start[i], var_len + 1));
 	if (*first_char && *first_char != '?')
 	{
 		tmp_env = ft_strndup(first_char, var_len);
@@ -85,7 +66,8 @@ static char	*expand_var(t_mini *msh, char *str, t_ptr_tab var_tab, size_t i)
 }
 
 // Fill the split with its corresponding segmented string. If the segmented
-// string is a variable name, obtain its value and expand it.
+// string is a variable name, obtain its value and expand it. Else, if
+// the segmented string is a non-variable, just duplicate it into split[i].
 static char	**fill_split(t_mini *msh, char **split,
 						ssize_t count, t_ptr_tab var_tab)
 {
@@ -114,6 +96,8 @@ static char	**fill_split(t_mini *msh, char **split,
 	return (split);
 }
 
+// This function splits the prompt in variables and non-variables, so we can
+// expand variables without having to work with a single string.
 char	**split_vars(t_mini *msh)
 {
 	const ssize_t	count = count_segments(*msh->var_tab);
@@ -125,6 +109,5 @@ char	**split_vars(t_mini *msh)
 	msh->expanded_vars = ft_calloc(count + 1, sizeof(t_bool));
 	if (!msh->expanded_vars)
 		return (NULL);
-	split = fill_split(msh, split, count, *msh->var_tab);
-	return (split);
+	return (fill_split(msh, split, count, *msh->var_tab));
 }

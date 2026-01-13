@@ -40,7 +40,7 @@ ssize_t	is_variable(char *var)
 }
 
 // Count variables by checking if they have valid names. Invalid names will
-// return var_len = 0. Variables inside single quotes are ignored.
+// return var_len = -1. Variables inside single quotes are ignored.
 static ssize_t	count_variables(char *args, t_ptr_tab squote_tab)
 {
 	ssize_t	count;
@@ -65,15 +65,26 @@ static ssize_t	count_variables(char *args, t_ptr_tab squote_tab)
 	return (count);
 }
 
-void	search_var_candidates(t_ptr_tab *var_tab, t_ptr_tab squote_tab)
+static ssize_t	save_var(t_ptr_tab *var_tab, ssize_t i, char *var_can, ssize_t var_len)
 {
-	ssize_t	var_len;
+	if (var_len >= 0)
+	{
+		var_tab->start[i] = var_can;
+		var_tab->end[i++] = var_can + var_len + 1;
+	}
+	return (i);
+}
+
+// Look for $ characters to find variable candidates, then check its preliminar
+// validity with is_variable. Later, we will perform secondary validation for
+// special edge cases that invalidate variables.
+static ssize_t	search_var_candidates(t_ptr_tab *var_tab, t_ptr_tab squote_tab)
+{
 	ssize_t	squote_i;
 	char	*var_can;
 	ssize_t	i;
 
 	var_can = ft_strchr(var_tab->orig, '$');
-	var_len = 0;
 	squote_i = -1;
 	i = 0;
 	while (i < var_tab->count && var_can)
@@ -81,17 +92,13 @@ void	search_var_candidates(t_ptr_tab *var_tab, t_ptr_tab squote_tab)
 		squote_i = ft_tabfind(var_can, squote_tab, f);
 		if (squote_i < 0)
 		{
-			var_len = is_variable(var_can);
-			if (var_len >= 0)
-			{
-				var_tab->start[i] = var_can;
-				var_tab->end[i++] = var_can + var_len + 1;
-			}
+			i = save_var(var_tab, i, var_can, is_variable(var_can));
 			var_can = ft_strchr(++var_can, '$');
 		}
 		else
 			var_can = ft_strchr(squote_tab.end[squote_i], '$');
 	}
+	return (i);
 }
 
 // Locate every variable and store its start and end in a pointer table.
@@ -101,7 +108,6 @@ void	search_var_candidates(t_ptr_tab *var_tab, t_ptr_tab squote_tab)
 // 			orig            start[0]
 // 			                     |
 // 			                     end[0]
-// FIX: Add error checking to search_var_candidate (see word_locate.c)
 ssize_t	locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab)
 {
 	var_tab->count = count_variables(args, squote_tab);
@@ -114,7 +120,11 @@ ssize_t	locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab)
 			strerror(errno));
 			return (-1);
 		}
-		search_var_candidates(var_tab, squote_tab);
+		if (search_var_candidates(var_tab, squote_tab) != var_tab->count)
+		{
+			ft_printf(2, "Error locating variables\n");
+			return (-1);
+		}
 	}
 	if (var_tab->count < 0)
 		ft_printf(2, "Error locating variables\n");

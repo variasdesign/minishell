@@ -12,6 +12,11 @@
 
 #include "minishell.h"
 
+// If variables were found, we have to expand them. That means that the length
+// of the prompt string will vary, since variables and their values aren't
+// necessarily equal. Thus, we have to relocate variables because the var
+// pointer table is no longer true. This wouldn't matter if we didn't needed
+// var_tab anymore, but it's used again afterwards during redir_locate.
 static ssize_t	relocate_variables(t_ptr_tab *var_tab,
 								ssize_t j, char *args, char *split_arg)
 {
@@ -30,6 +35,11 @@ static ssize_t	relocate_variables(t_ptr_tab *var_tab,
 	return (j);
 }
 
+// If variables were found, we have to expand them. That means that the length
+// of the prompt string will vary, since variables and their values aren't
+// necessarily equal. Thus, we have to relocate quotes because the quotes
+// pointer tables are no longer true. This wouldn't matter if we didn't needed
+// squote_tab and dquote_tab anymore, but it's used again by other components.
 static	ssize_t	relocate_quotes(char *input,
 							t_ptr_tab *squote_tab, t_ptr_tab *dquote_tab)
 {
@@ -79,6 +89,12 @@ static char	*reassemble_args(char **split_args, t_ptr_tab *var_tab,
 	return (args);
 }
 
+// The expander first locates all quotes that were inputted, storing them
+// inside their respective pointer tables. Then it performs validation of quotes
+// by checking their parity. Then it locates all variables and performs validation,
+// removing those that aren't actually variables (whenever conditions apply).
+// Once quotes and variables are located, we call reassemble_args to recover
+// the full prompt with expanded variables.
 char	*expander(t_mini *msh)
 {
 	const char	*orig = msh->input;

@@ -38,7 +38,7 @@
 # define E_HEREDOC_FAILURE "heredoc couldn't be created or written to.\n"
 # define E_INVALID_EXEC "File not found: %s\n"
 # define E_INVALID_HERE_DOC "Invalid heredoc delimiter.\n"
-# define E_INVALID_PROMPT "Invalid prompt.\n"
+# define E_INVALID_PROMPT "minishell: syntax error near unexpected token '%s'\n"
 # define E_PATH_FAILURE "PATH env not found.\n"
 # define E_PIPE_FAILURE "Couldn't create pipes: %s\n"
 # define E_QUOTE_PARITY "Invalid number of %c quotes.\n"

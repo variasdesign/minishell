@@ -96,11 +96,11 @@ ssize_t	locate_words(char *args, t_mini *msh)
 		}
 		if (search_word_candidates(args, msh) != msh->word_tab->count)
 		{
-			ft_printf(STDERR_FILENO, "Error locating words.\n");
+			ft_printf(2, "Error locating words.\n");
 			return (-1);
 		}
 	}
 	if (msh->word_tab->count < 0)
-		ft_printf(STDERR_FILENO, "Error locating words.\n");
+		ft_printf(2, "Error locating words.\n");
 	return (msh->word_tab->count);
 }

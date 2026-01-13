@@ -12,6 +12,24 @@
 
 #include "minishell.h"
 
+static void	cleanup_heredoc(t_list *redir_list)
+{
+	t_node	*redir_node;
+	t_redir	*redir;
+
+	if (redir_list)
+	{
+		redir_node = redir_list->head;
+		while (redir_node)
+		{
+			redir = redir_node->content;
+			if (redir->type == TOKEN_REDIR_HEREDOC)
+				unlink("/tmp/heredoc");
+			redir_node = redir_node->next;
+		}
+	}
+}
+
 int	dup2_fds(t_cmd *cmd)
 {
 	if (dup2(cmd->fd_in, STDIN_FILENO) < 0
@@ -82,5 +100,6 @@ pid_t	fork_and_exec(t_mini *msh, t_node *cmd_node, t_list *env_list)
 		cmd[1] = cmd_node->next->content;
 		cmd[1]->fd_in = fd[0];
 	}
+	cleanup_heredoc(cmd[0]->redir_list);
 	return (pid);
 }

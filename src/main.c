@@ -12,6 +12,10 @@
 
 #include "minishell.h"
 
+// read_input assembles a prompt with relevant info and then calls readline
+// to read user input. If minishell is not running interactively, call
+// get_next_line instead. Then, trim all whitespace and add whatever the user
+// inputted to the command history (if conditions allow).
 static char	*read_input(char **args, t_list *env, char **prompt)
 {
 	char	*tmp;
@@ -36,6 +40,12 @@ static char	*read_input(char **args, t_list *env, char **prompt)
 	return (*args);
 }
 
+// mini_loop loops forever asking for input until msh->loop is false.
+// We read the input from the user using readline and then we call
+// the expander, lexer and parser to parse whatever the user inputted.
+// Each component returns something used in the next step. Then,
+// we execute everything inside msh->cmd_list. Lastly, msh->cmd_since_last_pipe
+// is reset to distinguish between TOKEN_WORD_CMD and TOKEN_WORD_CMD.
 static int	mini_loop(t_mini *msh)
 {
 	while (msh->loop)
@@ -63,6 +73,10 @@ static int	mini_loop(t_mini *msh)
 	return (g_sig);
 }
 
+// This function is the starting point of minishell.
+// It checks for arguments passed, sets the global signal,
+// allocates the program memory and launches the prompt loop.
+// When user exits, it frees all allocated memory and exits.
 /// TODO: Norminette E V E R Y T H I N G
 /// TODO: Check for forbidden functions
 int	main(int argc, char *argv[], char *envp[])
@@ -80,6 +94,6 @@ int	main(int argc, char *argv[], char *envp[])
 		return (EXIT_FAILURE);
 	mini_loop(msh);
 	free_all(msh);
-	// write(STDOUT_FILENO, "exit\n", 5);
+	//write(1, "exit\n", 5);
 	return (g_sig);
 }

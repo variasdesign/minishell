@@ -132,7 +132,6 @@ static char	*expand_line_vars(char *line, t_list *env_list, t_bool expand_vars)
 	return (line);
 }
 
-/// FIX: Unlink /tmp/heredoc when heredoc finishes.
 int	heredoc(char *lim, t_list *env_list, t_bool expand_vars)
 {
 	const int	heredoc_fd = open_heredoc();

@@ -36,6 +36,10 @@ static	char	*get_user(t_list *env)
 	return ("user");
 }
 
+// By using a combination of available environment variables,
+// we assemble an informational prompt that displays the user
+// and the current dir. If those envs are not available,
+// we return placeholders.
 // TODO: Read hostname by executing hostname or uname -n
 // and redirecting its output to a string
 char	*assemble_prompt(t_list *env, char *prompt)

@@ -77,7 +77,7 @@ static char	*insert_redir_into_tab(char *redir_can, t_ptr_tab *redir_tab,
 	return (redir_strchr(redir_can + redir_len));
 }
 
-static void	search_redir_candidates(t_ptr_tab *redir_tab, t_ptr_tab squote_tab,
+static ssize_t	search_redir_candidates(t_ptr_tab *redir_tab, t_ptr_tab squote_tab,
 									t_ptr_tab dquote_tab, t_ptr_tab var_tab)
 {
 	ssize_t	ptr_index[3];
@@ -100,6 +100,7 @@ static void	search_redir_candidates(t_ptr_tab *redir_tab, t_ptr_tab squote_tab,
 		else if (ptr_index[VAR] >= 0)
 			redir_can = redir_strchr(var_tab.end[ptr_index[VAR]]);
 	}
+	return (i);
 }
 
 // Locate every redirection and store its start and end in a pointer table.
@@ -112,7 +113,6 @@ static void	search_redir_candidates(t_ptr_tab *redir_tab, t_ptr_tab squote_tab,
 // 			                                    ||
 // 			                                    start[1]
 // 			                                     end[1]
-// FIX: Add error checking to search_redir_candidates (see word_locate.c)
 ssize_t	locate_redirs(char *args, t_mini *msh)
 {
 	msh->redir_tab->count = count_redirs(args, *msh->squote_tab,
@@ -123,12 +123,15 @@ ssize_t	locate_redirs(char *args, t_mini *msh)
 		if (!msh->redir_tab)
 		{
 			ft_printf(2, "Error allocating redirection pointer table: %s",
-				strerror(errno));
-			msh->redir_tab->count = -1;
+			strerror(errno));
+			return (-1);
 		}
-		else
-			search_redir_candidates(msh->redir_tab, *msh->squote_tab,
-				*msh->dquote_tab, *msh->var_tab);
+		if (search_redir_candidates(msh->redir_tab, *msh->squote_tab,
+				*msh->dquote_tab, *msh->var_tab) != msh->redir_tab->count)
+		{
+			ft_printf(2, "Error locating redirections.\n");
+			return (-1);
+		}
 	}
 	if (msh->redir_tab->count < 0)
 		ft_printf(2, "Error locating redirections.\n");

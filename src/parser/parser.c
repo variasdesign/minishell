@@ -98,7 +98,6 @@ static t_node	*create_cmd(t_list *token_list, t_node **token_node,
 	return (NULL);
 }
 
-/// FIX: Invalid prompt message should be more specific.
 t_list	*parser(t_list *token_list)
 {
 	t_list	*cmd_list;
@@ -108,11 +107,7 @@ t_list	*parser(t_list *token_list)
 	size_t	i;
 
 	if (!validate_token_list(*token_list))
-	{
-		ft_printf(2, E_INVALID_PROMPT);
-		g_sig = 2;
 		return (ft_lstdel_list(token_list, free));
-	}
 	cmd_list = ft_lstnew_list(sizeof(t_cmd));
 	if (!cmd_list)
 		return (ft_lstdel_list(token_list, free));

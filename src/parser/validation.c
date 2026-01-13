@@ -30,6 +30,7 @@ t_bool	is_word_type(t_token_type type)
 static t_bool	validate_pipes(t_list token_list)
 {
 	t_node	*curr_node;
+	char	*token_str;
 
 	curr_node = find_token_node(token_list.head, TOKEN_PIPE, f);
 	while (curr_node)
@@ -39,10 +40,15 @@ static t_bool	validate_pipes(t_list token_list)
 			if (curr_node->prev && curr_node->next)
 			{
 				if (!(is_word_type(get_token_type(curr_node->prev))))
+				{
+					token_str = dup_token_content(curr_node->next);
+					ft_printf(2, E_INVALID_PROMPT, token_str);
+					free(token_str);
 					return (f);
+				}
 			}
 			else
-				return (f);
+				return (ft_printf(2, E_INVALID_PROMPT, "newline"), f);
 		}
 		curr_node = find_token_node(curr_node->next, TOKEN_PIPE, f);
 	}
@@ -52,6 +58,7 @@ static t_bool	validate_pipes(t_list token_list)
 static t_bool	validate_redirs(t_list token_list)
 {
 	t_node	*curr_node;
+	char	*token_str;
 
 	curr_node = token_list.head;
 	while (curr_node)
@@ -61,10 +68,18 @@ static t_bool	validate_redirs(t_list token_list)
 			if (curr_node->next)
 			{
 				if (!(is_word_type(get_token_type(curr_node->next))))
+				{
+					token_str = dup_token_content(curr_node->next);
+					ft_printf(2, E_INVALID_PROMPT, token_str);
+					free(token_str);
 					return (f);
+				}
 			}
 			else
+			{
+				ft_printf(2, E_INVALID_PROMPT, "newline");
 				return (f);
+			}
 		}
 		curr_node = curr_node->next;
 	}
@@ -73,5 +88,10 @@ static t_bool	validate_redirs(t_list token_list)
 
 t_bool	validate_token_list(t_list token_list)
 {
-	return (validate_pipes(token_list) && validate_redirs(token_list));
+	if (!validate_pipes(token_list) || !validate_redirs(token_list))
+	{
+		g_sig = 2;
+		return (f);
+	}
+	return (t);
 }

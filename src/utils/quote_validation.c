@@ -17,6 +17,10 @@ int	quote_char(char c)
 	return (c == '\"' || c == '\'');
 }
 
+// If quotes of one type are found inside quotes of other type, that means
+// that those quotes are literal quote characters, and they must be removed
+// from their respective pointer tables. Since we are working with arrays,
+// we have to replace the deleted quote with the next one and so on.
 ssize_t	find_and_del_quotes(t_ptr_tab *lead_tab, t_ptr_tab *second_tab)
 {
 	ssize_t	i;
@@ -39,6 +43,8 @@ ssize_t	find_and_del_quotes(t_ptr_tab *lead_tab, t_ptr_tab *second_tab)
 	return (lead_tab->count + second_tab->count);
 }
 
+// If quote_tab.end[quote_tab.count - 1] is null, that means that we have
+// an odd number of quotes, and thus quote parity is invalid.
 static t_bool	check_quotes_parity(t_ptr_tab quote_tab)
 {
 	if (quote_tab.count > 0)
