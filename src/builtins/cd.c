@@ -14,15 +14,15 @@
 
 static char	*get_home_path(t_list *env_list)
 {
-	char	*home;
+	t_env	*home;
 
-	home = get_env(env_list, "HOME")->value;
+	home = get_env(env_list, "HOME");
 	if (!home)
 	{
 		ft_printf(2, E_SHELL_PERROR, "cd", "HOME not set");
 		return (NULL);
 	}
-	return (home);
+	return (home->value);
 }
 
 static char	*change_pwd(t_list *env_list)

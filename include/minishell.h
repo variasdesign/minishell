@@ -197,7 +197,7 @@ void			save_word(char *start_word, char *end_word,
 
 // Built-ins
 int				builtin_cd(char **args, t_list *env_list);
-int				builtin_pwd(void);
+int				builtin_pwd(t_env *pwd);
 int				builtin_echo(char **args);
 int				builtin_env(char **args, t_list *env_list);
 int				builtin_export(char **args, t_list *env_list);

@@ -54,7 +54,7 @@ t_cmd	*exec_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop)
 	else if (builtin == CMD_EXPORT)
 		g_sig = builtin_export(cmd->args, env_list);
 	else if (builtin == CMD_PWD)
-		g_sig = builtin_pwd();
+		g_sig = builtin_pwd(get_env(env_list, "PWD"));
 	else if (builtin == CMD_UNSET)
 		g_sig = builtin_unset(cmd->args, env_list);
 	return (cmd);

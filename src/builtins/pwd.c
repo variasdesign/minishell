@@ -12,17 +12,13 @@
 
 #include "minishell.h"
 
-int	builtin_pwd(void)
+int	builtin_pwd(t_env *pwd)
 {
-	char	*pwd;
-
-	pwd = getcwd(NULL, 0);
 	if (!pwd)
 	{
 		ft_printf(STDERR_FILENO, "minishell: pwd: %s\n", strerror(errno));
 		return (1);
 	}
-	ft_printf(1, "%s\n", pwd);
-	free(pwd);
+	ft_printf(1, "%s\n", pwd->value);
 	return (0);
 }
