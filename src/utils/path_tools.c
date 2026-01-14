@@ -106,7 +106,7 @@ int	get_exec_path(t_cmd *cmd, t_list *env_list)
 	char	**path_list;
 	t_env	*path_env;
 
-	if (cmd->args[0])
+	if (cmd->args[0] && !period_check(cmd->args[0]))
 	{
 		path_env = get_env(env_list, "PATH");
 		path_list = NULL;
@@ -115,7 +115,7 @@ int	get_exec_path(t_cmd *cmd, t_list *env_list)
 		exec_path = valid_exec(cmd->args[0], path_list);
 		if (path_list)
 			ft_freematrix((void **)path_list);
-		if (!period_check(cmd->args[0]) && exec_path)
+		if (exec_path)
 		{
 			free(cmd->args[0]);
 			cmd->args[0] = exec_path;

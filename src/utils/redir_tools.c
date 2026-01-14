@@ -12,11 +12,31 @@
 
 #include "minishell.h"
 
+// Custom strchr that looks for the first available redirection, if any.
+char	*redir_strchr(char *args)
+{
+	char	*pipe;
+	char	*in;
+	char	*out;
+
+	pipe = ft_strchr(args, '|');
+	in = ft_strchr(args, '<');
+	out = ft_strchr(args, '>');
+	if (pipe && (!in || pipe < in) && (!out || pipe < out))
+		return (pipe);
+	else if (in && (!pipe || in < pipe) && (!out || in < out))
+		return (in);
+	else if (out && (!pipe || out < pipe) && (!in || out < in))
+		return (out);
+	return (NULL);
+}
+
 int	redir_char(char c)
 {
 	return (c == '<' || c == '>' || c == '|');
 }
 
+// Perform preliminary redir validation
 ssize_t	is_redir(char *redir)
 {
 	const char	c = *redir;
@@ -36,6 +56,7 @@ ssize_t	is_redir(char *redir)
 	return (len);
 }
 
+// Obtain the path inputted as a redirection argument
 char	*get_redir_path(t_node *redir_node)
 {
 	t_redir	*redir;

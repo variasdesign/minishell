@@ -48,9 +48,9 @@ ssize_t	validate_vars(t_ptr_tab *var_tab, t_ptr_tab *dquote_tab,
 		if (check_heredoc_limiter(*var_tab, i)
 			|| (!is_variable(var_tab->start[i])
 				&& (ft_tabfind(var_tab->start[i], *dquote_tab, f) >= 0
-				|| (!ft_isalnum(*(first_char))
-					&& ft_tabfind(first_char, *dquote_tab, t) < 0
-					&& ft_tabfind(first_char, *squote_tab, t) < 0))))
+					|| (!ft_isalnum(*(first_char))
+						&& ft_tabfind(first_char, *dquote_tab, t) < 0
+						&& ft_tabfind(first_char, *squote_tab, t) < 0))))
 		{
 			var_tab->start[i] = ft_tabdelboth(i, var_tab);
 			continue ;

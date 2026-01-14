@@ -12,54 +12,43 @@
 
 #include "minishell.h"
 
-static char	*redir_strchr(char *args)
+// We first check if the prospective redirection is inside quotes or was a now
+// expanded variable, incrementing the count if neither is true.
+static char	*check_redir_inside_tables(char *redir_can, t_mini *msh,
+								ssize_t *count)
 {
-	char	*pipe;
-	char	*in;
-	char	*out;
+	ssize_t	redir_len;
+	ssize_t	ptr_index[3];
 
-	pipe = ft_strchr(args, '|');
-	in = ft_strchr(args, '<');
-	out = ft_strchr(args, '>');
-	if (pipe && (!in || pipe < in) && (!out || pipe < out))
-		return (pipe);
-	else if (in && (!pipe || in < pipe) && (!out || in < out))
-		return (in);
-	else if (out && (!pipe || out < pipe) && (!in || out < in))
-		return (out);
-	return (NULL);
+	ptr_index[SQUOTE] = ft_tabfind(redir_can, *msh->squote_tab, f);
+	ptr_index[DQUOTE] = ft_tabfind(redir_can, *msh->dquote_tab, f);
+	ptr_index[VAR] = ft_tabfind(redir_can, *msh->var_tab, t);
+	if (ptr_index[SQUOTE] < 0 && ptr_index[DQUOTE] < 0 && ptr_index[VAR] < 0)
+	{
+		redir_len = is_redir(redir_can);
+		*count += redir_len > 0;
+		redir_can = redir_strchr(redir_can + redir_len);
+	}
+	else if (ptr_index[SQUOTE] >= 0)
+		redir_can = redir_strchr(msh->squote_tab->end[ptr_index[SQUOTE]]);
+	else if (ptr_index[DQUOTE] >= 0)
+		redir_can = redir_strchr(msh->dquote_tab->end[ptr_index[DQUOTE]]);
+	else if (ptr_index[VAR] >= 0)
+		redir_can = redir_strchr(msh->var_tab->end[ptr_index[VAR]]);
+	return (redir_can);
 }
 
 // Count redirections by checking if they are valid. Invalid redirections will
 // return redir_len = 0. Redirs inside single or double quotes are ignored.
-static ssize_t	count_redirs(char *args, t_ptr_tab squote_tab,
-								t_ptr_tab dquote_tab, t_ptr_tab var_tab)
+static ssize_t	count_redirs(char *args, t_mini *msh)
 {
 	ssize_t	count;
-	ssize_t	redir_len;
-	ssize_t	ptr_index[3];
 	char	*redir_can;
 
 	count = 0;
 	redir_can = redir_strchr(args);
 	while (redir_can)
-	{
-		ptr_index[SQUOTE] = ft_tabfind(redir_can, squote_tab, f);
-		ptr_index[DQUOTE] = ft_tabfind(redir_can, dquote_tab, f);
-		ptr_index[VAR] = ft_tabfind(redir_can, var_tab, t);
-		if (ptr_index[SQUOTE] < 0 && ptr_index[DQUOTE] < 0 && ptr_index[VAR] < 0)
-		{
-			redir_len = is_redir(redir_can);
-			count += redir_len > 0;
-			redir_can = redir_strchr(redir_can + redir_len);
-		}
-		else if (ptr_index[SQUOTE] >= 0)
-			redir_can = redir_strchr(squote_tab.end[ptr_index[SQUOTE]]);
-		else if (ptr_index[DQUOTE] >= 0)
-			redir_can = redir_strchr(dquote_tab.end[ptr_index[DQUOTE]]);
-		else if (ptr_index[VAR] >= 0)
-			redir_can = redir_strchr(var_tab.end[ptr_index[VAR]]);
-	}
+		redir_can = check_redir_inside_tables(redir_can, msh, &count);
 	return (count);
 }
 
@@ -77,8 +66,11 @@ static char	*insert_redir_into_tab(char *redir_can, t_ptr_tab *redir_tab,
 	return (redir_strchr(redir_can + redir_len));
 }
 
-static ssize_t	search_redir_candidates(t_ptr_tab *redir_tab, t_ptr_tab squote_tab,
-									t_ptr_tab dquote_tab, t_ptr_tab var_tab)
+// Look for redirection candidates to insert into the table by checking
+// if they are not inside quotes or if they are now expanded variables,
+// which doesn't count as redirections.
+static ssize_t	search_redir_candidates(t_ptr_tab *redir_tab,
+			t_ptr_tab squote_tab, t_ptr_tab dquote_tab, t_ptr_tab var_tab)
 {
 	ssize_t	ptr_index[3];
 	char	*redir_can;
@@ -91,7 +83,9 @@ static ssize_t	search_redir_candidates(t_ptr_tab *redir_tab, t_ptr_tab squote_ta
 		ptr_index[SQUOTE] = ft_tabfind(redir_can, squote_tab, f);
 		ptr_index[DQUOTE] = ft_tabfind(redir_can, dquote_tab, f);
 		ptr_index[VAR] = ft_tabfind(redir_can, var_tab, t);
-		if (ptr_index[SQUOTE] < 0 && ptr_index[DQUOTE] < 0 && ptr_index[VAR] < 0)
+		if (ptr_index[SQUOTE] < 0
+			&& ptr_index[DQUOTE] < 0
+			&& ptr_index[VAR] < 0)
 			redir_can = insert_redir_into_tab(redir_can, redir_tab, i++);
 		else if (ptr_index[SQUOTE] >= 0)
 			redir_can = redir_strchr(squote_tab.end[ptr_index[SQUOTE]]);
@@ -115,15 +109,14 @@ static ssize_t	search_redir_candidates(t_ptr_tab *redir_tab, t_ptr_tab squote_ta
 // 			                                     end[1]
 ssize_t	locate_redirs(char *args, t_mini *msh)
 {
-	msh->redir_tab->count = count_redirs(args, *msh->squote_tab,
-			*msh->dquote_tab, *msh->var_tab);
+	msh->redir_tab->count = count_redirs(args, msh);
 	if (msh->redir_tab->count > 0)
 	{
 		msh->redir_tab = ft_taballoc(msh->redir_tab, args, sizeof(char *));
 		if (!msh->redir_tab)
 		{
 			ft_printf(2, "Error allocating redirection pointer table: %s",
-			strerror(errno));
+				strerror(errno));
 			return (-1);
 		}
 		if (search_redir_candidates(msh->redir_tab, *msh->squote_tab,

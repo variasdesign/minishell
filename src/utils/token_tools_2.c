@@ -12,6 +12,9 @@
 
 #include "minishell.h"
 
+// Check if we are actually dealing with a command word or an argument word.
+// If the previous token is a redirection or cmd_since_last_pipe is set to true
+// then it's a TOKEN_WORD_ARG. Else, it's a TOKEN_WORD_CMD.
 static t_token_type	cmd_or_arg_word(t_token_type prev,
 									t_bool *cmd_since_last_pipe)
 {
@@ -21,6 +24,7 @@ static t_token_type	cmd_or_arg_word(t_token_type prev,
 	return (TOKEN_WORD_CMD);
 }
 
+// Check against clobber redirection >|
 static t_token_type	redir_out_type(size_t redir_len, char *start)
 {
 	if (redir_len == 2)
@@ -32,6 +36,9 @@ static t_token_type	redir_out_type(size_t redir_len, char *start)
 	return (TOKEN_REDIR_OUT);
 }
 
+// Assign a token type to a given string. First, check if start is inside
+// the redir table. If it is, try to guess which redir type is by looking at
+// its characters. If not, it must be a word.
 t_token_type	find_token_type(char *start, t_token_type prev,
 							t_bool *cmd_since_last_pipe, t_ptr_tab redir_tab)
 {

@@ -12,6 +12,10 @@
 
 #include "minishell.h"
 
+// Count word groups by counting number of pipes. Word groups are groups led
+// by a TOKEN_WORD_CMD and optionally any following TOKEN_WORD_ARG. Since pipes
+// separate groups of words (and thus, commands), we can use the number
+// of pipes as an indicator of word groups, given that word_groups = pipes + 1.
 size_t	count_word_groups(t_list token_list)
 {
 	t_node	*curr_node;
@@ -27,6 +31,7 @@ size_t	count_word_groups(t_list token_list)
 	return (count);
 }
 
+// Count how many word token are from a given token_node
 size_t	count_word_tokens(t_node *token_node)
 {
 	size_t			words;
@@ -44,6 +49,7 @@ size_t	count_word_tokens(t_node *token_node)
 	return (words);
 }
 
+// Obtain token type from a given token node.
 t_token_type	get_token_type(t_node *node)
 {
 	t_token	*token;
@@ -56,6 +62,8 @@ t_token_type	get_token_type(t_node *node)
 	return (TOKEN_NULL);
 }
 
+// Allocate a string that contains the token string, used when converting
+// from token list to command list.
 char	*dup_token_content(t_node *node)
 {
 	const t_token	*token = node->content;
@@ -70,6 +78,10 @@ char	*dup_token_content(t_node *node)
 	return (str);
 }
 
+// Return a node that contains a token of t_token_type type. There's also
+// the special types TOKEN_REDIR_IN_ALL and TOKEN_REDIR_OUT_ALL to signal
+// any token of their respective categories. Also, the boolean last signals
+// if we are searching from first to last or last to first.
 t_node	*find_token_node(t_node *offset, t_token_type type, t_bool last)
 {
 	t_node			*node;

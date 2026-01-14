@@ -70,6 +70,7 @@ BASE_SRCS		+= $(addprefix $(SRC_DIR_UT)/,	\
 					exec_tools.c				\
 					file_tools.c				\
 					heredoc_tools.c				\
+					heredoc_tools_2.c			\
 					init_tools.c				\
 					path_tools.c				\
 					prompt_tools.c				\

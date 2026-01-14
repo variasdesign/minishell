@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+// Cleanup the temporary heredoc file. We wanted to use O_TMPFILE
+// in the heredoc call to avoid creating a file but it doesn't work correctly.
 static void	cleanup_heredoc(t_list *redir_list)
 {
 	t_node	*redir_node;
@@ -30,6 +32,7 @@ static void	cleanup_heredoc(t_list *redir_list)
 	}
 }
 
+// Duplicate the opened file descriptors into STDIN and STDOUT.
 int	dup2_fds(t_cmd *cmd)
 {
 	if (dup2(cmd->fd_in, STDIN_FILENO) < 0
@@ -41,6 +44,8 @@ int	dup2_fds(t_cmd *cmd)
 	return (0);
 }
 
+// Close the original opened file descriptors, either from pipe()
+// or from open_files(), since they are already duped into STDIN and STDOUT.
 void	close_fds(t_cmd *cmd)
 {
 	if (cmd->fd_in != STDIN_FILENO)
@@ -49,6 +54,11 @@ void	close_fds(t_cmd *cmd)
 		close(cmd->fd_out);
 }
 
+// If the command word is not empty, execute it. First, reassemble the linked
+// list environment into a 2D array for execve to use. Then, set the writing
+// end of the pipe (if present) as output. Then, duplicate file descriptors
+// into STDIN and STDOUT and close the originals. Finally, check if the command
+// is a builtin or not, executing with execve if not, else calling exec_builtin.
 static t_cmd	*child_process(t_cmd *cmd, t_list *env_list, int fd[2])
 {
 	exec_signal();
@@ -77,6 +87,10 @@ static t_cmd	*child_process(t_cmd *cmd, t_list *env_list, int fd[2])
 	return (NULL);
 }
 
+// Create a pipe (if needed), open redirections (if any), fork and execute.
+// If the execution fails for any reason, child_cleanup is called. The parent
+// also performs some cleanup and sets the reading end of the pipe for
+// the next command to use as input.
 pid_t	fork_and_exec(t_mini *msh, t_node *cmd_node, t_list *env_list)
 {
 	int		fd[2];

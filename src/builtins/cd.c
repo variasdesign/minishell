@@ -70,7 +70,8 @@ int	builtin_cd(char **args, t_list *env_list)
 		path = args[1];
 	if (chdir(path) != 0)
 	{
-		ft_printf(2, "minishell: cd: %s: %s\n", path, "No such file or directory");
+		ft_printf(2, "minishell: cd: %s: %s\n", path,
+			"No such file or directory");
 		return (1);
 	}
 	if (!change_pwd(env_list))

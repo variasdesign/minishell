@@ -52,7 +52,8 @@ static ssize_t	search_quote_candidates(t_ptr_tab *quote_tab, char q)
 // Locate every (char q) quote and store its start and end in a string table.
 // start is a pointer to starting quote, end is a pointer to the next char
 // of ending quote. Later, quote validation will be performed to remove
-// literal quotes from the table and readjust the count in case of odd-numbered quotes.
+// literal quotes from the table and readjust the count in
+// case of odd-numbered quotes.
 // Example:	echo My name 'is $USER, hello!'\0
 // 			|            |                 |
 // 			orig         start[0]          |
@@ -68,7 +69,7 @@ ssize_t	locate_quotes(char *args, t_ptr_tab *quote_tab, char q)
 		if (!quote_tab)
 		{
 			ft_printf(2, "Error allocating %c quote pointer table: %s\n", q,
-			strerror(errno));
+				strerror(errno));
 			return (-1);
 		}
 		if (search_quote_candidates(quote_tab, q) != quote_tab->count)

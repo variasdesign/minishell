@@ -30,7 +30,7 @@ static int	has_newline_flag(char **args)
 		else
 			break ;
 	}
-	return (i > 1 ? i : 0);
+	return (i * (i != 0));
 }
 
 static void	print_args(char **args, int start)
@@ -54,7 +54,7 @@ int	builtin_echo(char **args)
 
 	newline = 1;
 	flag_count = has_newline_flag(args);
-	if (flag_count > 0)
+	if (flag_count)
 	{
 		newline = 0;
 		print_args(args, flag_count);

@@ -48,7 +48,7 @@ int	builtin_exit(char **args, t_bool *loop)
 	if (args[1] && !exit_atoi(args[1], &exit_code))
 	{
 		if (loop)
-		*loop = f;
+			*loop = f;
 		ft_printf(2, E_SHELL_PERROR, "exit", "numeric argument required");
 		return (2);
 	}
@@ -60,8 +60,8 @@ int	builtin_exit(char **args, t_bool *loop)
 	if (loop)
 		*loop = f;
 	if (!args[1])
-		return(0);
+		return (0);
 	exit_code %= 256;
 	exit_code += 256 * (exit_code < 0);
-	return(exit_code);
+	return (exit_code);
 }

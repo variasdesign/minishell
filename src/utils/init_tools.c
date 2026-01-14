@@ -12,6 +12,8 @@
 
 #include "minishell.h"
 
+// If PWD is not found in env, initialize it using getcwd().
+// If PATH is not found in env, initialize it with a default sane value.
 static	void	default_envs(t_list *env)
 {
 	char	*pwd;
@@ -25,6 +27,8 @@ static	void	default_envs(t_list *env)
 		add_env(env, "PATH", "/usr/local/sbin:/usr/local/bin:/usr/bin");
 }
 
+// Simple loop to allocate tables and deallocate them if there were allocations
+// previous to the failed one.
 static t_mini	*allocate_tables(t_mini *msh, t_ptr_tab **tables)
 {
 	size_t		i;
@@ -36,7 +40,7 @@ static t_mini	*allocate_tables(t_mini *msh, t_ptr_tab **tables)
 		if (!tables[i])
 		{
 			ft_printf(2, "Error allocating minishell pointer tables: %s\n",
-			strerror(errno));
+				strerror(errno));
 			while (i-- > 0)
 			{
 				free(tables[i]);
@@ -51,6 +55,7 @@ static t_mini	*allocate_tables(t_mini *msh, t_ptr_tab **tables)
 	return (msh);
 }
 
+// Initialize environment by making a hard copy of envp into a linked list.
 static t_list	*init_env(char **envp)
 {
 	t_list	*env_list;
@@ -72,6 +77,10 @@ static t_list	*init_env(char **envp)
 	return (env_list);
 }
 
+// Initialize main minishell structure. First, we declare a fixed-length
+// 2D array containing all tables. This is just a convenience to initialize
+// them with a loop. Then we allocate all tables and make a hard copy of env
+// into a linked list. The rest are default values.
 t_mini	*allocate_minishell(char **envp)
 {
 	t_mini		*msh;

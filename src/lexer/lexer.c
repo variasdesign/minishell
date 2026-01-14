@@ -12,6 +12,10 @@
 
 #include "minishell.h"
 
+// If quotes are found, we check if they are actually valid quotes inside
+// quote_tab. If they are, we copy everything between the starting
+// and end quote, but not the quotes themselves, returning the end
+// of the quoted part to continue copying the string.
 static char	*copy_quote_content(t_ptr_tab quote_tab, char **str, char *word_str,
 								size_t *len)
 {
@@ -28,6 +32,7 @@ static char	*copy_quote_content(t_ptr_tab quote_tab, char **str, char *word_str,
 	return (word_str);
 }
 
+// Iterate over the string word_str and copy it into str, skipping any quotes.
 static char	*unquote_rewrite(t_mini *msh, char *word_str, size_t len)
 {
 	char	*str;
@@ -54,6 +59,8 @@ static char	*unquote_rewrite(t_mini *msh, char *word_str, size_t len)
 	return (orig);
 }
 
+// Check if the word contains quotes and rewrite them, setting a boolean
+// that signals for later freeing of the allocated memory in unquote_rewrite()
 static void	unquote_word(t_mini *msh, t_token *tok, size_t i)
 {
 	const size_t	len = msh->word_tab->end[i] - msh->word_tab->start[i];
@@ -72,6 +79,11 @@ static void	unquote_word(t_mini *msh, t_token *tok, size_t i)
 	}
 }
 
+// This function creates a linked list node in which a t_token resides.
+// First, we check the token type based on a few conditions. Then,
+// if it's a word and it contains known quotes, we rewrite the word
+// without quotes and a boolean is set true, signalling that the rewritten
+// string has to be freed later as it was allocated here.
 static t_node	*create_token(t_mini *msh, t_ptr_tab *tab,
 							size_t i, t_token_type prev)
 {
@@ -93,6 +105,13 @@ static t_node	*create_token(t_mini *msh, t_ptr_tab *tab,
 	return (node);
 }
 
+// The lexer iterates over inputted arguments and does syntax classification.
+// It first locates redirections and words and then creates a token list
+// which contains syntactical units called tokens. Thus, we obtain a data
+// structure that lets us parse whatever the user inputted. The main logic
+// compares pointers of the redir table against pointers of the word table,
+// checking which pointer of their respective indexes comes first. This way,
+// we don't have to guess the order of words and redirections.
 t_list	*lexer(t_mini *msh)
 {
 	t_list	*tok_list;
@@ -100,6 +119,7 @@ t_list	*lexer(t_mini *msh)
 	size_t	redir_i;
 	size_t	word_i;
 
+	msh->cmd_since_last_pipe = f;
 	tok_list = ft_lstnew_list(sizeof(t_token));
 	if (!tok_list)
 		return (NULL);

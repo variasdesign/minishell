@@ -64,7 +64,8 @@ static int	open_output(char *path, t_bool append)
 	return (out);
 }
 
-static t_node	*open_redirection(t_cmd *cmd, t_node *redir_node, t_list *env_list)
+static t_node	*open_redirection(t_cmd *cmd, t_node *redir_node,
+								t_list *env_list)
 {
 	t_token_type	type;
 	t_redir			*redir;

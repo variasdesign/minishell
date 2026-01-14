@@ -43,7 +43,8 @@ static void	print_exported_vars(t_list *env_list)
 	{
 		env_var = (t_env *)current->content;
 		if (env_var && env_var->key && env_var->value)
-			ft_printf(1, "declare -x %s=\"%s\"\n", env_var->key, env_var->value);
+			ft_printf(1, "declare -x %s=\"%s\"\n",
+				env_var->key, env_var->value);
 		current = current->next;
 	}
 }

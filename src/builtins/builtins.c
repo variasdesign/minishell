@@ -12,6 +12,7 @@
 
 #include "minishell.h"
 
+// Check if the command word matches with a builtin.
 t_builtin	is_builtin(t_cmd *cmd)
 {
 	char	*arg;
@@ -37,6 +38,7 @@ t_builtin	is_builtin(t_cmd *cmd)
 	return (CMD_NULL);
 }
 
+// Call the builtin function associated with its builtin command.
 t_cmd	*exec_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop)
 {
 	const t_builtin	builtin = is_builtin(cmd);
@@ -60,6 +62,11 @@ t_cmd	*exec_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop)
 	return (cmd);
 }
 
+// Execute a single builtin, opening any redirections and duplicatingcating
+// the origin STDIN_FILENO and STDOUT_FILENO for later recovery. Since builtins
+// can change the environment (e.g. cd changes the current working directory),
+// we can't fork them, and thus must be execute in the parent. This means that
+// we have to backup the original file descriptors to not break minishell.
 int	exec_single_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop)
 {
 	int	orig_fd_in;

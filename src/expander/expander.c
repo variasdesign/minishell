@@ -91,10 +91,10 @@ static char	*reassemble_args(char **split_args, t_ptr_tab *var_tab,
 
 // The expander first locates all quotes that were inputted, storing them
 // inside their respective pointer tables. Then it performs validation of quotes
-// by checking their parity. Then it locates all variables and performs validation,
-// removing those that aren't actually variables (whenever conditions apply).
-// Once quotes and variables are located, we call reassemble_args to recover
-// the full prompt with expanded variables.
+// by checking their parity. Then it locates all variables and performs
+// validation, removing those that aren't actually variables
+// (whenever conditions apply). Once quotes and variables are located, we call
+// reassemble_args to recover the full prompt with expanded variables.
 char	*expander(t_mini *msh)
 {
 	const char	*orig = msh->input;

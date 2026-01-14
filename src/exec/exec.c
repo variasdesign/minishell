@@ -12,11 +12,13 @@
 
 #include "minishell.h"
 
+// Wait for children to finish, setting a temporary exit code if something
+// failed during execution so as to not overwrite it with WEXITSTATUS.
 static void	wait_for_children(t_list *cmd_list, pid_t *pids, int *status)
 {
 	ssize_t	i;
 	int		tmp_exit_code;
-	
+
 	i = -1;
 	tmp_exit_code = g_sig;
 	while (++i < cmd_list->count)
@@ -32,6 +34,8 @@ static void	wait_for_children(t_list *cmd_list, pid_t *pids, int *status)
 	}
 }
 
+// Initialize the pids array and fork and execute each command
+// in the command list, then wait for children to finish.
 static void	init_pids_and_exec(t_mini *msh, t_list *cmd_list,
 								t_list *env_list, int *status)
 {
@@ -52,9 +56,12 @@ static void	init_pids_and_exec(t_mini *msh, t_list *cmd_list,
 	free(msh->pids);
 }
 
-/// TODO: If multiple commands are passed as stdin
-/// and one of those commands fail
-/// the ones after shouldn't be executed.
+// Execute the command list in a sequential fashion. If there's only
+// one command and it's a builtin, don't fork and execute it following
+// other logic.
+/// TODO: If multiple commands are passed as stdin and one of
+/// those commands fail, the ones after shouldn't be executed.
+/// Actually, it depends on the failure condition, needs research.
 int	exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env_list)
 {
 	int		status;

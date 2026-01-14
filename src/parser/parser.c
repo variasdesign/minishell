@@ -12,6 +12,9 @@
 
 #include "minishell.h"
 
+// This functions initializes the t_redir element and adds it to the redir list,
+// also checking if the variables inside a heredoc must be expanded by looking
+// for quotes inside the delimiter field, following bash's behavior.
 static void	add_redir_node(t_list *redir_list, t_list *token_list,
 						t_node *token_node)
 {
@@ -24,13 +27,17 @@ static void	add_redir_node(t_list *redir_list, t_list *token_list,
 		next_token = token_node->next->content;
 	redir.type = get_token_type(token_node);
 	if (next_token)
-		redir.expand_vars = redir.type == TOKEN_REDIR_HEREDOC && !next_token->rewritten;
+		redir.expand_vars = redir.type == TOKEN_REDIR_HEREDOC
+			&& !next_token->rewritten;
 	redir.file = dup_token_content(token_node->next);
 	ft_lstdel_wrapper(token_list, token_node->next, free);
 	redir_node = ft_lstnew_node(redir_list->data_size, &redir);
 	ft_lstadd_back(redir_list, redir_node);
 }
 
+// Inside each t_cmd, there's a secondary list containing all redirections
+// for the current word group. This function creates such list and fills
+// it with t_redir elements.
 static t_list	*init_redir_list(t_list *token_list, t_node *token_node)
 {
 	t_list			*redir_list;
@@ -51,6 +58,8 @@ static t_list	*init_redir_list(t_list *token_list, t_node *token_node)
 	return (redir_list);
 }
 
+// This function iterates over the word group and inserts all arguments
+// into a 2D array.
 static char	**insert_words_into_args(t_node *token_node, size_t word_count)
 {
 	char			**args;
@@ -72,6 +81,12 @@ static char	**insert_words_into_args(t_node *token_node, size_t word_count)
 	return (args);
 }
 
+// This function creates the node that contain a t_cmd for the command list.
+// First, we initialize any redirections, then we insert token words
+// of the current word group into the arguments. Then we initialize its file
+// descriptors. Then we check, depending on its position, if the current
+// command has to pipe to or from other commands. Finally, we haven't finished
+// yet, look for the next command word by looking ahead of next pipe.
 static t_node	*create_cmd(t_list *token_list, t_node **token_node,
 						size_t curr_index, size_t last_index)
 {
@@ -98,6 +113,9 @@ static t_node	*create_cmd(t_list *token_list, t_node **token_node,
 	return (NULL);
 }
 
+// The parser parses the token list and generates a command list. First,
+// it validates the token list, then it creates a command list and count groups
+// of words to see how many t_cmd we have to create inside the list.
 t_list	*parser(t_list *token_list)
 {
 	t_list	*cmd_list;

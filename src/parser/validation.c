@@ -27,6 +27,7 @@ t_bool	is_word_type(t_token_type type)
 	return (f);
 }
 
+// Validate pipes by looking if the previous and next tokens are words.
 static t_bool	validate_pipes(t_list token_list)
 {
 	t_node	*curr_node;
@@ -55,6 +56,8 @@ static t_bool	validate_pipes(t_list token_list)
 	return (t);
 }
 
+// Validate redirections by looking for a word argument after
+// the current redir token. If something fails, print the unexpected token.
 static t_bool	validate_redirs(t_list token_list)
 {
 	t_node	*curr_node;
@@ -76,10 +79,7 @@ static t_bool	validate_redirs(t_list token_list)
 				}
 			}
 			else
-			{
-				ft_printf(2, E_INVALID_PROMPT, "newline");
-				return (f);
-			}
+				return (ft_printf(2, E_INVALID_PROMPT, "newline"), f);
 		}
 		curr_node = curr_node->next;
 	}

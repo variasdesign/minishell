@@ -65,7 +65,8 @@ static ssize_t	count_variables(char *args, t_ptr_tab squote_tab)
 	return (count);
 }
 
-static ssize_t	save_var(t_ptr_tab *var_tab, ssize_t i, char *var_can, ssize_t var_len)
+static ssize_t	save_var(t_ptr_tab *var_tab, ssize_t i,
+						char *var_can, ssize_t var_len)
 {
 	if (var_len >= 0)
 	{
@@ -117,7 +118,7 @@ ssize_t	locate_vars(char *args, t_ptr_tab *var_tab, t_ptr_tab squote_tab)
 		if (!var_tab)
 		{
 			ft_printf(2, "Error allocating variable pointer table: %s\n",
-			strerror(errno));
+				strerror(errno));
 			return (-1);
 		}
 		if (search_var_candidates(var_tab, squote_tab) != var_tab->count)

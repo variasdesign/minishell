@@ -12,8 +12,8 @@
 
 #include "minishell.h"
 
-// Count words by checking if they are valid. Invalid words will
-// return word_len = 0. Words inside single or double quotes are counted as one.
+// Count words by checking if they are valid, using the same logic as in
+// search_word_candidates. Invalid words will return word_len = 0.
 static ssize_t	count_words(char *word_can, t_ptr_tab squote_tab,
 								t_ptr_tab dquote_tab, t_ptr_tab redir_tab)
 {
@@ -40,6 +40,9 @@ static ssize_t	count_words(char *word_can, t_ptr_tab squote_tab,
 	return (count);
 }
 
+// Search word candidates by skipping redirections, whitespace and quotes.
+// If word_len > 0, then we have found valid word characters and the word
+// must be saved to the table
 static ssize_t	search_word_candidates(char *word, t_mini *msh)
 {
 	ssize_t	word_len;
@@ -91,7 +94,7 @@ ssize_t	locate_words(char *args, t_mini *msh)
 		if (!msh->word_tab)
 		{
 			ft_printf(2, "Error allocating word pointer table: %s\n",
-			strerror(errno));
+				strerror(errno));
 			return (-1);
 		}
 		if (search_word_candidates(args, msh) != msh->word_tab->count)

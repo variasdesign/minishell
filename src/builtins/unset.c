@@ -15,10 +15,19 @@
 static int	unset_var(char *name, t_list *env_list)
 {
 	t_node	*env_node;
+	t_env	*env;
 
 	env_node = get_env_node(env_list, name);
 	if (env_node)
+	{
+		env = env_node->content;
+		if (env)
+		{
+			free(env->key);
+			free(env->value);
+		}
 		ft_lstdel_wrapper(env_list, env_node, free);
+	}
 	return (0);
 }
 
