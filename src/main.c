@@ -91,6 +91,6 @@ int	main(int argc, char *argv[], char *envp[])
 		return (EXIT_FAILURE);
 	mini_loop(msh);
 	free_all(msh);
-//	write(1, "exit\n", 5);
+	write(1, "exit\n", 5);
 	return (g_sig);
 }
