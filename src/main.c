@@ -76,8 +76,6 @@ static int	mini_loop(t_mini *msh)
 // It checks for arguments passed, sets the global signal,
 // allocates the program memory and launches the prompt loop.
 // When user exits, it frees all allocated memory and exits.
-/// TODO: Norminette E V E R Y T H I N G
-/// TODO: Check for forbidden functions
 int	main(int argc, char *argv[], char *envp[])
 {
 	t_mini	*msh;
