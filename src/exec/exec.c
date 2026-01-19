@@ -67,6 +67,7 @@ int	exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env_list)
 	int		status;
 	t_cmd	*cmd;
 
+	status = 0;
 	if (cmd_list->count > 0)
 	{
 		cmd = cmd_list->head->content;

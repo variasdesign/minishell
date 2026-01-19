@@ -6,6 +6,14 @@ define p_tok_list
   end
 end
 
+define p_cmd_list
+  set var $n = $arg0
+  while $n
+    print *(t_cmd *)($n->content)
+    set var $n = $n->next
+  end
+end
+
 define p_generic_list
   set var $n = $arg0
   while $n

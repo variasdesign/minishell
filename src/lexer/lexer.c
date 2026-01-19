@@ -124,7 +124,7 @@ t_list	*lexer(t_mini *msh)
 	if (!tok_list)
 		return (NULL);
 	if (locate_redirs(msh->input, msh) < 0 || locate_words(msh->input, msh) < 0)
-		return (ft_lstdel_list(tok_list, free));
+		return (ft_lstdel_list(tok_list, free_tok_list));
 	redir_i = 0;
 	word_i = 0;
 	while ((msh->redir_tab->count > 0 && msh->redir_tab->start[redir_i])

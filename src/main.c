@@ -32,11 +32,14 @@ static char	*read_input(char **args, t_list *env, char **prompt)
 		*args = readline(*prompt);
 	else
 		*args = get_next_line(STDIN_FILENO);
-	tmp = ft_strtrim(*args, "\t\n\v\f\r ");
-	free(*args);
-	*args = tmp;
-	if (*args && **args && !ft_isspace(**args))
-		add_history(*args);
+	if (*args && **args)
+	{
+		tmp = ft_strtrim(*args, "\t\n\v\f\r ");
+		free(*args);
+		*args = tmp;
+		if (*args && **args && !ft_isspace(**args))
+			add_history(*args);
+	}
 	return (*args);
 }
 

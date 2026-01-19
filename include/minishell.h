@@ -189,6 +189,7 @@ void			exit_error(char *msg, char *err, int exit_code);
 void			free_all(t_mini *msh);
 void			free_cmd_list(void *cmd_ptr);
 void			free_redir_list(void *redir_ptr);
+void			free_tok_list(void *tok_ptr);
 void			free_tables(t_mini *msh, t_bool free_full_table);
 void			input_signal(void);
 void			interrupt(int signal);

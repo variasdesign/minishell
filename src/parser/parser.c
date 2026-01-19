@@ -125,10 +125,10 @@ t_list	*parser(t_list *token_list)
 	size_t	i;
 
 	if (!validate_token_list(*token_list))
-		return (ft_lstdel_list(token_list, free));
+		return (ft_lstdel_list(token_list, free_tok_list));
 	cmd_list = ft_lstnew_list(sizeof(t_cmd));
 	if (!cmd_list)
-		return (ft_lstdel_list(token_list, free));
+		return (ft_lstdel_list(token_list, free_tok_list));
 	word_groups = count_word_groups(*token_list);
 	token_node = token_list->head;
 	i = 0;
@@ -138,6 +138,6 @@ t_list	*parser(t_list *token_list)
 		ft_lstadd_back(cmd_list, cmd_node);
 		i++;
 	}
-	ft_lstdel_list(token_list, free);
+	ft_lstdel_list(token_list, free_tok_list);
 	return (cmd_list);
 }

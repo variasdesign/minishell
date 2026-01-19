@@ -73,8 +73,6 @@ char	*dup_token_content(t_node *node)
 	char			*str;
 
 	str = ft_strndup(start, len);
-	if (token->rewritten)
-		free((void *)start);
 	return (str);
 }
 

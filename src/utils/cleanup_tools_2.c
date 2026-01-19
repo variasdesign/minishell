@@ -23,3 +23,13 @@ void	child_cleanup(t_mini *msh, t_cmd *cmd)
 		exit(g_sig);
 	exit(EXIT_FAILURE);
 }
+
+void	free_tok_list(void *tok_ptr)
+{
+	t_token	*tok;
+
+	tok = tok_ptr;
+	if (tok->rewritten)
+		free((void *)tok->start);
+	free(tok);
+}
