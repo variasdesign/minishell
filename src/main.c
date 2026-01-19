@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/12 18:38:30 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/19 10:00:38 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,6 @@ int	main(int argc, char *argv[], char *envp[])
 		return (EXIT_FAILURE);
 	mini_loop(msh);
 	free_all(msh);
-	write(1, "exit\n", 5);
+//	write(1, "exit\n", 5);
 	return (g_sig);
 }
