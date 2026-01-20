@@ -12,21 +12,6 @@
 
 #include "minishell.h"
 
-t_bool	is_redir_type(t_token_type type)
-{
-	if (type == TOKEN_REDIR_APPEND || type == TOKEN_REDIR_IN
-		|| type == TOKEN_REDIR_OUT || type == TOKEN_REDIR_HEREDOC)
-		return (t);
-	return (f);
-}
-
-t_bool	is_word_type(t_token_type type)
-{
-	if (type == TOKEN_WORD_CMD || type == TOKEN_WORD_ARG)
-		return (t);
-	return (f);
-}
-
 // Validate pipes by looking if the previous and next tokens are words.
 static t_bool	validate_pipes(t_list token_list)
 {
@@ -38,7 +23,7 @@ static t_bool	validate_pipes(t_list token_list)
 	{
 		if (get_token_type(curr_node) == TOKEN_PIPE)
 		{
-			if (curr_node->prev && curr_node->next)
+			if (curr_node->next)
 			{
 				if (!(is_word_type(get_token_type(curr_node->prev))))
 				{
@@ -86,9 +71,29 @@ static t_bool	validate_redirs(t_list token_list)
 	return (t);
 }
 
+// Validate words by checking if the first token is a word.
+// If something fails, print the unexpected token.
+static t_bool	validate_words(t_list token_list)
+{
+	t_node	*curr_node;
+	char	*token_str;
+
+	curr_node = token_list.head;
+	if (!is_word_type(get_token_type(curr_node)))
+	{
+		token_str = dup_token_content(curr_node);
+		ft_printf(2, E_INVALID_PROMPT, token_str);
+		free(token_str);
+		return (f);
+	}
+	return (t);
+}
+
 t_bool	validate_token_list(t_list token_list)
 {
-	if (!validate_pipes(token_list) || !validate_redirs(token_list))
+	if (!validate_words(token_list)
+		|| !validate_redirs(token_list)
+		|| !validate_pipes(token_list))
 	{
 		g_sig = 2;
 		return (f);

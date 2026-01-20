@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/28 14:03:24 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/16 14:24:07 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/20 19:56:08 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,9 +17,14 @@ void	free_env_list(void *env_ptr)
 	t_env	*env;
 
 	env = env_ptr;
-	free(env->key);
-	free(env->value);
-	free(env);
+	if (env)
+	{
+		if (env->key)
+			free(env->key);
+		if (env->value)
+			free(env->value);
+		free(env);
+	}
 }
 
 void	free_cmd_list(void *cmd_ptr)
@@ -50,6 +55,7 @@ void	free_tables(t_mini *msh, t_bool free_full_table)
 void	free_all(t_mini *msh)
 {
 	msh->env = ft_lstdel_list(msh->env, free_env_list);
+	msh->export_list = ft_lstdel_list(msh->export_list, free_env_list);
 	if (msh->input)
 		free(msh->input);
 	if (msh->prompt)

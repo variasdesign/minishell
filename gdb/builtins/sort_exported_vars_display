@@ -1,0 +1,7 @@
+display ((t_env *)(current->content))->key
+display ((t_env *)(current->next->content))->key
+display ((t_env *)(current->next->prev->content))->key
+display ((t_env *)(current->next->next->content))->key
+display ((t_env *)(current->prev->next->content))->key
+display ((t_env *)(current->prev->content))->key
+display ft_strncmp(curr_var->key, next_var->key, ft_strlen(curr_var->key))

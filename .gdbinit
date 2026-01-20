@@ -14,6 +14,14 @@ define p_cmd_list
   end
 end
 
+define p_env_list
+  set var $n = $arg0
+  while $n
+    print *(t_env *)($n->content)
+    set var $n = $n->next
+  end
+end
+
 define p_generic_list
   set var $n = $arg0
   while $n

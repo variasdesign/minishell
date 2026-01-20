@@ -12,6 +12,21 @@
 
 #include "minishell.h"
 
+t_bool	is_redir_type(t_token_type type)
+{
+	if (type == TOKEN_REDIR_APPEND || type == TOKEN_REDIR_IN
+		|| type == TOKEN_REDIR_OUT || type == TOKEN_REDIR_HEREDOC)
+		return (t);
+	return (f);
+}
+
+t_bool	is_word_type(t_token_type type)
+{
+	if (type == TOKEN_WORD_CMD || type == TOKEN_WORD_ARG)
+		return (t);
+	return (f);
+}
+
 // Check if we are actually dealing with a command word or an argument word.
 // If the previous token is a redirection or cmd_since_last_pipe is set to true
 // then it's a TOKEN_WORD_ARG. Else, it's a TOKEN_WORD_CMD.
