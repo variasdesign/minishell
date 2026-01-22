@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/20 19:08:36 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/22 19:18:59 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -54,6 +54,7 @@ typedef enum e_token_type
 	TOKEN_NULL,
 	TOKEN_WORD_CMD,
 	TOKEN_WORD_ARG,
+	TOKEN_WORD_ALL,
 	TOKEN_PIPE,
 	TOKEN_REDIR_IN,
 	TOKEN_REDIR_HEREDOC,
@@ -137,12 +138,14 @@ extern volatile sig_atomic_t	g_sig;
 
 char			**split_vars(t_mini *msh);
 char			**reassemble_env(t_list *env_list);
+char			*assemble_path(char *exec, char *path_env);
 char			*assemble_prompt(t_list *env, char *prompt);
 char			*dup_token_content(t_node *token_node);
 char			*expand_line_vars(char *line, t_list *env_list,
 					t_bool expand_vars);
-char			*get_redir_path(t_node *redir_node);
 char			*expander(t_mini *msh);
+char			*get_redir_path(t_node *redir_node);
+char			*path_error(char *exec, DIR *dir);
 char			*redir_strchr(char *args);
 char			*skip_redir(char *str, t_ptr_tab redir_tab);
 int				dup2_fds(t_cmd *cmd);

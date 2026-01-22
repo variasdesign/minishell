@@ -30,7 +30,7 @@ static void	add_redir_node(t_list *redir_list, t_list *token_list,
 		redir.expand_vars = redir.type == TOKEN_REDIR_HEREDOC
 			&& !next_token->rewritten;
 	redir.file = dup_token_content(token_node->next);
-	ft_lstdel_wrapper(token_list, token_node->next, free);
+	ft_lstdel_wrapper(token_list, token_node->next, free_tok_list);
 	redir_node = ft_lstnew_node(redir_list->data_size, &redir);
 	ft_lstadd_back(redir_list, redir_node);
 }

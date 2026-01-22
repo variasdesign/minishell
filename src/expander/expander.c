@@ -106,7 +106,7 @@ char	*expander(t_mini *msh)
 	{
 		if (locate_vars(msh->input, msh->var_tab, *msh->squote_tab) > 0
 			&& validate_vars(msh->var_tab, msh->dquote_tab,
-				msh->squote_tab) >= 0)
+				msh->squote_tab) > 0)
 		{
 			msh->input = reassemble_args(split_vars(msh), msh->var_tab,
 					msh->expanded_vars);

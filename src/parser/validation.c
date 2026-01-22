@@ -71,20 +71,30 @@ static t_bool	validate_redirs(t_list token_list)
 	return (t);
 }
 
-// Validate words by checking if the first token is a word.
+// Validate words by checking if there are any pipes before the first word.
 // If something fails, print the unexpected token.
 static t_bool	validate_words(t_list token_list)
 {
 	t_node	*curr_node;
+	t_node	*first_word;
 	char	*token_str;
 
 	curr_node = token_list.head;
-	if (!is_word_type(get_token_type(curr_node)))
+	first_word = find_token_node(curr_node, TOKEN_WORD_ALL, f);
+	if (curr_node && first_word && curr_node != first_word)
 	{
-		token_str = dup_token_content(curr_node);
-		ft_printf(2, E_INVALID_PROMPT, token_str);
-		free(token_str);
-		return (f);
+		curr_node = first_word->prev;
+		while (curr_node)
+		{
+			if (get_token_type(curr_node) == TOKEN_PIPE)
+			{
+				token_str = dup_token_content(curr_node);
+				ft_printf(2, E_INVALID_PROMPT, token_str);
+				free(token_str);
+				return (f);
+			}
+			curr_node = curr_node->prev;
+		}
 	}
 	return (t);
 }

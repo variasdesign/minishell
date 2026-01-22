@@ -30,7 +30,7 @@ static int	has_newline_flag(char **args)
 		else
 			break ;
 	}
-	return (i * (i != 0));
+	return (i * (i > 1));
 }
 
 static void	print_args(char **args, int start)
