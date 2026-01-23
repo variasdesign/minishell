@@ -73,34 +73,34 @@ char	*dup_token_content(t_node *node)
 	char			*str;
 
 	str = ft_strndup(start, len);
-	if (token->rewritten)
-		free((void *)start);
 	return (str);
 }
 
 // Return a node that contains a token of t_token_type type. There's also
-// the special types TOKEN_REDIR_IN_ALL and TOKEN_REDIR_OUT_ALL to signal
-// any token of their respective categories. Also, the boolean last signals
-// if we are searching from first to last or last to first.
-t_node	*find_token_node(t_node *offset, t_token_type type, t_bool last)
+// the special types TOKEN_WORD_ALL, TOKEN_REDIR_IN_ALL and TOKEN_REDIR_OUT_ALL
+// to signal any token of their respective categories. Also, the boolean
+// last signals if we are searching from first to last or last to first.
+t_node	*find_token_node(t_node *node, t_token_type type, t_bool last)
 {
-	t_node			*node;
 	t_token_type	node_type;
 
-	node = offset;
 	while (node)
 	{
 		node_type = get_token_type(node);
 		if (node_type == type)
 			return (node);
-		else if (type == TOKEN_REDIR_IN_ALL)
-		{
-			if (node_type == TOKEN_REDIR_IN || node_type == TOKEN_REDIR_HEREDOC)
-				return (node);
-		}
-		else if (type == TOKEN_REDIR_OUT_ALL)
-			if (node_type == TOKEN_REDIR_OUT || node_type == TOKEN_REDIR_APPEND)
-				return (node);
+		else if (type == TOKEN_REDIR_IN_ALL
+			&& (node_type == TOKEN_REDIR_IN
+				|| node_type == TOKEN_REDIR_HEREDOC))
+			return (node);
+		else if (type == TOKEN_REDIR_OUT_ALL
+			&& (node_type == TOKEN_REDIR_OUT
+				|| node_type == TOKEN_REDIR_APPEND))
+			return (node);
+		else if (type == TOKEN_WORD_ALL
+			&& (node_type == TOKEN_WORD_CMD
+				|| node_type == TOKEN_WORD_ARG))
+			return (node);
 		if (last)
 			node = node->prev;
 		else

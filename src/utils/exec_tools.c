@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/21 13:28:50 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/08 19:13:34 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/20 19:04:11 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ static t_cmd	*child_process(t_cmd *cmd, t_list *env_list, int fd[2])
 			g_sig = -1;
 			return (cmd);
 		}
-		return (exec_builtin(cmd, env_list, NULL));
+		return (exec_builtin(cmd, env_list, NULL, NULL));
 	}
 	return (NULL);
 }

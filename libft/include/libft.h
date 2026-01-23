@@ -6,7 +6,7 @@
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/23 20:18:15 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/18 14:20:09 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/20 17:04:46 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -75,6 +75,7 @@ int			ft_toupper(int c);
 //t_list	*arr_to_list(t_list **lst, void *arr);
 size_t		ft_lstsize(t_list *lst);
 ssize_t		ft_lstfind_index(t_list *list, t_node *node_to_find);
+t_list		*ft_lstcpy(t_list *list);
 t_list		*ft_lstmap(t_list *list, void *(*f)(void *), void (*del)(void *));
 t_list		*ft_lstdel_list(t_list *list, void (*del)(void *));
 t_list		*ft_lstnew_list(ssize_t data_size);
@@ -94,6 +95,9 @@ void		ft_lstdel_wrapper(t_list *list, t_node *node, void (*del)(void *));
 void		*ft_lstget_data_index(t_list *list, ssize_t index);
 void		*ft_lstget_data_node(t_node *node);
 void		ft_lstiter(t_list *list, void (*f)(void *));
+void		ft_lstswap_right(t_list *list, t_node *node);
+void		ft_lstswap_left(t_list *list, t_node *node);
+void		ft_lstswap_ends(t_list *list);
 
 // MEMORY
 int			ft_memcmp(const void *s1, const void *s2, size_t n);

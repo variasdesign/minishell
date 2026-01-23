@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/07 19:27:26 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/12 18:41:15 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/20 19:11:22 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,12 @@ static t_list	*init_env(char **envp)
 	size_t	i;
 
 	env_list = ft_lstnew_list(sizeof(t_env));
+	if (!env_list)
+	{
+		ft_printf(2, "Error allocating minishell environment list: %s\n",
+			strerror(errno));
+		return (NULL);
+	}
 	i = 0;
 	while (envp && envp[i])
 	{
@@ -75,6 +81,20 @@ static t_list	*init_env(char **envp)
 	}
 	default_envs(env_list);
 	return (env_list);
+}
+
+static t_list	*init_export(void)
+{
+	t_list	*export_list;
+
+	export_list = ft_lstnew_list(sizeof(t_env));
+	if (!export_list)
+	{
+		ft_printf(2, "Error allocating minishell export list: %s\n",
+			strerror(errno));
+		return (NULL);
+	}
+	return (export_list);
 }
 
 // Initialize main minishell structure. First, we declare a fixed-length
@@ -96,6 +116,7 @@ t_mini	*allocate_minishell(char **envp)
 	if (!msh)
 		return (NULL);
 	msh->env = init_env(envp);
+	msh->export_list = init_export();
 	msh->squote_tab = tables[0];
 	msh->dquote_tab = tables[1];
 	msh->var_tab = tables[2];

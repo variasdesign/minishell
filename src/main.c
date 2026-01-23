@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:34:35 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/19 10:00:38 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/12 18:38:30 by ttonchak         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,11 +32,14 @@ static char	*read_input(char **args, t_list *env, char **prompt)
 		*args = readline(*prompt);
 	else
 		*args = get_next_line(STDIN_FILENO);
-	tmp = ft_strtrim(*args, "\t\n\v\f\r ");
-	free(*args);
-	*args = tmp;
-	if (*args && **args && !ft_isspace(**args))
-		add_history(*args);
+	if (*args && **args)
+	{
+		tmp = ft_strtrim(*args, "\t\n\v\f\r ");
+		free(*args);
+		*args = tmp;
+		if (*args && **args && !ft_isspace(**args))
+			add_history(*args);
+	}
 	return (*args);
 }
 

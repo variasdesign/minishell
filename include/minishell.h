@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/15 16:31:21 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/14 20:02:26 by varias-c         ###   ########.fr       */
+/*   Updated: 2026/01/22 19:18:59 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@
 # define E_CHILD_ERR "Children exited with error.\n"
 # define E_DUP_FAILURE "Duplication of file descriptors failed: %s\n"
 # define E_EXEC_FAILURE "Children didn't exit correctly.\n"
+# define E_EXPORT_IDENT "minishell: export: '%s': not a valid identifier\n"
 # define E_FORK_FAILURE "Couldn't fork: %s\n"
 # define E_HEREDOC_FAILURE "heredoc couldn't be created or written to.\n"
 # define E_INVALID_EXEC "File not found: %s\n"
@@ -51,6 +52,7 @@ typedef enum e_token_type
 	TOKEN_NULL,
 	TOKEN_WORD_CMD,
 	TOKEN_WORD_ARG,
+	TOKEN_WORD_ALL,
 	TOKEN_PIPE,
 	TOKEN_REDIR_IN,
 	TOKEN_REDIR_HEREDOC,
@@ -122,6 +124,7 @@ typedef struct s_mini
 	t_list		*cmd_list;
 	t_list		*env;
 	t_list		*token_list;
+	t_list		*export_list;
 	t_ptr_tab	*dquote_tab;
 	t_ptr_tab	*redir_tab;
 	t_ptr_tab	*squote_tab;
@@ -133,12 +136,14 @@ extern volatile sig_atomic_t	g_sig;
 
 char			**split_vars(t_mini *msh);
 char			**reassemble_env(t_list *env_list);
+char			*assemble_path(char *exec, char *path_env);
 char			*assemble_prompt(t_list *env, char *prompt);
 char			*dup_token_content(t_node *token_node);
 char			*expand_line_vars(char *line, t_list *env_list,
 					t_bool expand_vars);
-char			*get_redir_path(t_node *redir_node);
 char			*expander(t_mini *msh);
+char			*get_redir_path(t_node *redir_node);
+char			*path_error(char *exec, DIR *dir);
 char			*redir_strchr(char *args);
 char			*skip_redir(char *str, t_ptr_tab redir_tab);
 int				dup2_fds(t_cmd *cmd);
@@ -188,7 +193,9 @@ void			exec_signal(void);
 void			exit_error(char *msg, char *err, int exit_code);
 void			free_all(t_mini *msh);
 void			free_cmd_list(void *cmd_ptr);
+void			free_env_list(void *env_ptr);
 void			free_redir_list(void *redir_ptr);
+void			free_tok_list(void *tok_ptr);
 void			free_tables(t_mini *msh, t_bool free_full_table);
 void			input_signal(void);
 void			interrupt(int signal);
@@ -197,18 +204,22 @@ void			prompt_handler(int signal);
 void			quit(int signal);
 void			save_word(char *start_word, char *end_word,
 					t_ptr_tab *word_tab, ssize_t i);
+void			sort_exported_vars(t_list *sorted_env);
 
 // Built-ins
 int				builtin_cd(char **args, t_list *env_list);
 int				builtin_pwd(t_env *pwd);
 int				builtin_echo(char **args);
 int				builtin_env(char **args, t_list *env_list);
-int				builtin_export(char **args, t_list *env_list);
+int				builtin_export(char **args, t_list *env_list,
+					t_list *export_list);
 int				builtin_unset(char **args, t_list *env_list);
 int				builtin_exit(char **args, t_bool *loop);
 t_env			*create_env_var(char *key, char *value);
-t_cmd			*exec_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop);
-int				exec_single_builtin(t_cmd *cmd, t_list *env_list, t_bool *loop);
+t_cmd			*exec_builtin(t_cmd *cmd, t_list *env_list, t_list *export_list,
+					t_bool *loop);
+int				exec_single_builtin(t_cmd *cmd, t_list *env_list,
+					t_list *export_list, t_bool *loop);
 t_builtin		is_builtin(t_cmd *cmd);
 
 #endif

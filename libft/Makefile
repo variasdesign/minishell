@@ -96,6 +96,7 @@ STR_SRCS		= $(addprefix $(STR_DIR),		\
 
 LIST_SRCS		=	$(addprefix $(LIST_DIR),	\
 					ft_lstadd.c					\
+					ft_lstcpy.c					\
 					ft_lstdel.c					\
 					ft_lstdel_2.c				\
 					ft_lstfind.c				\
@@ -105,6 +106,8 @@ LIST_SRCS		=	$(addprefix $(LIST_DIR),	\
 					ft_lstmap.c					\
 					ft_lstnew.c					\
 					ft_lstsize.c				\
+					ft_lstswap.c				\
+					ft_lstswap_2.c				\
 					)							\
 
 BASE_SRCS		=	$(ARRAY_SRCS)	\

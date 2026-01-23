@@ -6,7 +6,7 @@
 /*   By: ttonchak <ttonchak@student.42malaga.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/11/17 19:09:19 by varias-c          #+#    #+#             */
-/*   Updated: 2026/01/08 18:13:29 by ttonchak         ###   ########.fr       */
+/*   Updated: 2026/01/20 18:54:23 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,11 +67,12 @@ int	exec_cmd_list(t_mini *msh, t_list *cmd_list, t_list *env_list)
 	int		status;
 	t_cmd	*cmd;
 
+	status = 0;
 	if (cmd_list->count > 0)
 	{
 		cmd = cmd_list->head->content;
 		if (cmd_list->count == 1 && is_builtin(cmd))
-			exec_single_builtin(cmd, env_list, &msh->loop);
+			exec_single_builtin(cmd, env_list, msh->export_list, &msh->loop);
 		else
 			init_pids_and_exec(msh, cmd_list, env_list, &status);
 	}

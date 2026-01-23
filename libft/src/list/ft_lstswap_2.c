@@ -1,35 +1,29 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   cleanup_tools_2.c                                  :+:      :+:    :+:   */
+/*   ft_lstswap_2.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: varias-c <varias-c@student.42malaga.com>   +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/12/16 14:23:18 by varias-c          #+#    #+#             */
-/*   Updated: 2025/12/16 14:24:02 by varias-c         ###   ########.fr       */
+/*   Created: 2026/01/20 18:10:45 by varias-c          #+#    #+#             */
+/*   Updated: 2026/01/20 18:10:52 by varias-c         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "minishell.h"
+#include "libft.h"
 
-void	child_cleanup(t_mini *msh, t_cmd *cmd)
+void	ft_lstswap_ends(t_list *list)
 {
-	if (cmd)
-		ft_freematrix((void **)cmd->env);
-	ft_lstdel_list(msh->cmd_list, free_cmd_list);
-	free(msh->pids);
-	free_all(msh);
-	if (g_sig != -1)
-		exit(g_sig);
-	exit(EXIT_FAILURE);
-}
+	t_node	*tmp;
 
-void	free_tok_list(void *tok_ptr)
-{
-	t_token	*tok;
-
-	tok = tok_ptr;
-	if (tok->rewritten)
-		free((void *)tok->start);
-	free(tok);
+	if (list->count > 1)
+	{
+		list->tail->next = list->head->next;
+		list->head->next = NULL;
+		list->head->prev = list->tail->prev;
+		list->tail->prev = NULL;
+		tmp = list->head;
+		list->head = list->tail;
+		list->tail = tmp;
+	}
 }
