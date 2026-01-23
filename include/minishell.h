@@ -47,6 +47,8 @@
 # define E_UNREADABLE_INPUT "Input is not readable: %s\n"
 # define E_UNWRITABLE_OUTPUT "Output is not writable: %s\n"
 
+# define B_DECLARE "declare -x %s=\"%s\"\n"
+
 typedef enum e_token_type
 {
 	TOKEN_NULL,
