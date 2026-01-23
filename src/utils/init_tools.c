@@ -22,6 +22,7 @@ static	void	default_envs(t_list *env)
 	{
 		pwd = getcwd(NULL, 0);
 		add_env(env, "PWD", pwd);
+		free(pwd);
 	}
 	if (!get_env(env, "PATH"))
 		add_env(env, "PATH", "/usr/local/sbin:/usr/local/bin:/usr/bin");
