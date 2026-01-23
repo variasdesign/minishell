@@ -63,7 +63,7 @@ static	ssize_t	relocate_quotes(char *input,
 // Also, check if variables were expanded and relocate them
 // to avoid unquoted expanded vars becoming redirs
 static char	*reassemble_args(char **split_args, t_ptr_tab *var_tab,
-							t_bool *expanded_vars)
+							t_bool *expanded_vars, char *orig)
 {
 	ssize_t	i;
 	ssize_t	j;
@@ -86,6 +86,7 @@ static char	*reassemble_args(char **split_args, t_ptr_tab *var_tab,
 			j = relocate_variables(var_tab, j, args, split_args[i]);
 	}
 	ft_freematrix((void **)split_args);
+	free(orig);
 	return (args);
 }
 
@@ -97,8 +98,6 @@ static char	*reassemble_args(char **split_args, t_ptr_tab *var_tab,
 // reassemble_args to recover the full prompt with expanded variables.
 char	*expander(t_mini *msh)
 {
-	const char	*orig = msh->input;
-
 	if (locate_quotes(msh->input, msh->squote_tab, '\'') < 0
 		|| locate_quotes(msh->input, msh->dquote_tab, '\"') < 0)
 		return (NULL);
@@ -109,8 +108,7 @@ char	*expander(t_mini *msh)
 				msh->squote_tab) > 0)
 		{
 			msh->input = reassemble_args(split_vars(msh), msh->var_tab,
-					msh->expanded_vars);
-			free((void *)orig);
+					msh->expanded_vars, msh->input);
 			msh->squote_tab->orig = msh->input;
 			msh->dquote_tab->orig = msh->input;
 			msh->var_tab->orig = msh->input;
@@ -121,5 +119,7 @@ char	*expander(t_mini *msh)
 		}
 		return (msh->input);
 	}
+	free (msh->input);
+	free_tables(msh, f);
 	return (NULL);
 }
